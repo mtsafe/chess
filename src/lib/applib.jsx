@@ -27,7 +27,7 @@ function spitBaller(foot) {
 }
 
 function walker(foot) {
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < 64; i++) {
     if (foot[i] === "0") return i.toString()
   }
   return "0"
@@ -76,7 +76,7 @@ export function aiChoosesToe(aiStrategy, foot) {
 
 export function numMovesLeft(foot) {
   let result = 0
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < 64; i++) {
     if (foot[i] === "0") result++
   }
   return result

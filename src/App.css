@@ -5,29 +5,35 @@
   text-align: center;
 }
 
-.game-board {
+.game-board-chess {
   width: min-content;
   margin: 0 auto;
-  background-color: hsl(210, 29%, 29%);
-  color: hsl(0, 0%, 100%);
-  border: 6px solid hsl(210, 29%, 24%);
-  border-radius: 10px;
+  border: 2px solid hsl(210, 29%, 24%);
+  border-radius: 4px;
   display: grid;
-  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  grid-template: repeat(8, 1fr) / repeat(8, 1fr);
 }
 
 .square-button {
-  padding: 1.2em 1.2em;
+  padding: 0.45em 0.45em;
+}
+.light-square {
+  color: hsl(210, 29%, 29%);
+  background-color: hsl(0, 0%, 100%);
+}
+.dark-square {
+  color: hsl(0, 0%, 100%);
+  background-color: hsl(210, 29%, 29%);
 }
 .interact-img {
-  width: 130px;
-  height: 130px;
-  border: 6px solid hsl(210, 29%, 24%);
+  width: 49px;
+  height: 49px;
+  border: 2px solid hsl(210, 29%, 24%);
 }
 .interact-img:hover {
   background-color: hsla(193, 95%, 68%, 0.263);
-  border: 6px solid hsl(210, 29%, 24%);
-  border-radius: 2px;
+  border: 2px solid hsl(210, 29%, 24%);
+  border-radius: 0.75px;
   display: flex;
   justify-content: center;
   align-items: center;

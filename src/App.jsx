@@ -13,9 +13,9 @@ function App() {
 
   function newToes() {
     let result = []
-    for (let i = 0; i < 9; i++) {
-      let toe_id = i.toString()
-      result = [...result, { toe_id: toe_id, letter: "0" }]
+    for (let i = 0; i < 64; i++) {
+      //      let toe_id = i.toString()
+      result = [...result, { toe_id: i.toString(), toe_num: i, letter: "0" }]
     }
     return result
   }
@@ -89,7 +89,7 @@ function App() {
 
   return (
     <>
-      <h1>TIC-TAC-TOE + Vite + React</h1>
+      <h1>CHESS + Vite + React</h1>
       <h2>[You Against AI!]</h2>
       <GameBoard toes={toes} playerSelected={playerSelected} />
       <div>
