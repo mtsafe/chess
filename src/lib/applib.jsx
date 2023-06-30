@@ -1,3 +1,8 @@
+export function rf2Index(rank, file) {
+  return (8 - rank) * 8 + file.charCodeAt(0) - 97
+}
+export function index2Rank() {}
+export function index2File() {}
 // Treats foot and testLetter as read-only
 
 const winMatrix = [
@@ -18,12 +23,12 @@ function getRandomInt(max) {
 
 function spitBaller(foot) {
   let testFoot = foot
-    .map((toe, index) => {
-      if (toe.toString() === "0") return index
+    .map((tile, index) => {
+      if (tile.toString() === "0") return index
     })
     .filter(index => typeof index === "number")
-  let toeNumber = getRandomInt(numMovesLeft(foot))
-  return testFoot[toeNumber].toString()
+  let tileNumber = getRandomInt(numMovesLeft(foot))
+  return testFoot[tileNumber].toString()
 }
 
 function walker(foot) {
@@ -55,8 +60,8 @@ function bossLvl1(foot) {
   return spitBaller(foot)
 }
 
-export function aiChoosesToe(aiStrategy, foot) {
-  // aiChoosesToe returns an index as a string type.
+export function aiChoosesTile(aiStrategy, foot) {
+  // aiChoosesTile returns an index as a string type.
   // aiStrategy is a number type.
   switch (aiStrategy) {
     case 0:

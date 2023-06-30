@@ -1,17 +1,18 @@
-import { ToeButton } from "./ToeButton"
+import { SquareTile } from "./SquareTile"
 
-export function GameBoard({ toes, playerSelected }) {
+export function GameBoard({ tiles, pieceMatchingIndex, playerMoved }) {
   return (
     <div className="game-board-chess">
-      {toes.map(toe => {
+      {tiles.map(tile => {
         return (
-          <ToeButton
-            {...toe}
-            key={toe.toe_id}
-            toe_id={toe.toe_id}
-            toe_num={toe.toe_num}
-            letter={toe.letter}
-            playerSelected={playerSelected}
+          <SquareTile
+            {...tile}
+            key={tile.tile_id}
+            tile_id={tile.tile_id}
+            tile_num={tile.tile_num}
+            letter={tile.letter}
+            pieceMatchingIndex={pieceMatchingIndex}
+            playerMoved={playerMoved}
           />
         )
       })}
