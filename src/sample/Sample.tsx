@@ -41,7 +41,7 @@ function TheApp() {
           Widget C
         </div>
       </div>
-      <div className="page" onDrop={handleOnDrop} OnDragOver={handleDragOver}>
+      <div className="page" onDrop={handleOnDrop} onDragOver={handleDragOver}>
         {widgets.map((widget, index) => (
           <div className="dropped-widget" key={index}>
             widget

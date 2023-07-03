@@ -2,11 +2,12 @@ import { PieceImg } from "./PieceImg"
 // import { TileImg } from "./TileImg"
 
 export function SquareTile({
-  letter,
   tile_id,
   tile_num,
-  pieceMatchingIndex,
-  playerMoved,
+  handleOnDrag,
+  handleOnDrop,
+  getPieceMatchingIndex,
+  isTarget,
 }) {
   let squareShift = 0
   let className, frameBorderClass, tileShade
@@ -21,34 +22,17 @@ export function SquareTile({
   }
 
   return (
-    <div className={className} tile_id={tile_id} letter={letter}>
+    <div className={className} tile_id={tile_id}>
       <div className={frameBorderClass}>
         <PieceImg
-          letter={letter}
           tile_num={tile_num}
           tileShade={tileShade}
-          pieceMatchingIndex={pieceMatchingIndex}
+          handleOnDrag={handleOnDrag}
+          getPieceMatchingIndex={getPieceMatchingIndex}
+          isTarget={isTarget}
+          handleOnDrop={handleOnDrop}
         />
       </div>
     </div>
   )
-}
-{
-  /* </button>
-    <button
-    className={className}
-    tile_id={tile_id}
-    letter={letter}
-    onClick={e => playerMoved(tile_id, e.target)}
-  >
-    <TileImg letter={letter} tile_num={tile_num} tileShade={tileShade} />
-    <div className={frameBorderClass}>
-      <PieceImg
-        letter={letter}
-        tile_num={tile_num}
-        tileShade={tileShade}
-        pieceMatchingIndex={pieceMatchingIndex}
-      />
-    </div>
-  </button> */
 }

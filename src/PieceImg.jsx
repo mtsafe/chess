@@ -12,13 +12,21 @@ import LightRook from "./assets/chessSetShade/rook-w164x294.png"
 import LightPawn from "./assets/chessSetShade/pawn-w164x294.png"
 import Empty from "./assets/transparent100x100.png"
 
-export function PieceImg({ letter, tile_num, tileShade, pieceMatchingIndex }) {
-  let className
-  if (tileShade === 0) className = "interact-img img-border-dark"
-  else className = "interact-img img-border-light"
+export function PieceImg({
+  tile_num,
+  tileShade,
+  handleOnDrag,
+  getPieceMatchingIndex,
+  isTarget,
+  handleOnDrop,
+}) {
+  if (isTarget)
+    console.log(
+      `PieceImg: #${tile_num} isTarget=${isTarget} with type ${typeof isTarget}`
+    )
 
   let alt, src
-  let pieceHere = pieceMatchingIndex(tile_num)
+  let pieceHere = getPieceMatchingIndex(tile_num)
   if (typeof pieceHere === "undefined") {
     alt = ""
     src = Empty
@@ -77,5 +85,33 @@ export function PieceImg({ letter, tile_num, tileShade, pieceMatchingIndex }) {
         break
     }
   }
-  return <img src={src} className={className} alt={alt} letter={letter} />
+
+  let className
+  if (tileShade === 0) className = "interact-img img-border-dark"
+  else className = "interact-img img-border-light"
+  if (isTarget) className += " dropzone"
+
+  let draggable = undefined,
+    onDragStart = undefined,
+    onDragOver = undefined,
+    onDrop = undefined
+  if (tile_num === 48) draggable = true
+  if (isTarget) {
+    onDragOver = e => e.preventDefault()
+    onDrop = e => handleOnDrop(e)
+  } else {
+    onDragStart = e => handleOnDrag(e)
+  }
+  return (
+    <img
+      src={src}
+      className={className}
+      alt={alt}
+      tile_num={tile_num}
+      draggable={draggable}
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+    />
+  )
 }

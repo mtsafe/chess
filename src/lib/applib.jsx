@@ -1,8 +1,14 @@
-export function rf2Index(rank, file) {
+function rf2Index(rank, file) {
   return (8 - rank) * 8 + file.charCodeAt(0) - 97
 }
-export function index2Rank() {}
-export function index2File() {}
+function index2Rank(index) {
+  return Math.floor(index / 8)
+}
+// function index2File(index) {}
+function index2Column(index) {
+  let rank = index2Rank(index)
+  return index - rank * 8
+}
 // Treats foot and testLetter as read-only
 
 const winMatrix = [
@@ -60,7 +66,7 @@ function bossLvl1(foot) {
   return spitBaller(foot)
 }
 
-export function aiChoosesTile(aiStrategy, foot) {
+function aiChoosesTile(aiStrategy, foot) {
   // aiChoosesTile returns an index as a string type.
   // aiStrategy is a number type.
   switch (aiStrategy) {
@@ -79,7 +85,7 @@ export function aiChoosesTile(aiStrategy, foot) {
   }
 }
 
-export function numMovesLeft(foot) {
+function numMovesLeft(foot) {
   let result = 0
   for (let i = 0; i < 64; i++) {
     if (foot[i] === "0") result++
@@ -87,12 +93,12 @@ export function numMovesLeft(foot) {
   return result
 }
 
-export function tie(foot) {
+function tie(foot) {
   // assumes already checked for winner
   return numMovesLeft(foot) === 0
 }
 
-export function locateOneMoveWin(foot, testLetter) {
+function locateOneMoveWin(foot, testLetter) {
   // locateOneMoveWin returns number type
   const winLetter = "0"
   for (const triplet of winMatrix) {
@@ -118,9 +124,7 @@ export function locateOneMoveWin(foot, testLetter) {
   return null
 }
 
-export function winnnnner(foot, testLetter) {}
-
-export function winner(foot, testLetter) {
+function winner(foot, testLetter) {
   if (foot[0] === testLetter) {
     if (foot[1] === testLetter && foot[2] === testLetter) {
       return true
@@ -159,4 +163,15 @@ export function winner(foot, testLetter) {
     return true
   }
   return false
+}
+export {
+  rf2Index,
+  index2Rank,
+  // index2File,
+  index2Column,
+  aiChoosesTile,
+  numMovesLeft,
+  tie,
+  locateOneMoveWin,
+  winner,
 }

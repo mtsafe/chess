@@ -1,88 +1,97 @@
 import { useState } from "react"
+
+// FUNCTION COMPONENTS
 import { GameBoard } from "./GameBoard"
 import { GameStatus } from "./GameStatus"
 import { AISelector } from "./AISelector"
-import { aiChoosesTile, rf2Index, tie, winner } from "./lib/applib"
 import { NewGameButton } from "./NewGameButton"
+
+// FUNCTIONS SUPPORTING STATE
+import { newTiles } from "./state/tiles"
+import { newPieces1, newPieces2 } from "./state/pieces.jsx"
+
+// OTHER FUNCTIONS
+import { aiChoosesTile, tie, winner } from "./lib/applib"
+import { findDropTargets } from "./lib/player1eventlib"
+
+// CONSTANTS
+import * as Action from "./lib/actions"
+
 import "./App.css"
 
-// A gameboard consists of 64 tiles arranged 8x8.
-
 function App() {
+  // ***************************
+  // STATE HOOKS
   const [tiles, setTiles] = useState(newTiles)
   const [pieces1, setPieces1] = useState(newPieces1)
   const [pieces2, setPieces2] = useState(newPieces2)
+  const [draggedPiece, setDraggedPiece] = useState(null)
+  const [dropTargetMoves, setDropTargetMoves] = useState([])
+  // sample dropTargetMove = {
+  //   src: tile_num,
+  //   srcPiece: letter,
+  //   action: "move",
+  //   tar: targetLocation,
+  //   tarPiece: "",
+  // }) // take 1 step
+
+  const [moves, setMoves] = useState([])
   const [statusMsg, setStatusMsg] = useState("Go!")
   const [aiStrategy, setAIStrategy] = useState(1)
 
-  function newTiles() {
-    let result = []
-    for (let i = 0; i < 64; i++) {
-      result = [...result, { tile_id: i.toString(), tile_num: i, letter: "0" }]
-    }
-    return result
-  }
+  function getPieceMatchingIndex(tile_num) {
+    let result
+    if (pieces1?.length)
+      result = pieces1.find(piece => piece.index === tile_num)
 
-  function pieceMatchingIndex(tile_num) {
-    let result = pieces1.find(piece => piece.index === tile_num)
-    if (typeof result === "undefined")
+    if (typeof result === "undefined" && pieces2?.length)
       result = pieces2.find(piece => piece.index === tile_num)
     return result
   }
 
-  function newPieces1() {
-    // player one is light shade
-    let result = [
-      { name: "Queen", code: "Q", letter: "Q", index: rf2Index(1, "d") },
-      { name: "King", code: "K", letter: "K", index: rf2Index(1, "e") },
-      { name: "Bishop", code: "QB", letter: "B", index: rf2Index(1, "c") },
-      { name: "Bishop", code: "KB", letter: "B", index: rf2Index(1, "f") },
-      { name: "Knight", code: "QN", letter: "N", index: rf2Index(1, "b") },
-      { name: "Knight", code: "KN", letter: "N", index: rf2Index(1, "g") },
-      { name: "Rook", code: "QR", letter: "R", index: rf2Index(1, "a") },
-      { name: "Rook", code: "KR", letter: "R", index: rf2Index(1, "h") },
-      { name: "Pawn", code: "Pa", letter: "P", index: rf2Index(2, "a") },
-      { name: "Pawn", code: "Pb", letter: "P", index: rf2Index(2, "b") },
-      { name: "Pawn", code: "Pc", letter: "P", index: rf2Index(2, "c") },
-      { name: "Pawn", code: "Pd", letter: "P", index: rf2Index(2, "d") },
-      { name: "Pawn", code: "Pe", letter: "P", index: rf2Index(2, "e") },
-      { name: "Pawn", code: "Pf", letter: "P", index: rf2Index(2, "f") },
-      { name: "Pawn", code: "Pg", letter: "P", index: rf2Index(2, "g") },
-      { name: "Pawn", code: "Ph", letter: "P", index: rf2Index(2, "h") },
-    ]
-    result = result.map(piece => {
-      piece.player = 1
-      return piece
-    })
-    return result
+  function getMoveMatchingTar(tile_num) {
+    return dropTargetMoves.find(move => move.tar === tile_num)
   }
 
-  function newPieces2() {
-    // player two is dark shade
-    let result = [
-      { name: "Queen", code: "Q", letter: "Q", index: rf2Index(8, "d") },
-      { name: "King", code: "K", letter: "K", index: rf2Index(8, "e") },
-      { name: "Bishop", code: "QB", letter: "B", index: rf2Index(8, "c") },
-      { name: "Bishop", code: "KB", letter: "B", index: rf2Index(8, "f") },
-      { name: "Knight", code: "QN", letter: "N", index: rf2Index(8, "b") },
-      { name: "Knight", code: "KN", letter: "N", index: rf2Index(8, "g") },
-      { name: "Rook", code: "QR", letter: "R", index: rf2Index(8, "a") },
-      { name: "Rook", code: "KR", letter: "R", index: rf2Index(8, "h") },
-      { name: "Pawn", code: "Pa", letter: "P", index: rf2Index(7, "a") },
-      { name: "Pawn", code: "Pb", letter: "P", index: rf2Index(7, "b") },
-      { name: "Pawn", code: "Pc", letter: "P", index: rf2Index(7, "c") },
-      { name: "Pawn", code: "Pd", letter: "P", index: rf2Index(7, "d") },
-      { name: "Pawn", code: "Pe", letter: "P", index: rf2Index(7, "e") },
-      { name: "Pawn", code: "Pf", letter: "P", index: rf2Index(7, "f") },
-      { name: "Pawn", code: "Pg", letter: "P", index: rf2Index(7, "g") },
-      { name: "Pawn", code: "Ph", letter: "P", index: rf2Index(7, "h") },
-    ]
-    result = result.map(piece => {
-      piece.player = 2
-      return piece
-    })
-    return result
+  function movePiece(srcIndex, targetIndex) {
+    let piece = getPieceMatchingIndex(targetIndex)
+    if (piece !== undefined) return
+    piece = getPieceMatchingIndex(srcIndex)
+    if (piece === undefined) return
+    if (piece.player === 1)
+      setPieces1(
+        pieces1.map(p => {
+          if (p.index === srcIndex) p.index = targetIndex
+          return p
+        })
+      )
+    else
+      setPieces2(
+        pieces2.map(p => {
+          if (p.index === srcIndex) p.index = targetIndex
+          return p
+        })
+      )
   }
+
+  function killPiece(targetIndex) {
+    let piece = getPieceMatchingIndex(targetIndex)
+    if (piece !== undefined) return
+    if (piece.player === 1)
+      setPieces1(
+        pieces1.map(p => {
+          if (p.index !== srcIndex) return p
+        })
+      )
+    else
+      setPieces2(
+        pieces2.map(p => {
+          if (p.index !== srcIndex) return p
+        })
+      )
+  }
+
+  function recordMove(instruction) {}
 
   function restartGame() {
     setPieces1(newPieces1())
@@ -90,11 +99,6 @@ function App() {
     setTiles(newTiles())
     setStatusMsg(() => "Go!")
   }
-
-  let foot = tiles.map(tile => {
-    return tile.letter
-  })
-
   function playerClaimsTile(tile_id) {
     toggleTile(tile_id, "X")
   }
@@ -153,16 +157,64 @@ function App() {
     setAIStrategy(parseInt(value))
   }
 
+  // ***************************
+  // EVENT HANDLERS
+  function handleOnDrag(e) {
+    // Add the target element's id to the data transfer object
+    let tile_num = e.target.attributes.getNamedItem("tile_num").value
+    console.log("handleOnDrag triggered for tile_num=" + tile_num)
+    setDraggedPiece(tile_num)
+    let freshDropTargetMoves = findDropTargets(e.target, pieces1, pieces2)
+    setDropTargetMoves(freshDropTargetMoves)
+  }
+
+  function handleOnDrop(e) {
+    console.log("handleOnDrop()")
+    // prevent default action (open as link for some elements)
+    e.preventDefault()
+    // move dragged element to the selected drop target
+    console.log("handleOnDrop: classList='" + e.target.classList + "'")
+    if (e.target.classList.contains("dropzone")) {
+      // find Move that drops here
+      let targetTileNum = e.target.getAttribute("tile_num")
+      console.log("handleOnDrop: targetTileNum=" + targetTileNum)
+      let move = getMoveMatchingTar(parseInt(e.target.getAttribute("tile_num")))
+      // sample dropTargetMove = {
+      //   src: tile_num,
+      //   srcPiece: letter,
+      //   action: "move",
+      //   tar: targetLocation,
+      //   tarPiece: "",
+      // }) // take 1 step
+
+      if (move.action === Action.MOVE) {
+        movePiece(move.src, move.tar)
+      } else if (move.action === Action.CAPTURE) {
+        killPiece(move.tar)
+        // if the instruction == capture
+        // then set the list of pieces to exclude the target piece
+        // then set the piece index to the new location
+      }
+    }
+    let instruction
+    recordMove(instruction)
+  }
+  // ***************************
+  // EXECUTION BEGINS (OTHER THAN STATE HOOK DECLARATIONS)
+  let foot = tiles.map(tile => {
+    return tile.letter
+  })
+
   return (
     <>
       <h1>CHESS + Vite + React</h1>
       <h2>[You Against AI!]</h2>
       <GameBoard
         tiles={tiles}
-        pieces1={pieces1}
-        pieces2={pieces2}
-        pieceMatchingIndex={pieceMatchingIndex}
-        playerMoved={playerMoved}
+        handleOnDrag={handleOnDrag}
+        handleOnDrop={handleOnDrop}
+        getPieceMatchingIndex={getPieceMatchingIndex}
+        dropTargetMoves={dropTargetMoves}
       />
       <div>
         <GameStatus statusMsg={statusMsg} />
