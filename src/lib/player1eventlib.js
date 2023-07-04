@@ -6,7 +6,11 @@
 //   rf2Index,
 // } from "./applib"
 import { getPieceMatchingIndex } from "../state/pieces"
-import { player1Pawn1Step, player1Pawn2Step } from "./player1moves"
+import {
+  player1Pawn1Step,
+  player1Pawn2Step,
+  player1PawnCaptureLeft,
+} from "./player1moves"
 
 // EVENT HANDLER SUPPORT FUNCTIONS
 function findDropTargets(pieceElement, pieces1, pieces2) {
@@ -17,9 +21,9 @@ function findDropTargets(pieceElement, pieces1, pieces2) {
     case "P":
       result.push(player1Pawn1Step(letter, tile_num, pieces1, pieces2))
       result.push(player1Pawn2Step(letter, tile_num, pieces1, pieces2))
-      // result.push(tile_num - 7) // attack right or en passant
-      // result.push(tile_num - 9) // attack left or en passant
-      // result.push(tile_num - 16) // take 2 steps
+      result.push(player1PawnCaptureLeft(letter, tile_num, pieces1, pieces2))
+      // result.push(tile_num - 7) // capture right or en passant
+      // result.push(tile_num - 9) // capture left or en passant
       break
   }
   // console.log("letter=" + letter + " tile_num=" + tile_num)

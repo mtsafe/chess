@@ -33,6 +33,10 @@ After executing "`npm run dev`", Node is a running process that is running Vite 
 ## Added react hooks linter
 `$ npm install eslint-plugin-react-hooks --save-dev`
 
+## Added jest
+
+`$ npm install jest --save-dev`
+
 ## Make it work for GitHub
 `$ npm install gh-pages --save-dev`
 

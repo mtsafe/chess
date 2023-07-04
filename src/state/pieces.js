@@ -55,6 +55,14 @@ function newPieces2() {
   return result
 }
 
+function getFreshPiecesWithout(tarIndex, pieces) {
+  return pieces
+    .map(p => {
+      if (p.index !== tarIndex) return p
+    })
+    .filter(Boolean)
+}
+
 function getPieceMatchingIndex(tile_num, pieces1, pieces2) {
   let result
   if (pieces1?.length) result = pieces1.find(piece => piece.index === tile_num)
@@ -64,4 +72,38 @@ function getPieceMatchingIndex(tile_num, pieces1, pieces2) {
   return result
 }
 
-export { newPieces1, newPieces2, getPieceMatchingIndex }
+function killPiece(tarIndex, pieces1, pieces2) {
+  console.log(`killPiece(${tarIndex}`)
+  let victim = getPieceMatchingIndex(tarIndex, pieces1, pieces2)
+  if (victim === undefined) return
+  if (victim === 1) return getFreshPiecesWithout(tarIndex, pieces1)
+  else return getFreshPiecesWithout(tarIndex, pieces2)
+}
+
+function movePiece(srcIndex, tarIndex, pieces1, pieces2) {
+  console.log(`movePiece(${srcIndex}, ${tarIndex})`)
+  let piece = getPieceMatchingIndex(tarIndex, pieces1, pieces2)
+  if (piece !== undefined) return
+
+  piece = getPieceMatchingIndex(srcIndex, pieces1, pieces2)
+  if (piece === undefined) return
+
+  if (piece.player === 1)
+    return pieces1.map(p => {
+      if (p.index === srcIndex) p.index = tarIndex
+      return p
+    })
+  return pieces2.map(p => {
+    if (p.index === srcIndex) p.index = tarIndex
+    return p
+  })
+}
+
+export {
+  newPieces1,
+  newPieces2,
+  getFreshPiecesWithout,
+  getPieceMatchingIndex,
+  killPiece,
+  movePiece,
+}

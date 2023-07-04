@@ -4,7 +4,7 @@ function rf2Index(rank, file) {
 function index2Rank(index) {
   return 8 - Math.floor(index / 8)
 }
-// function index2File(index) {}
+function index2File(index) {}
 function index2Column(index) {
   let rank = index2Rank(index)
   return index - rank * 8
@@ -167,7 +167,7 @@ function winner(foot, testLetter) {
 export {
   rf2Index,
   index2Rank,
-  // index2File,
+  index2File,
   index2Column,
   aiChoosesTile,
   numMovesLeft,

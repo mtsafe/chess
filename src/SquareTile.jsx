@@ -4,10 +4,10 @@ import { PieceImg } from "./PieceImg"
 export function SquareTile({
   tile_id,
   tile_num,
-  handleOnDrag,
-  handleOnDrop,
-  getPieceMatchingIndex,
-  isTarget,
+  handleOnDragProp,
+  handleOnDropProp,
+  getPieceMatchingIndexProp,
+  isDropZone,
 }) {
   let squareShift = 0
   let className, frameBorderClass, tileShade
@@ -27,10 +27,10 @@ export function SquareTile({
         <PieceImg
           tile_num={tile_num}
           tileShade={tileShade}
-          handleOnDrag={handleOnDrag}
-          getPieceMatchingIndex={getPieceMatchingIndex}
-          isTarget={isTarget}
-          handleOnDrop={handleOnDrop}
+          handleOnDragProp={handleOnDragProp}
+          getPieceMatchingIndexProp={getPieceMatchingIndexProp}
+          isDropZone={isDropZone}
+          handleOnDropProp={handleOnDropProp}
         />
       </div>
     </div>

@@ -8,7 +8,7 @@ import { NewGameButton } from "./NewGameButton"
 
 // FUNCTIONS SUPPORTING STATE
 import { newTiles } from "./state/tiles"
-import { newPieces1, newPieces2 } from "./state/pieces.jsx"
+import { newPieces1, newPieces2, killPiece, movePiece } from "./state/pieces"
 
 // OTHER FUNCTIONS
 import { aiChoosesTile, tie, winner } from "./lib/applib"
@@ -28,10 +28,10 @@ function App() {
   //  const [draggedPiece, setDraggedPiece] = useState(null)
   const [dropTargetMoves, setDropTargetMoves] = useState([])
   // sample dropTargetMove = {
-  //   src: tile_num,
+  //   srcIndex: tile_num,
   //   srcPiece: letter,
   //   action: "move",
-  //   tar: targetLocation,
+  //   tarIndex: targetLocation,
   //   tarPiece: "",
   // }) // take 1 step
 
@@ -39,7 +39,7 @@ function App() {
   const [statusMsg, setStatusMsg] = useState("Go!")
   const [aiStrategy, setAIStrategy] = useState(1)
 
-  function getPieceMatchingIndex(tile_num) {
+  function getPieceMatchingIndexProp(tile_num) {
     let result
     if (pieces1?.length)
       result = pieces1.find(piece => piece.index === tile_num)
@@ -49,49 +49,11 @@ function App() {
     return result
   }
 
-  function getMoveMatchingTar(tile_num) {
+  function getMoveMatchingTarProp(tile_num) {
     if (dropTargetMoves?.length) {
-      return dropTargetMoves.find(move => move.tar === tile_num)
+      return dropTargetMoves.find(move => move.tarIndex === tile_num)
     }
     return undefined
-  }
-
-  function movePiece(srcIndex, targetIndex) {
-    let piece = getPieceMatchingIndex(targetIndex)
-    if (piece !== undefined) return
-    piece = getPieceMatchingIndex(srcIndex)
-    if (piece === undefined) return
-    if (piece.player === 1)
-      setPieces1(
-        pieces1.map(p => {
-          if (p.index === srcIndex) p.index = targetIndex
-          return p
-        })
-      )
-    else
-      setPieces2(
-        pieces2.map(p => {
-          if (p.index === srcIndex) p.index = targetIndex
-          return p
-        })
-      )
-  }
-
-  function killPiece(targetIndex) {
-    let piece = getPieceMatchingIndex(targetIndex)
-    if (piece !== undefined) return
-    if (piece.player === 1)
-      setPieces1(
-        pieces1.map(p => {
-          if (p.index !== srcIndex) return p
-        })
-      )
-    else
-      setPieces2(
-        pieces2.map(p => {
-          if (p.index !== srcIndex) return p
-        })
-      )
   }
 
   function recordMove(instruction) {}
@@ -162,40 +124,52 @@ function App() {
 
   // ***************************
   // EVENT HANDLERS
-  function handleOnDrag(e) {
-    // Add the target element's id to the data transfer object
-    let tile_num = e.target.attributes.getNamedItem("tile_num").value
-    console.log("handleOnDrag triggered for tile_num=" + tile_num)
-    // setDraggedPiece(tile_num)
-    let freshDropTargetMoves = findDropTargets(e.target, pieces1, pieces2)
-    setDropTargetMoves(freshDropTargetMoves)
+  function handleOnDragProp(e) {
+    setDropTargetMoves(findDropTargets(e.target, pieces1, pieces2))
   }
 
-  function handleOnDrop(e) {
-    console.log("handleOnDrop()")
+  function handleOnDropProp(e) {
+    console.log("handleOnDropProp()")
     // prevent default action (open as link for some elements)
     e.preventDefault()
+    console.log(
+      `handleOnDropProp: targetTileNum=${e.target.getAttribute(
+        "tile_num"
+      )}  classList="${e.target.classList}"`
+    )
+    if (!e.target.classList.contains("dropzone")) return
     // move dragged element to the selected drop target
-    console.log("handleOnDrop: classList='" + e.target.classList + "'")
-    if (e.target.classList.contains("dropzone")) {
-      // find Move that drops here
-      let targetTileNum = e.target.getAttribute("tile_num")
-      console.log("handleOnDrop: targetTileNum=" + targetTileNum)
-      let move = getMoveMatchingTar(parseInt(e.target.getAttribute("tile_num")))
-      // sample dropTargetMove = {
-      //   src: tile_num,
-      //   srcPiece: letter,
-      //   action: "move",
-      //   tar: targetLocation,
-      //   tarPiece: "",
-      // }) // take 1 step
-      if (move === undefined) return
-      if (move.action === Action.MOVE) {
-        movePiece(move.src, move.tar)
-      } else if (move.action === Action.CAPTURE) {
-        killPiece(move.tar)
-        movePiece(move.src, move.tar)
-      }
+    // find Move that drops here
+
+    let move = getMoveMatchingTarProp(
+      parseInt(e.target.getAttribute("tile_num"))
+    )
+    // sample move = {
+    //   srcIndex: tile_num,
+    //   srcPiece: letter,
+    //   action: Action.MOVE,
+    //   tarIndex: targetLocation,
+    //   tarPiece: "",
+    // }) // take 1 step
+    if (move === undefined) return
+    if (move.action === Action.MOVE) {
+      let freshPieces1 = movePiece(
+        move.srcIndex,
+        move.tarIndex,
+        pieces1,
+        pieces2
+      )
+      setPieces1(freshPieces1)
+    } else if (move.action === Action.CAPTURE) {
+      let freshPieces2 = killPiece(move.tarIndex, pieces1, pieces2)
+      let freshPieces1 = movePiece(
+        move.srcIndex,
+        move.tarIndex,
+        pieces1,
+        freshPieces2
+      )
+      setPieces1(freshPieces1)
+      setPieces2(freshPieces2)
     }
     let instruction
     recordMove(instruction)
@@ -212,10 +186,10 @@ function App() {
       <h2>[You Against AI!]</h2>
       <GameBoard
         tiles={tiles}
-        handleOnDrag={handleOnDrag}
-        handleOnDrop={handleOnDrop}
-        getPieceMatchingIndex={getPieceMatchingIndex}
-        getMoveMatchingTar={getMoveMatchingTar}
+        handleOnDragProp={handleOnDragProp}
+        handleOnDropProp={handleOnDropProp}
+        getPieceMatchingIndexProp={getPieceMatchingIndexProp}
+        getMoveMatchingTarProp={getMoveMatchingTarProp}
       />
       <div>
         <GameStatus statusMsg={statusMsg} />

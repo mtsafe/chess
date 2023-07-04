@@ -15,18 +15,18 @@ import Empty from "./assets/transparent100x100.png"
 export function PieceImg({
   tile_num,
   tileShade,
-  handleOnDrag,
-  getPieceMatchingIndex,
-  isTarget,
-  handleOnDrop,
+  handleOnDragProp,
+  getPieceMatchingIndexProp,
+  isDropZone,
+  handleOnDropProp,
 }) {
-  if (isTarget)
+  if (isDropZone)
     console.log(
-      `PieceImg: #${tile_num} isTarget=${isTarget} with type ${typeof isTarget}`
+      `PieceImg: #${tile_num} isDropZone=${isDropZone} with type ${typeof isDropZone}`
     )
 
   let alt, src
-  let pieceHere = getPieceMatchingIndex(tile_num)
+  let pieceHere = getPieceMatchingIndexProp(tile_num)
   if (typeof pieceHere === "undefined") {
     alt = ""
     src = Empty
@@ -89,18 +89,18 @@ export function PieceImg({
   let className
   if (tileShade === 0) className = "interact-img img-border-dark"
   else className = "interact-img img-border-light"
-  if (isTarget) className += " dropzone"
 
   let draggable = undefined,
     onDragStart = undefined,
     onDragOver = undefined,
     onDrop = undefined
   //  if (tile_num === 48) draggable = true
-  if (isTarget) {
+  if (isDropZone) {
+    className += " dropzone"
     onDragOver = e => e.preventDefault()
-    onDrop = e => handleOnDrop(e)
+    onDrop = e => handleOnDropProp(e)
   } else {
-    onDragStart = e => handleOnDrag(e)
+    onDragStart = e => handleOnDragProp(e)
   }
   return (
     <img
