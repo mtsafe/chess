@@ -25,7 +25,7 @@ function App() {
   const [tiles, setTiles] = useState(newTiles)
   const [pieces1, setPieces1] = useState(newPieces1)
   const [pieces2, setPieces2] = useState(newPieces2)
-  const [draggedPiece, setDraggedPiece] = useState(null)
+  //  const [draggedPiece, setDraggedPiece] = useState(null)
   const [dropTargetMoves, setDropTargetMoves] = useState([])
   // sample dropTargetMove = {
   //   src: tile_num,
@@ -35,7 +35,7 @@ function App() {
   //   tarPiece: "",
   // }) // take 1 step
 
-  const [moves, setMoves] = useState([])
+  //  const [moves, setMoves] = useState([])
   const [statusMsg, setStatusMsg] = useState("Go!")
   const [aiStrategy, setAIStrategy] = useState(1)
 
@@ -50,7 +50,10 @@ function App() {
   }
 
   function getMoveMatchingTar(tile_num) {
-    return dropTargetMoves.find(move => move.tar === tile_num)
+    if (dropTargetMoves?.length) {
+      return dropTargetMoves.find(move => move.tar === tile_num)
+    }
+    return undefined
   }
 
   function movePiece(srcIndex, targetIndex) {
@@ -163,7 +166,7 @@ function App() {
     // Add the target element's id to the data transfer object
     let tile_num = e.target.attributes.getNamedItem("tile_num").value
     console.log("handleOnDrag triggered for tile_num=" + tile_num)
-    setDraggedPiece(tile_num)
+    // setDraggedPiece(tile_num)
     let freshDropTargetMoves = findDropTargets(e.target, pieces1, pieces2)
     setDropTargetMoves(freshDropTargetMoves)
   }
@@ -186,14 +189,12 @@ function App() {
       //   tar: targetLocation,
       //   tarPiece: "",
       // }) // take 1 step
-
+      if (move === undefined) return
       if (move.action === Action.MOVE) {
         movePiece(move.src, move.tar)
       } else if (move.action === Action.CAPTURE) {
         killPiece(move.tar)
-        // if the instruction == capture
-        // then set the list of pieces to exclude the target piece
-        // then set the piece index to the new location
+        movePiece(move.src, move.tar)
       }
     }
     let instruction
@@ -214,7 +215,7 @@ function App() {
         handleOnDrag={handleOnDrag}
         handleOnDrop={handleOnDrop}
         getPieceMatchingIndex={getPieceMatchingIndex}
-        dropTargetMoves={dropTargetMoves}
+        getMoveMatchingTar={getMoveMatchingTar}
       />
       <div>
         <GameStatus statusMsg={statusMsg} />

@@ -95,7 +95,7 @@ export function PieceImg({
     onDragStart = undefined,
     onDragOver = undefined,
     onDrop = undefined
-  if (tile_num === 48) draggable = true
+  //  if (tile_num === 48) draggable = true
   if (isTarget) {
     onDragOver = e => e.preventDefault()
     onDrop = e => handleOnDrop(e)

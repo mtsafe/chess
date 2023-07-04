@@ -2,7 +2,7 @@ function rf2Index(rank, file) {
   return (8 - rank) * 8 + file.charCodeAt(0) - 97
 }
 function index2Rank(index) {
-  return Math.floor(index / 8)
+  return 8 - Math.floor(index / 8)
 }
 // function index2File(index) {}
 function index2Column(index) {

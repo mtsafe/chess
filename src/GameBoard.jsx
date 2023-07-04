@@ -5,17 +5,16 @@ export function GameBoard({
   handleOnDrag,
   handleOnDrop,
   getPieceMatchingIndex,
-  dropTargetMoves,
+  getMoveMatchingTar,
 }) {
   return (
     <div id="chess-board" className="game-board-chess">
       {tiles.map(tile => {
         let isTarget = false
-        if (
-          dropTargetMoves?.length &&
-          dropTargetMoves.find(record => record.tar === tile.tile_num)
-        )
-          isTarget = true
+
+        if (getMoveMatchingTar(tile.tile_num) !== undefined)
+          console.log("marking square " + tile.tile_num)
+        if (getMoveMatchingTar(tile.tile_num) !== undefined) isTarget = true
         return (
           <SquareTile
             {...tile}
