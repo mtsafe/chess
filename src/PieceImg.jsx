@@ -20,11 +20,6 @@ export function PieceImg({
   isDropZone,
   handleOnDropProp,
 }) {
-  if (isDropZone)
-    console.log(
-      `PieceImg: #${tile_num} isDropZone=${isDropZone} with type ${typeof isDropZone}`
-    )
-
   let alt, src
   let pieceHere = getPieceMatchingIndexProp(tile_num)
   if (typeof pieceHere === "undefined") {

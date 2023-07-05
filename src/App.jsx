@@ -78,6 +78,7 @@ function App() {
   // ***************************
   // EVENT HANDLERS
   function handleOnDragProp(e) {
+    console.log("handleOnDragProp()")
     setDropTargetMoves(findDropTargets(e.target, pieces1, pieces2))
   }
 
@@ -132,6 +133,7 @@ function App() {
     }
     if (freshPieces1 !== undefined) setPieces1(freshPieces1)
     if (freshPieces2 !== undefined) setPieces2(freshPieces2)
+    setDropTargetMoves([])
 
     let instruction
     recordMove(instruction)

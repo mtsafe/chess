@@ -4,7 +4,9 @@ function rf2Index(rank, file) {
 function index2Rank(index) {
   return 8 - Math.floor(index / 8)
 }
-function index2File(index) {}
+function index2File(index) {
+  return String.fromCharCode(97 + index - Math.floor(index / 8) * 8)
+}
 function index2Column(index) {
   let rank = index2Rank(index)
   return index - rank * 8

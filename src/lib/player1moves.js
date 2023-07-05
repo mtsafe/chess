@@ -1,7 +1,8 @@
-import { index2Rank, index2File } from "./applib"
+import { index2Rank, index2File, rf2Index } from "./applib"
 import { getPieceMatchingIndex } from "../state/pieces"
 import * as Action from "./actions"
 
+// PAWN MOVES
 function player1Pawn1Step(srcIndex, pieces1, pieces2) {
   let tarIndex = srcIndex - 8
   let pieceAtTarget = getPieceMatchingIndex(
@@ -64,6 +65,46 @@ function player1PawnCaptureRight(srcIndex, pieces1, pieces2) {
   }
 }
 
+// ROOK MOVES
+function player1RookVertical(srcIndex, pieces1, pieces2) {
+  let file = index2File(srcIndex)
+  let result1 = rookVerticalLoop("-", srcIndex, file, pieces1, pieces2)
+  let result2 = rookVerticalLoop("+", srcIndex, file, pieces1, pieces2)
+  return [...result1, ...result2].filter(Boolean)
+}
+
+function rookVerticalLoop(direction, srcIndex, file, pieces1, pieces2) {
+  let rank,
+    start,
+    condition,
+    nextRank,
+    result = []
+  if (direction === "+") {
+    start = index2Rank(srcIndex) + 1
+    condition = () => rank <= 8
+    nextRank = () => rank++
+  } else {
+    start = index2Rank(srcIndex) - 1
+    condition = () => rank > 0
+    nextRank = () => rank--
+  }
+  for (rank = start; condition(); nextRank()) {
+    let tarIndex = rf2Index(rank, file)
+    let pieceAtTarget = getPieceMatchingIndex(
+      parseInt(tarIndex),
+      pieces1,
+      pieces2
+    )
+    if (pieceAtTarget === undefined)
+      result.push(movePieceAction(srcIndex, "R", tarIndex))
+    else if (pieceAtTarget.player === 2) {
+      result.push(capturePiece(srcIndex, "R", tarIndex, pieceAtTarget.letter))
+      break
+    } else break
+  }
+  return result
+}
+
 function capturePiece(srcIndex, srcPiece, tarIndex, tarPiece) {
   return {
     srcIndex,
@@ -109,4 +150,5 @@ export {
   player1Pawn2Step,
   player1PawnCaptureLeft,
   player1PawnCaptureRight,
+  player1RookVertical,
 }
