@@ -63,18 +63,23 @@ function getFreshPiecesWithout(tarIndex, pieces) {
     .filter(Boolean)
 }
 
-function getPieceMatchingIndex(tile_num, pieces1, pieces2) {
-  let result
-  if (pieces1?.length) result = pieces1.find(piece => piece.index === tile_num)
+function getPieceMatchingIndex1(tile_num, pieces) {
+  if (pieces?.length) return pieces.find(piece => piece.index === tile_num)
+}
 
-  if (typeof result === "undefined" && pieces2?.length)
-    result = pieces2.find(piece => piece.index === tile_num)
+function getPieceMatchingIndex2(tile_num, gameState) {
+  let result
+  if (gameState.pieces1?.length)
+    result = gameState.pieces1.find(piece => piece.index === tile_num)
+
+  if (typeof result === "undefined" && gameState.pieces2?.length)
+    result = gameState.pieces2.find(piece => piece.index === tile_num)
   return result
 }
 
 function killPiece(tarIndex, pieces) {
   console.log(`killPiece(${tarIndex})`)
-  let victim = getPieceMatchingIndex(tarIndex, pieces, pieces)
+  let victim = getPieceMatchingIndex1(tarIndex, pieces)
   if (victim === undefined) return
   return getFreshPiecesWithout(tarIndex, pieces)
 }
@@ -91,7 +96,7 @@ function makeQueen(tarIndex, pieces) {
 
 function movePiece(srcIndex, tarIndex, pieces) {
   console.log(`movePiece(${srcIndex}, ${tarIndex})`)
-  let piece = getPieceMatchingIndex(srcIndex, pieces, pieces)
+  let piece = getPieceMatchingIndex1(srcIndex, pieces)
   if (piece === undefined) return
 
   return pieces.map(p => {
@@ -100,19 +105,19 @@ function movePiece(srcIndex, tarIndex, pieces) {
   })
 }
 
-function promotePiece(tarIndex, pieces1) {
+function promotePiece(tarIndex, pieces) {
   console.log(`promotePiece(${tarIndex}`)
-  let newQueen = getPieceMatchingIndex(tarIndex, pieces1, pieces1)
+  let newQueen = getPieceMatchingIndex1(tarIndex, pieces)
   if (newQueen === undefined) return
-  if (newQueen.player === 1) return makeQueen(tarIndex, pieces1)
-  else return makeQueen(tarIndex, pieces2)
+  return makeQueen(tarIndex, pieces)
 }
 
 export {
   newPieces1,
   newPieces2,
   getFreshPiecesWithout,
-  getPieceMatchingIndex,
+  getPieceMatchingIndex1,
+  getPieceMatchingIndex2,
   killPiece,
   movePiece,
   promotePiece,

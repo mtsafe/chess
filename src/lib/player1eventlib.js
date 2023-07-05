@@ -5,8 +5,9 @@
 //   index2Column,
 //   rf2Index,
 // } from "./applib"
-import { getPieceMatchingIndex } from "../state/pieces"
+import { getPieceMatchingIndex1, getPieceMatchingIndex2 } from "../state/pieces"
 import {
+  player1King,
   player1Pawn1Step,
   player1Pawn2Step,
   player1PawnCaptureLeft,
@@ -15,19 +16,22 @@ import {
 } from "./player1moves"
 
 // EVENT HANDLER SUPPORT FUNCTIONS
-function findDropTargets(pieceElement, pieces1, pieces2) {
+function findDropTargets(pieceElement, gameState) {
   let result = []
   let srcIndex = parseInt(pieceElement.getAttribute("tile_num"))
-  let { letter } = getPieceMatchingIndex(parseInt(srcIndex), pieces1, pieces2)
+  let { letter } = getPieceMatchingIndex2(parseInt(srcIndex), gameState)
   switch (letter) {
     case "P":
-      result.push(player1Pawn1Step(srcIndex, pieces1, pieces2))
-      result.push(player1Pawn2Step(srcIndex, pieces1, pieces2))
-      result.push(player1PawnCaptureLeft(srcIndex, pieces1, pieces2))
-      result.push(player1PawnCaptureRight(srcIndex, pieces1, pieces2))
+      result.push(player1Pawn1Step(srcIndex, gameState))
+      result.push(player1Pawn2Step(srcIndex, gameState))
+      result.push(player1PawnCaptureLeft(srcIndex, gameState))
+      result.push(player1PawnCaptureRight(srcIndex, gameState))
       break
     case "R":
-      result = player1Rook(srcIndex, pieces1, pieces2)
+      result = player1Rook(srcIndex, gameState)
+      break
+    case "K":
+      result = player1King(srcIndex, gameState)
       break
   }
   return result.filter(Boolean) // remove undefined elements from array
