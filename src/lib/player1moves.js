@@ -2,60 +2,111 @@ import { index2Rank, index2File } from "./applib"
 import { getPieceMatchingIndex } from "../state/pieces"
 import * as Action from "./actions"
 
-function player1Pawn1Step(letter, tile_num, pieces1, pieces2) {
-  let tarIndex = tile_num - 8
+function player1Pawn1Step(srcIndex, pieces1, pieces2) {
+  let tarIndex = srcIndex - 8
   let pieceAtTarget = getPieceMatchingIndex(
     parseInt(tarIndex),
     pieces1,
     pieces2
   )
-  if (pieceAtTarget === undefined)
-    return {
-      srcIndex: tile_num,
-      srcPiece: letter,
-      action: Action.MOVE,
-      tarIndex,
-      tarPiece: "",
-    }
+  if (pieceAtTarget === undefined) {
+    if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
+    return movePieceAction(srcIndex, "P", tarIndex)
+  }
 }
 
-function player1Pawn2Step(letter, tile_num, pieces1, pieces2) {
-  if (index2Rank(tile_num) !== 2) return
-  let tarIndex = tile_num - 8
+function player1Pawn2Step(srcIndex, pieces1, pieces2) {
+  if (index2Rank(srcIndex) !== 2) return
+  let tarIndex = srcIndex - 8
   let pieceAtTarget = getPieceMatchingIndex(
     parseInt(tarIndex),
     pieces1,
     pieces2
   )
   if (pieceAtTarget !== undefined) return
-  tarIndex = tile_num - 16
+  tarIndex = srcIndex - 16
   pieceAtTarget = getPieceMatchingIndex(parseInt(tarIndex), pieces1, pieces2)
   if (pieceAtTarget !== undefined) return
+  if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
+  return movePieceAction(srcIndex, "P", tarIndex)
+}
+
+function player1PawnCaptureLeft(srcIndex, pieces1, pieces2) {
+  if (index2File(srcIndex) === "a") return
+  let tarIndex = srcIndex - 9
+  let pieceAtTarget = getPieceMatchingIndex(
+    parseInt(tarIndex),
+    pieces1,
+    pieces2
+  )
+  // also capture en passant
+
+  if (pieceAtTarget?.player === 2) {
+    if (index2Rank(tarIndex) === 8)
+      return pawnCapturePromote(srcIndex, tarIndex, pieceAtTarget.letter)
+    return capturePiece(srcIndex, "P", tarIndex, pieceAtTarget.letter)
+  }
+}
+function player1PawnCaptureRight(srcIndex, pieces1, pieces2) {
+  if (index2File(srcIndex) === "h") return
+  let tarIndex = srcIndex - 7
+  let pieceAtTarget = getPieceMatchingIndex(
+    parseInt(tarIndex),
+    pieces1,
+    pieces2
+  )
+  // also capture en passant
+
+  if (pieceAtTarget?.player === 2) {
+    if (index2Rank(tarIndex) === 8)
+      return pawnCapturePromote(srcIndex, tarIndex, pieceAtTarget.letter)
+    return capturePiece(srcIndex, "P", tarIndex, pieceAtTarget.letter)
+  }
+}
+
+function capturePiece(srcIndex, srcPiece, tarIndex, tarPiece) {
   return {
-    srcIndex: tile_num,
-    srcPiece: letter,
+    srcIndex,
+    srcPiece,
+    action: Action.CAPTURE,
+    tarIndex,
+    tarPiece,
+  }
+}
+
+function movePieceAction(srcIndex, srcPiece, tarIndex) {
+  return {
+    srcIndex,
+    srcPiece,
     action: Action.MOVE,
     tarIndex,
     tarPiece: "",
   }
 }
 
-function player1PawnCaptureLeft(letter, tile_num, pieces1, pieces2) {
-  if (index2Rank(tile_num) === "a") return
-  let tarIndex = tile_num - 9
-  let pieceAtTarget = getPieceMatchingIndex(
-    parseInt(tarIndex),
-    pieces1,
-    pieces2
-  )
-  if (pieceAtTarget?.player === 2)
-    return {
-      srcIndex: tile_num,
-      srcPiece: letter,
-      action: Action.CAPTURE,
-      tarIndex,
-      tarPiece: pieceAtTarget.letter,
-    }
+function pawnCapturePromote(srcIndex, tarIndex, tarPiece) {
+  return {
+    srcIndex,
+    srcPiece: "P",
+    action: Action.CAPTURE_PROMOTE,
+    tarIndex,
+    tarPiece,
+  }
 }
 
-export { player1Pawn1Step, player1Pawn2Step, player1PawnCaptureLeft }
+function pawnMovePromote(srcIndex, tarIndex) {
+  return {
+    srcIndex,
+    srcPiece: "P",
+    action: Action.MOVE_PROMOTE,
+    tarIndex,
+    tarPiece: "",
+  }
+}
+
+export {
+  player1Pawn1Step,
+  player1Pawn2Step,
+  player1PawnCaptureLeft,
+  player1PawnCaptureRight,
+}

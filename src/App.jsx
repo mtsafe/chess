@@ -8,7 +8,13 @@ import { NewGameButton } from "./NewGameButton"
 
 // FUNCTIONS SUPPORTING STATE
 import { newTiles } from "./state/tiles"
-import { newPieces1, newPieces2, killPiece, movePiece } from "./state/pieces"
+import {
+  newPieces1,
+  newPieces2,
+  killPiece,
+  movePiece,
+  promotePiece,
+} from "./state/pieces"
 
 // OTHER FUNCTIONS
 import { aiChoosesTile, tie, winner } from "./lib/applib"
@@ -64,59 +70,6 @@ function App() {
     setTiles(newTiles())
     setStatusMsg(() => "Go!")
   }
-  function playerClaimsTile(tile_id) {
-    toggleTile(tile_id, "X")
-  }
-  function aiClaimsTile(tile_id) {
-    toggleTile(tile_id, "O")
-  }
-  function displayWinner() {
-    setStatusMsg(() => "You Win!")
-  }
-  function displayLoser() {
-    setStatusMsg(() => "You Lose...")
-  }
-  function displayTie() {
-    setStatusMsg(() => "The cat got it.")
-  }
-
-  function playerMoved(tile_id, imgElement) {
-    if (statusMsg !== "Go!") return
-
-    let tileLetter = imgElement.attributes.letter.nodeValue
-    if (tileLetter !== "0") return
-    playerClaimsTile(tile_id)
-    if (winner(foot, "X")) {
-      displayWinner()
-      return
-    }
-    if (tie(foot)) {
-      displayTie()
-      return
-    }
-
-    aiClaimsTile(aiChoosesTile(aiStrategy, foot))
-    if (winner(foot, "O")) {
-      displayLoser()
-      return
-    }
-    if (tie(foot)) {
-      displayTie()
-      return
-    }
-  }
-
-  function toggleTile(tile_id, letter) {
-    foot[tile_id] = letter
-    setTiles(tilesState => {
-      return tilesState.map(tile => {
-        if (tile.tile_id === tile_id) {
-          return { ...tile, letter }
-        }
-        return tile
-      })
-    })
-  }
 
   function changeAI(value) {
     setAIStrategy(parseInt(value))
@@ -152,25 +105,34 @@ function App() {
     //   tarPiece: "",
     // }) // take 1 step
     if (move === undefined) return
-    if (move.action === Action.MOVE) {
-      let freshPieces1 = movePiece(
-        move.srcIndex,
-        move.tarIndex,
-        pieces1,
-        pieces2
-      )
-      setPieces1(freshPieces1)
-    } else if (move.action === Action.CAPTURE) {
-      let freshPieces2 = killPiece(move.tarIndex, pieces1, pieces2)
-      let freshPieces1 = movePiece(
-        move.srcIndex,
-        move.tarIndex,
-        pieces1,
-        freshPieces2
-      )
-      setPieces1(freshPieces1)
-      setPieces2(freshPieces2)
+    let freshPieces1, freshPieces2
+    switch (move.action) {
+      case Action.MOVE:
+        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
+        break
+      case Action.CAPTURE:
+        freshPieces2 = killPiece(move.tarIndex, pieces2)
+        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
+        break
+      case Action.MOVE_PROMOTE:
+        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
+        freshPieces1 = promotePiece(move.tarIndex, freshPieces1)
+        break
+      case Action.CAPTURE_PROMOTE:
+        freshPieces2 = killPiece(move.tarIndex, pieces2)
+        console.log("kill piece results:")
+        console.dir(freshPieces2)
+        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
+        console.log("move piece results:")
+        console.dir(freshPieces1)
+        freshPieces1 = promotePiece(move.tarIndex, freshPieces1)
+        console.log("promote piece results:")
+        console.dir(freshPieces1)
+        break
     }
+    if (freshPieces1 !== undefined) setPieces1(freshPieces1)
+    if (freshPieces2 !== undefined) setPieces2(freshPieces2)
+
     let instruction
     recordMove(instruction)
   }
@@ -205,3 +167,72 @@ function App() {
 }
 
 export default App
+
+// function playerClaimsTile(tile_id) {
+//   toggleTile(tile_id, "X")
+// }
+// function aiClaimsTile(tile_id) {
+//   toggleTile(tile_id, "O")
+// }
+// function displayWinner() {
+//   setStatusMsg(() => "You Win!")
+// }
+// function displayLoser() {
+//   setStatusMsg(() => "You Lose...")
+// }
+// function displayTie() {
+//   setStatusMsg(() => "The cat got it.")
+// }
+
+// function playerMoved(tile_id, imgElement) {
+//   if (statusMsg !== "Go!") return
+
+//   let tileLetter = imgElement.attributes.letter.nodeValue
+//   if (tileLetter !== "0") return
+//   playerClaimsTile(tile_id)
+//   if (winner(foot, "X")) {
+//     displayWinner()
+//     return
+//   }
+//   if (tie(foot)) {
+//     displayTie()
+//     return
+//   }
+
+// function playerMoved(tile_id, imgElement) {
+//   if (statusMsg !== "Go!") return
+
+//   let tileLetter = imgElement.attributes.letter.nodeValue
+//   if (tileLetter !== "0") return
+//   playerClaimsTile(tile_id)
+//   if (winner(foot, "X")) {
+//     displayWinner()
+//     return
+//   }
+//   if (tie(foot)) {
+//     displayTie()
+//     return
+//   }
+
+//   aiClaimsTile(aiChoosesTile(aiStrategy, foot))
+//   if (winner(foot, "O")) {
+//     displayLoser()
+//     return
+//   }
+//   if (tie(foot)) {
+//     displayTie()
+//     return
+//   }
+// }
+
+// function toggleTile(tile_id, letter) {
+//   foot[tile_id] = letter
+//   setTiles(tilesState => {
+//     return tilesState.map(tile => {
+//       if (tile.tile_id === tile_id) {
+//         return { ...tile, letter }
+//       }
+//       return tile
+//     })
+//   })
+// }

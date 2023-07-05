@@ -1,19 +1,21 @@
-const MOVE = ""
 const CAPTURE = "x"
+const CAPTURE_PROMOTE = "C"
 const CHECK = "+"
 const CHECKMATE = "#"
 const KINGSIDE_CASTLE = "0-0"
 const QUEENSIDE_CASTLE = "0-0-0"
-const PROMOTION = "Q"
+const MOVE = ""
+const MOVE_PROMOTE = "Q"
 const DRAW_OFFER = "="
 
 export {
   CAPTURE,
+  CAPTURE_PROMOTE,
   CHECK,
   CHECKMATE,
   DRAW_OFFER,
   KINGSIDE_CASTLE,
   MOVE,
-  PROMOTION,
+  MOVE_PROMOTE,
   QUEENSIDE_CASTLE,
 }

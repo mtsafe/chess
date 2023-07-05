@@ -72,31 +72,40 @@ function getPieceMatchingIndex(tile_num, pieces1, pieces2) {
   return result
 }
 
-function killPiece(tarIndex, pieces1, pieces2) {
-  console.log(`killPiece(${tarIndex}`)
-  let victim = getPieceMatchingIndex(tarIndex, pieces1, pieces2)
+function killPiece(tarIndex, pieces) {
+  console.log(`killPiece(${tarIndex})`)
+  let victim = getPieceMatchingIndex(tarIndex, pieces, pieces)
   if (victim === undefined) return
-  if (victim === 1) return getFreshPiecesWithout(tarIndex, pieces1)
-  else return getFreshPiecesWithout(tarIndex, pieces2)
+  return getFreshPiecesWithout(tarIndex, pieces)
 }
 
-function movePiece(srcIndex, tarIndex, pieces1, pieces2) {
-  console.log(`movePiece(${srcIndex}, ${tarIndex})`)
-  let piece = getPieceMatchingIndex(tarIndex, pieces1, pieces2)
-  if (piece !== undefined) return
-
-  piece = getPieceMatchingIndex(srcIndex, pieces1, pieces2)
-  if (piece === undefined) return
-
-  if (piece.player === 1)
-    return pieces1.map(p => {
-      if (p.index === srcIndex) p.index = tarIndex
+function makeQueen(tarIndex, pieces) {
+  return pieces
+    .map(p => {
+      if (p.index !== tarIndex) return p
+      p.letter = "Q"
       return p
     })
-  return pieces2.map(p => {
+    .filter(Boolean)
+}
+
+function movePiece(srcIndex, tarIndex, pieces) {
+  console.log(`movePiece(${srcIndex}, ${tarIndex})`)
+  let piece = getPieceMatchingIndex(srcIndex, pieces, pieces)
+  if (piece === undefined) return
+
+  return pieces.map(p => {
     if (p.index === srcIndex) p.index = tarIndex
     return p
   })
+}
+
+function promotePiece(tarIndex, pieces1) {
+  console.log(`promotePiece(${tarIndex}`)
+  let newQueen = getPieceMatchingIndex(tarIndex, pieces1, pieces1)
+  if (newQueen === undefined) return
+  if (newQueen.player === 1) return makeQueen(tarIndex, pieces1)
+  else return makeQueen(tarIndex, pieces2)
 }
 
 export {
@@ -106,4 +115,5 @@ export {
   getPieceMatchingIndex,
   killPiece,
   movePiece,
+  promotePiece,
 }
