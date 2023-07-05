@@ -1,3 +1,6 @@
+function rc2Index(rank, column) {
+  return (8 - rank) * 8 + column - 1
+}
 function rf2Index(rank, file) {
   return (8 - rank) * 8 + file.charCodeAt(0) - 97
 }
@@ -8,8 +11,7 @@ function index2File(index) {
   return String.fromCharCode(97 + index - Math.floor(index / 8) * 8)
 }
 function index2Column(index) {
-  let rank = index2Rank(index)
-  return index - rank * 8
+  return 1 + index - Math.floor(index / 8) * 8
 }
 // Treats foot and testLetter as read-only
 
@@ -167,6 +169,7 @@ function winner(foot, testLetter) {
   return false
 }
 export {
+  rc2Index,
   rf2Index,
   index2Rank,
   index2File,

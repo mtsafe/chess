@@ -11,7 +11,7 @@ import {
   player1Pawn2Step,
   player1PawnCaptureLeft,
   player1PawnCaptureRight,
-  player1RookVertical,
+  player1Rook,
 } from "./player1moves"
 
 // EVENT HANDLER SUPPORT FUNCTIONS
@@ -27,10 +27,7 @@ function findDropTargets(pieceElement, pieces1, pieces2) {
       result.push(player1PawnCaptureRight(srcIndex, pieces1, pieces2))
       break
     case "R":
-      let rookMoves = player1RookVertical(srcIndex, pieces1, pieces2)
-      result = [...result, ...rookMoves]
-      // rookMoves = player1RookHorizontal(srcIndex, pieces1, pieces2)
-      // result=[...result, ...rookMoves]
+      result = player1Rook(srcIndex, pieces1, pieces2)
       break
   }
   return result.filter(Boolean) // remove undefined elements from array

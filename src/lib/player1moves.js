@@ -1,4 +1,10 @@
-import { index2Rank, index2File, rf2Index } from "./applib"
+import {
+  index2Rank,
+  index2File,
+  rc2Index,
+  rf2Index,
+  index2Column,
+} from "./applib"
 import { getPieceMatchingIndex } from "../state/pieces"
 import * as Action from "./actions"
 
@@ -66,14 +72,52 @@ function player1PawnCaptureRight(srcIndex, pieces1, pieces2) {
 }
 
 // ROOK MOVES
-function player1RookVertical(srcIndex, pieces1, pieces2) {
+function player1Rook(srcIndex, pieces1, pieces2) {
   let file = index2File(srcIndex)
-  let result1 = rookVerticalLoop("-", srcIndex, file, pieces1, pieces2)
-  let result2 = rookVerticalLoop("+", srcIndex, file, pieces1, pieces2)
-  return [...result1, ...result2].filter(Boolean)
+  let rank = index2Rank(srcIndex)
+  let result1 = rookHorizontal("-", srcIndex, rank, pieces1, pieces2)
+  let result2 = rookHorizontal("+", srcIndex, rank, pieces1, pieces2)
+  let result3 = rookVertical("-", srcIndex, file, pieces1, pieces2)
+  let result4 = rookVertical("+", srcIndex, file, pieces1, pieces2)
+  return [...result1, ...result2, ...result3, ...result4].filter(Boolean)
 }
 
-function rookVerticalLoop(direction, srcIndex, file, pieces1, pieces2) {
+function rookHorizontal(direction, srcIndex, rank, pieces1, pieces2) {
+  let column,
+    start,
+    condition,
+    nextColumn,
+    result = []
+  if (direction === "+") {
+    start = index2Column(srcIndex) + 1
+    condition = () => column <= 8
+    nextColumn = () => column++
+  } else {
+    start = index2Column(srcIndex) - 1
+    condition = () => column > 0
+    nextColumn = () => column--
+  }
+  console.log("start=" + start)
+  for (column = start; condition(); nextColumn()) {
+    let tarIndex = rc2Index(rank, column)
+    let pieceAtTarget = getPieceMatchingIndex(
+      parseInt(tarIndex),
+      pieces1,
+      pieces2
+    )
+    if (pieceAtTarget === undefined)
+      result.push(movePieceAction(srcIndex, "R", tarIndex))
+    else if (pieceAtTarget.player === 2) {
+      result.push(capturePiece(srcIndex, "R", tarIndex, pieceAtTarget.letter))
+      break
+    } else break
+  }
+  console.log("rookHorizontal result")
+  console.dir(result)
+  return result
+}
+
+function rookVertical(direction, srcIndex, file, pieces1, pieces2) {
   let rank,
     start,
     condition,
@@ -150,5 +194,5 @@ export {
   player1Pawn2Step,
   player1PawnCaptureLeft,
   player1PawnCaptureRight,
-  player1RookVertical,
+  player1Rook,
 }
