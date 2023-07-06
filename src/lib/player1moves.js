@@ -10,17 +10,21 @@ import * as Action from "./actions"
 
 // KING MOVES
 function player1King(srcIndex, gameState) {
+  let result = []
   let file = index2File(srcIndex)
   let rank = index2Rank(srcIndex)
-  let result = []
-  result.push(king(srcIndex, 1, rank, gameState))
-  result.push(king(srcIndex, -7, rank, gameState))
-  result.push(king(srcIndex, -8, file, gameState))
-  result.push(king(srcIndex, -9, file, gameState))
-  result.push(king(srcIndex, -1, rank, gameState))
-  result.push(king(srcIndex, 7, rank, gameState))
-  result.push(king(srcIndex, 8, file, gameState))
-  result.push(king(srcIndex, 9, file, gameState))
+  if (file !== "a") result.push(genericMove(srcIndex, -1, "K", gameState))
+  if (file !== "h") result.push(genericMove(srcIndex, 1, "K", gameState))
+  if (rank !== 8) {
+    if (file !== "h") result.push(genericMove(srcIndex, -7, "K", gameState))
+    result.push(genericMove(srcIndex, -8, "K", gameState))
+    if (file !== "a") result.push(genericMove(srcIndex, -9, "K", gameState))
+  }
+  if (rank !== 1) {
+    if (file !== "a") result.push(genericMove(srcIndex, 7, "K", gameState))
+    result.push(genericMove(srcIndex, 8, "K", gameState))
+    if (file !== "h") result.push(genericMove(srcIndex, 9, "K", gameState))
+  }
   if (!gameState.hasCastled()) {
     result.push(kingKingsideCastle(srcIndex, gameState))
     result.push(kingQueensideCastle(srcIndex, gameState))
@@ -28,16 +32,45 @@ function player1King(srcIndex, gameState) {
   return result.filter(Boolean)
 }
 
-function king(srcIndex, tarOffset, rf, gameState) {
+function kingKingsideCastle(srcIndex, gameState) {}
+function kingQueensideCastle(srcIndex, gameState) {}
+
+// KNIGHT MOVES
+function player1Knight(srcIndex, gameState) {
+  let result = []
+  let file = index2File(srcIndex)
+  let rank = index2Rank(srcIndex)
+  if (rank !== 8) {
+    if (file !== "h") {
+      if (rank !== 7) result.push(genericMove(srcIndex, -15, "N", gameState))
+      if (file !== "g") result.push(genericMove(srcIndex, -6, "N", gameState))
+    }
+    if (file !== "a") {
+      if (rank !== 7) result.push(genericMove(srcIndex, -17, "N", gameState))
+      if (file !== "b") result.push(genericMove(srcIndex, -10, "N", gameState))
+    }
+  }
+  if (rank !== 1) {
+    if (file !== "h") {
+      if (rank !== 2) result.push(genericMove(srcIndex, 17, "N", gameState))
+      if (file !== "g") result.push(genericMove(srcIndex, 10, "N", gameState))
+    }
+    if (file !== "a") {
+      if (rank !== 2) result.push(genericMove(srcIndex, 15, "N", gameState))
+      if (file !== "b") result.push(genericMove(srcIndex, 6, "N", gameState))
+    }
+  }
+  return result.filter(Boolean)
+}
+
+function genericMove(srcIndex, tarOffset, letter, gameState) {
   let tarIndex = srcIndex + tarOffset
   let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
   if (pieceAtTarget === undefined)
-    return movePieceAction(srcIndex, "K", tarIndex)
+    return movePieceAction(srcIndex, letter, tarIndex)
   if (pieceAtTarget.player === 2)
-    return capturePiece(srcIndex, "K", tarIndex, pieceAtTarget.letter)
+    return capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
 }
-function kingKingsideCastle(srcIndex, gameState) {}
-function kingQueensideCastle(srcIndex, gameState) {}
 
 // PAWN MOVES
 function player1Pawn1Step(srcIndex, gameState) {
@@ -86,18 +119,102 @@ function player1PawnCaptureRight(srcIndex, gameState) {
   }
 }
 
-// ROOK MOVES
-function player1Rook(srcIndex, gameState) {
-  let file = index2File(srcIndex)
-  let rank = index2Rank(srcIndex)
-  let result1 = rookHorizontal("-", srcIndex, rank, gameState)
-  let result2 = rookHorizontal("+", srcIndex, rank, gameState)
-  let result3 = rookVertical("-", srcIndex, file, gameState)
-  let result4 = rookVertical("+", srcIndex, file, gameState)
+// QUEEN MOVES
+function player1Queen(srcIndex, gameState) {
+  let result1 = genericBishop(srcIndex, "B", gameState)
+  let result2 = genericRook(srcIndex, "Q", gameState)
+  return [...result1, ...result2]
+}
+
+// BISHOP MOVES
+function player1Bishop(srcIndex, gameState) {
+  return genericBishop(srcIndex, "B", gameState)
+}
+
+function genericBishop(srcIndex, letter, gameState) {
+  let result1 = bishopRadiate(1, srcIndex, letter, gameState)
+  let result2 = bishopRadiate(2, srcIndex, letter, gameState)
+  let result3 = bishopRadiate(3, srcIndex, letter, gameState)
+  let result4 = bishopRadiate(4, srcIndex, letter, gameState)
   return [...result1, ...result2, ...result3, ...result4].filter(Boolean)
 }
 
-function rookHorizontal(direction, srcIndex, rank, gameState) {
+function bishopRadiate(quadrant, srcIndex, letter, gameState) {
+  let tarOffset,
+    condition,
+    nextPosition,
+    column,
+    rank,
+    result = []
+  switch (quadrant) {
+    case 1:
+      tarOffset = -7
+      condition = () => column <= 8 && rank <= 8
+      nextPosition = () => {
+        column++
+        rank++
+      }
+      break
+    case 2:
+      tarOffset = -9
+      condition = () => column > 0 && rank <= 8
+      nextPosition = () => {
+        column--
+        rank++
+      }
+      break
+    case 3:
+      tarOffset = 7
+      condition = () => column > 0 && rank > 0
+      nextPosition = () => {
+        column--
+        rank--
+      }
+      break
+    case 4:
+      tarOffset = 9
+      condition = () => column <= 8 && rank > 0
+      nextPosition = () => {
+        column++
+        rank--
+      }
+      break
+  }
+
+  let tarIndex = srcIndex + tarOffset
+  column = index2Column(tarIndex)
+  rank = index2Rank(tarIndex)
+  console.log(`condition=${condition()}`)
+  for (; condition(); nextPosition(), tarIndex += tarOffset) {
+    let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
+    if (pieceAtTarget === undefined)
+      result.push(movePieceAction(srcIndex, letter, tarIndex))
+    else if (pieceAtTarget.player === 2) {
+      result.push(
+        capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+      )
+      break
+    } else break
+  }
+  return result
+}
+
+// ROOK MOVES
+function player1Rook(srcIndex, gameState) {
+  return genericRook(srcIndex, "R", gameState)
+}
+
+function genericRook(srcIndex, letter, gameState) {
+  let file = index2File(srcIndex)
+  let rank = index2Rank(srcIndex)
+  let result1 = rookHorizontal("-", srcIndex, letter, rank, gameState)
+  let result2 = rookHorizontal("+", srcIndex, letter, rank, gameState)
+  let result3 = rookVertical("-", srcIndex, letter, file, gameState)
+  let result4 = rookVertical("+", srcIndex, letter, file, gameState)
+  return [...result1, ...result2, ...result3, ...result4].filter(Boolean)
+}
+
+function rookHorizontal(direction, srcIndex, letter, rank, gameState) {
   let column,
     start,
     condition,
@@ -116,16 +233,18 @@ function rookHorizontal(direction, srcIndex, rank, gameState) {
     let tarIndex = rc2Index(rank, column)
     let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
     if (pieceAtTarget === undefined)
-      result.push(movePieceAction(srcIndex, "R", tarIndex))
+      result.push(movePieceAction(srcIndex, letter, tarIndex))
     else if (pieceAtTarget.player === 2) {
-      result.push(capturePiece(srcIndex, "R", tarIndex, pieceAtTarget.letter))
+      result.push(
+        capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+      )
       break
     } else break
   }
   return result
 }
 
-function rookVertical(direction, srcIndex, file, gameState) {
+function rookVertical(direction, srcIndex, letter, file, gameState) {
   let rank,
     start,
     condition,
@@ -144,9 +263,11 @@ function rookVertical(direction, srcIndex, file, gameState) {
     let tarIndex = rf2Index(rank, file)
     let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
     if (pieceAtTarget === undefined)
-      result.push(movePieceAction(srcIndex, "R", tarIndex))
+      result.push(movePieceAction(srcIndex, letter, tarIndex))
     else if (pieceAtTarget.player === 2) {
-      result.push(capturePiece(srcIndex, "R", tarIndex, pieceAtTarget.letter))
+      result.push(
+        capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+      )
       break
     } else break
   }
@@ -194,7 +315,10 @@ function pawnMovePromote(srcIndex, tarIndex) {
 }
 
 export {
+  player1Bishop,
   player1King,
+  player1Knight,
+  player1Queen,
   player1Pawn1Step,
   player1Pawn2Step,
   player1PawnCaptureLeft,

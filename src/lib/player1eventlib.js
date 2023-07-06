@@ -7,7 +7,10 @@
 // } from "./applib"
 import { getPieceMatchingIndex1, getPieceMatchingIndex2 } from "../state/pieces"
 import {
+  player1Bishop,
   player1King,
+  player1Knight,
+  player1Queen,
   player1Pawn1Step,
   player1Pawn2Step,
   player1PawnCaptureLeft,
@@ -29,6 +32,15 @@ function findDropTargets(pieceElement, gameState) {
       break
     case "R":
       result = player1Rook(srcIndex, gameState)
+      break
+    case "N":
+      result = player1Knight(srcIndex, gameState)
+      break
+    case "B":
+      result = player1Bishop(srcIndex, gameState)
+      break
+    case "Q":
+      result = player1Queen(srcIndex, gameState)
       break
     case "K":
       result = player1King(srcIndex, gameState)
