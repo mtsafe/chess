@@ -126,14 +126,19 @@ function player1PawnCaptureLeft(srcIndex, gameState) {
   if (index2File(srcIndex) === "a") return
   let tarIndex = srcIndex - 9
   let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
-  // also capture en passant
 
+  if (pieceAtTarget?.player === 1) return
   if (pieceAtTarget?.player === 2) {
     if (index2Rank(tarIndex) === 8)
       return pawnCapturePromote(srcIndex, tarIndex, pieceAtTarget.letter)
     return capturePiece(srcIndex, "P", tarIndex, pieceAtTarget.letter)
   }
+
+  let victimIndex = srcIndex - 1
+  if (victimIndex === gameState.enPassantOpportunity)
+    return capturePieceEnPassant(srcIndex, tarIndex)
 }
+
 function player1PawnCaptureRight(srcIndex, gameState) {
   if (index2File(srcIndex) === "h") return
   let tarIndex = srcIndex - 7
@@ -145,6 +150,10 @@ function player1PawnCaptureRight(srcIndex, gameState) {
       return pawnCapturePromote(srcIndex, tarIndex, pieceAtTarget.letter)
     return capturePiece(srcIndex, "P", tarIndex, pieceAtTarget.letter)
   }
+
+  let victimIndex = srcIndex + 1
+  if (victimIndex === gameState.enPassantOpportunity)
+    return capturePieceEnPassant(srcIndex, tarIndex)
 }
 
 // QUEEN MOVES
@@ -309,6 +318,16 @@ function capturePiece(srcIndex, srcPiece, tarIndex, tarPiece) {
     action: Action.CAPTURE,
     tarIndex,
     tarPiece,
+  }
+}
+
+function capturePieceEnPassant(srcIndex, tarIndex) {
+  return {
+    srcIndex,
+    srcPiece: "P",
+    action: Action.EN_PASSANT,
+    tarIndex,
+    tarPiece: "P",
   }
 }
 

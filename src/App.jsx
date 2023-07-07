@@ -7,6 +7,7 @@ import { AISelector } from "./AISelector"
 import { NewGameButton } from "./NewGameButton"
 
 // FUNCTIONS SUPPORTING STATE
+import { getEnPassantOpp } from "./state/enPassantOpportunity"
 import { castleabilityObj, newCastleability } from "./state/castleability"
 import {
   newPieces1,
@@ -32,17 +33,23 @@ function App() {
   const [tiles, setTiles] = useState(newTiles)
   const [pieces1, setPieces1] = useState(newPieces1)
   const [pieces2, setPieces2] = useState(newPieces2)
-  //  const [draggedPiece, setDraggedPiece] = useState(null)
   const [dropTargetMoves, setDropTargetMoves] = useState([])
   const [recordedMoves, setRecordedMoves] = useState([])
   const [castleability, setCastleability] = useState(newCastleability())
+  const [enPassantOpportunity, setEnPassantOpportunity] = useState(-1)
 
   //  const [moves, setMoves] = useState([])
   const [isCheck, setIsCheck] = useState(false)
   const [statusMsg, setStatusMsg] = useState("Go!")
   // const [aiStrategy, setAIStrategy] = useState(1)
 
-  const gameState = { pieces1, pieces2, recordedMoves, canCastle }
+  const gameState = {
+    pieces1,
+    pieces2,
+    recordedMoves,
+    enPassantOpportunity,
+    canCastle,
+  }
 
   function canCastle() {
     if (isCheck)
@@ -77,7 +84,8 @@ function App() {
     setPieces1(newPieces1())
     setPieces2(newPieces2())
     setTiles(newTiles())
-    setStatusMsg(() => "Go!")
+    setStatusMsg("Go!")
+    setEnPassantOpportunity(-1)
   }
 
   function changeAI(value) {
@@ -101,27 +109,21 @@ function App() {
       )}  classList="${e.target.classList}"`
     )
     if (!e.target.classList.contains("dropzone")) return
-    // move dragged element to the selected drop target
-    // find Move that drops here
 
     let move = getMoveMatchingTarProp(
       parseInt(e.target.getAttribute("tile_num"))
     )
-    // sample move = {
-    //   srcIndex: tile_num,
-    //   srcPiece: letter,
-    //   action: Action.MOVE,
-    //   tarIndex: targetLocation,
-    //   tarPiece: "",
-    // }) // take 1 step
     if (move === undefined) return
     let freshPieces1,
       freshPieces2,
-      freshCastleability = castleability
+      freshCastleability = castleability,
+      freshEnPassantOpp = -1
     switch (move.action) {
       case Action.MOVE:
         freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
         freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
+        freshEnPassantOpp = getEnPassantOpp(move)
+        // also en passant opportunity for 2-step Pawn
         break
       case Action.CAPTURE:
         freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
@@ -138,6 +140,10 @@ function App() {
         freshPieces2 = killPiece(move.tarIndex, pieces2)
         freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
         freshPieces1 = promotePiece(move.tarIndex, freshPieces1)
+        break
+      case Action.EN_PASSANT:
+        freshPieces2 = killPiece(enPassantOpportunity, pieces2)
+        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
         break
       case Action.KINGSIDE_CASTLE:
         freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
@@ -161,6 +167,7 @@ function App() {
     setCastleability(freshCastleability)
     if (freshPieces1 !== undefined) setPieces1(freshPieces1)
     if (freshPieces2 !== undefined) setPieces2(freshPieces2)
+    setEnPassantOpportunity(freshEnPassantOpp)
     setDropTargetMoves([])
 
     let instructions
