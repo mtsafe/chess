@@ -25,15 +25,43 @@ function player1King(srcIndex, gameState) {
     result.push(genericMove(srcIndex, 8, "K", gameState))
     if (file !== "h") result.push(genericMove(srcIndex, 9, "K", gameState))
   }
-  if (!gameState.hasCastled()) {
-    result.push(kingKingsideCastle(srcIndex, gameState))
-    result.push(kingQueensideCastle(srcIndex, gameState))
-  }
+  result.push(kingKingsideCastle(srcIndex, 1, gameState))
+  result.push(kingQueensideCastle(srcIndex, 1, gameState))
   return result.filter(Boolean)
 }
 
-function kingKingsideCastle(srcIndex, gameState) {}
-function kingQueensideCastle(srcIndex, gameState) {}
+function kingKingsideCastle(srcIndex, playerNum, gameState) {
+  console.log(`kingKingsideCastle(${srcIndex}, ${playerNum})`)
+  let theCastleablility = gameState.canCastle()
+  if (
+    ((playerNum === 1 &&
+      srcIndex === 60 &&
+      theCastleablility.player1Kingside) ||
+      (playerNum === 2 &&
+        srcIndex === 4 &&
+        theCastleablility.player2Kingside)) &&
+    !getPieceMatchingIndex2(srcIndex - 1, gameState) !== undefined &&
+    !getPieceMatchingIndex2(srcIndex - 2, gameState) !== undefined
+  )
+    return kingsideCastle(srcIndex)
+}
+
+function kingQueensideCastle(srcIndex, playerNum, gameState) {
+  console.log(`kingQueensideCastle(${srcIndex}, ${playerNum})`)
+  let theCastleablility = gameState.canCastle()
+  if (
+    ((playerNum === 1 &&
+      srcIndex === 60 &&
+      theCastleablility.player1Queenside) ||
+      (playerNum === 2 &&
+        srcIndex === 4 &&
+        theCastleablility.player2Queenside)) &&
+    !getPieceMatchingIndex2(srcIndex - 1, gameState) !== undefined &&
+    !getPieceMatchingIndex2(srcIndex - 2, gameState) !== undefined &&
+    !getPieceMatchingIndex2(srcIndex - 3, gameState) !== undefined
+  )
+    return queensideCastle(srcIndex)
+}
 
 // KNIGHT MOVES
 function player1Knight(srcIndex, gameState) {
@@ -65,7 +93,7 @@ function player1Knight(srcIndex, gameState) {
 
 function genericMove(srcIndex, tarOffset, letter, gameState) {
   let tarIndex = srcIndex + tarOffset
-  let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
   if (pieceAtTarget === undefined)
     return movePieceAction(srcIndex, letter, tarIndex)
   if (pieceAtTarget.player === 2)
@@ -75,7 +103,7 @@ function genericMove(srcIndex, tarOffset, letter, gameState) {
 // PAWN MOVES
 function player1Pawn1Step(srcIndex, gameState) {
   let tarIndex = srcIndex - 8
-  let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
   if (pieceAtTarget === undefined) {
     if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
     return movePieceAction(srcIndex, "P", tarIndex)
@@ -85,10 +113,10 @@ function player1Pawn1Step(srcIndex, gameState) {
 function player1Pawn2Step(srcIndex, gameState) {
   if (index2Rank(srcIndex) !== 2) return
   let tarIndex = srcIndex - 8
-  let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
   if (pieceAtTarget !== undefined) return
   tarIndex = srcIndex - 16
-  pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
+  pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
   if (pieceAtTarget !== undefined) return
   if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
   return movePieceAction(srcIndex, "P", tarIndex)
@@ -97,7 +125,7 @@ function player1Pawn2Step(srcIndex, gameState) {
 function player1PawnCaptureLeft(srcIndex, gameState) {
   if (index2File(srcIndex) === "a") return
   let tarIndex = srcIndex - 9
-  let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
   // also capture en passant
 
   if (pieceAtTarget?.player === 2) {
@@ -109,7 +137,7 @@ function player1PawnCaptureLeft(srcIndex, gameState) {
 function player1PawnCaptureRight(srcIndex, gameState) {
   if (index2File(srcIndex) === "h") return
   let tarIndex = srcIndex - 7
-  let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
   // also capture en passant
 
   if (pieceAtTarget?.player === 2) {
@@ -186,7 +214,7 @@ function bishopRadiate(quadrant, srcIndex, letter, gameState) {
   rank = index2Rank(tarIndex)
   console.log(`condition=${condition()}`)
   for (; condition(); nextPosition(), tarIndex += tarOffset) {
-    let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
+    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex))
     else if (pieceAtTarget.player === 2) {
@@ -231,7 +259,7 @@ function rookHorizontal(direction, srcIndex, letter, rank, gameState) {
   }
   for (column = start; condition(); nextColumn()) {
     let tarIndex = rc2Index(rank, column)
-    let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
+    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex))
     else if (pieceAtTarget.player === 2) {
@@ -261,7 +289,7 @@ function rookVertical(direction, srcIndex, letter, file, gameState) {
   }
   for (rank = start; condition(); nextRank()) {
     let tarIndex = rf2Index(rank, file)
-    let pieceAtTarget = getPieceMatchingIndex2(parseInt(tarIndex), gameState)
+    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex))
     else if (pieceAtTarget.player === 2) {
@@ -294,6 +322,16 @@ function movePieceAction(srcIndex, srcPiece, tarIndex) {
   }
 }
 
+function queensideCastle(srcIndex) {
+  return {
+    srcIndex,
+    srcPiece: "K",
+    action: Action.QUEENSIDE_CASTLE,
+    tarIndex: srcIndex - 2,
+    tarPiece: "N",
+  }
+}
+
 function pawnCapturePromote(srcIndex, tarIndex, tarPiece) {
   return {
     srcIndex,
@@ -311,6 +349,16 @@ function pawnMovePromote(srcIndex, tarIndex) {
     action: Action.MOVE_PROMOTE,
     tarIndex,
     tarPiece: "",
+  }
+}
+
+function kingsideCastle(srcIndex) {
+  return {
+    srcIndex,
+    srcPiece: "K",
+    action: Action.KINGSIDE_CASTLE,
+    tarIndex: srcIndex + 2,
+    tarPiece: "N",
   }
 }
 

@@ -7,7 +7,7 @@ import { AISelector } from "./AISelector"
 import { NewGameButton } from "./NewGameButton"
 
 // FUNCTIONS SUPPORTING STATE
-import { newTiles } from "./state/tiles"
+import { castleabilityObj, newCastleability } from "./state/castleability"
 import {
   newPieces1,
   newPieces2,
@@ -15,6 +15,7 @@ import {
   movePiece,
   promotePiece,
 } from "./state/pieces"
+import { newTiles } from "./state/tiles"
 
 // OTHER FUNCTIONS
 // import { aiChoosesTile, tie, winner } from "./lib/applib"
@@ -34,17 +35,24 @@ function App() {
   //  const [draggedPiece, setDraggedPiece] = useState(null)
   const [dropTargetMoves, setDropTargetMoves] = useState([])
   const [recordedMoves, setRecordedMoves] = useState([])
+  const [castleability, setCastleability] = useState(newCastleability())
 
   //  const [moves, setMoves] = useState([])
   const [isCheck, setIsCheck] = useState(false)
   const [statusMsg, setStatusMsg] = useState("Go!")
   // const [aiStrategy, setAIStrategy] = useState(1)
 
-  const gameState = { pieces1, pieces2, recordedMoves, hasCastled }
+  const gameState = { pieces1, pieces2, recordedMoves, canCastle }
 
-  function hasCastled(playerNum, gameState) {
-    //    gameState.recordedMoves.contains("hasCastled")
-    return false
+  function canCastle() {
+    if (isCheck)
+      return {
+        player1Kingside: false,
+        player1Queenside: false,
+        player2Kingside: false,
+        player2Queenside: false,
+      }
+    return castleability
   }
 
   function getPieceMatchingIndexProp(tile_num) {
@@ -65,6 +73,7 @@ function App() {
   }
 
   function restartGame() {
+    setCastleability(newCastleability())
     setPieces1(newPieces1())
     setPieces2(newPieces2())
     setTiles(newTiles())
@@ -106,12 +115,17 @@ function App() {
     //   tarPiece: "",
     // }) // take 1 step
     if (move === undefined) return
-    let freshPieces1, freshPieces2
+    let freshPieces1,
+      freshPieces2,
+      freshCastleability = castleability
     switch (move.action) {
       case Action.MOVE:
+        freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
         freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
         break
       case Action.CAPTURE:
+        freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
+        freshCastleability = castleabilityObj(move.tarIndex, freshCastleability)
         freshPieces2 = killPiece(move.tarIndex, pieces2)
         freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
         break
@@ -120,11 +134,31 @@ function App() {
         freshPieces1 = promotePiece(move.tarIndex, freshPieces1)
         break
       case Action.CAPTURE_PROMOTE:
+        freshCastleability = castleabilityObj(move.tarIndex, freshCastleability)
         freshPieces2 = killPiece(move.tarIndex, pieces2)
         freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
         freshPieces1 = promotePiece(move.tarIndex, freshPieces1)
         break
+      case Action.KINGSIDE_CASTLE:
+        freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
+        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
+        freshPieces1 = movePiece(
+          move.srcIndex + 3,
+          move.srcIndex + 1,
+          freshPieces1
+        )
+        break
+      case Action.QUEENSIDE_CASTLE:
+        freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
+        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
+        freshPieces1 = movePiece(
+          move.srcIndex - 4,
+          move.srcIndex - 1,
+          freshPieces1
+        )
+        break
     }
+    setCastleability(freshCastleability)
     if (freshPieces1 !== undefined) setPieces1(freshPieces1)
     if (freshPieces2 !== undefined) setPieces2(freshPieces2)
     setDropTargetMoves([])
