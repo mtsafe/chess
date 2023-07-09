@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# cypress sample code
+cypress/e2e/1-getting-started
+cypress/e2e/2-advanced-examples
+cypress/fixtures
+cypress/support
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

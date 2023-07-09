@@ -37,18 +37,43 @@ After executing "`npm run dev`", Node is a running process that is running Vite 
 
 `$ npm install jest --save-dev`
 
+## Added cypress
+
+````sh
+$ npm install cypress --save-dev
+$ npx cypress open
+````
+
+Using cypress for end-to-end testing.
+
+In the package.json file add script "cypress:open" and change "dev" to specify the localhost by ip address.
+
+```json
+...
+  "scripts": {
+    "cypress:open": "cypress open",
+    "dev": "vite --host 127.0.0.1",
+...
+```
+
 ## Make it work for GitHub
+
 `$ npm install gh-pages --save-dev`
 
-In the package.json file add "predeploy" and "deploy".
-```
+In the package.json file add "predeploy" and "deploy". The final scripts will look like this:
+```json
  "homepage": "https://<username>.github.io/<repo>/",
   ...
-  "scripts": {
-...
-"build": "vite build",
+ "scripts": {
+    "cypress:open": "cypress open",
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "test": "jest"
+  },
 ...
 ```
 In the vite.config.js file add this line before plugins: [react()],

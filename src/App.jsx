@@ -28,6 +28,7 @@ import * as Action from "./lib/actions"
 import "./App.css"
 
 function App() {
+  const OFF_BOARD = -1
   // ***************************
   // STATE HOOKS
   const [tiles, setTiles] = useState(newTiles)
@@ -36,7 +37,7 @@ function App() {
   const [dropTargetMoves, setDropTargetMoves] = useState([])
   const [recordedMoves, setRecordedMoves] = useState([])
   const [castleability, setCastleability] = useState(newCastleability())
-  const [enPassantOpportunity, setEnPassantOpportunity] = useState(-1)
+  const [enPassantOpportunity, setEnPassantOpportunity] = useState(OFF_BOARD)
 
   //  const [moves, setMoves] = useState([])
   const [isCheck, setIsCheck] = useState(false)
@@ -85,7 +86,7 @@ function App() {
     setPieces2(newPieces2())
     setTiles(newTiles())
     setStatusMsg("Go!")
-    setEnPassantOpportunity(-1)
+    setEnPassantOpportunity(OFF_BOARD)
   }
 
   function changeAI(value) {
@@ -117,7 +118,7 @@ function App() {
     let freshPieces1,
       freshPieces2,
       freshCastleability = castleability,
-      freshEnPassantOpp = -1
+      freshEnPassantOpp = OFF_BOARD
     switch (move.action) {
       case Action.MOVE:
         freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
