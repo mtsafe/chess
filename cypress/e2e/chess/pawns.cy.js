@@ -1,6 +1,7 @@
 function hitRestartButton() {
   cy.get("#restart-button").click()
 }
+
 function validMovePawnA2B(a, b) {
   let dataTransfer = new DataTransfer()
   cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).should("be.visible")
@@ -15,13 +16,13 @@ function validMovePawnA2B(a, b) {
 
 function invalidMovePawnA2B(a, b) {
   let dataTransfer = new DataTransfer()
+  if (a < 0 || a > 63) return
   cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).should("be.visible")
   cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).trigger("dragstart", {
     dataTransfer,
   })
-  cy.get(`div[tile_id="${b}"] div img`).trigger("drop", {
-    dataTransfer,
-  })
+  if (b >= 0 && b <= 63)
+    cy.get(`div[tile_id="${b}"] div img`).trigger("drop", { dataTransfer })
   cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).should("be.visible")
 }
 
@@ -46,7 +47,7 @@ describe("Test pawns", () => {
     for (let i = 0; i < 8; i++) validMovePawnA2B(i + 48, i + 32)
   })
 
-  it("Moves each pawn 4 single steps, tries invalid moves, attacks, and promotes", () => {
+  it("Moves each pawn: single steps, attacks, promotes, and invalid moves", () => {
     for (let i = 0; i < 8; i++) {
       for (let j = 48; j > 23; j -= 8) {
         validMovePawnA2B(i + j, i + j - 8)

@@ -5,7 +5,8 @@
   "type": "module",
   "homepage": "https://mtsafe.github.io/tic-react-toe/",
   "scripts": {
-    "cypress:open": "cypress open",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run --spec \"cypress/e2e/chess/*.cy.js\"",
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "predeploy": "npm run build",

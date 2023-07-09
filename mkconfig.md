@@ -51,7 +51,8 @@ In the package.json file add script "cypress:open" and change "dev" to specify t
 ```json
 ...
   "scripts": {
-    "cypress:open": "cypress open",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run --spec \"cypress/e2e/chess/*.cy.js\"",
     "dev": "vite --host 127.0.0.1",
 ...
 ```
@@ -65,7 +66,8 @@ In the package.json file add "predeploy" and "deploy". The final scripts will lo
  "homepage": "https://<username>.github.io/<repo>/",
   ...
  "scripts": {
-    "cypress:open": "cypress open",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run --spec \"cypress/e2e/chess/*.cy.js\"",
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "predeploy": "npm run build",
