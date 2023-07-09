@@ -1,10 +1,10 @@
 export function AISelector({ changeAI }) {
   return (
     <div className="ai">
-      <label htmlFor="ai-select">AI Algo:</label>
+      <label htmlFor="ai-algo">AI Algo:</label>
       <select
-        name="ais"
-        id="ai-level"
+        name="ai-algo"
+        id="ai-algo"
         defaultValue={1}
         onChange={e => changeAI(e.target.value)}
       >
