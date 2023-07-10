@@ -8,7 +8,7 @@ import { NewGameButton } from "./NewGameButton"
 
 // FUNCTIONS SUPPORTING STATE
 import { getEnPassantOpp } from "./state/enPassantOpportunity"
-import { castleabilityObj, newCastleability } from "./state/castleability"
+import { verifyCastleability, newCastleability } from "./state/castleability"
 import {
   newPieces1,
   newPieces2,
@@ -20,10 +20,7 @@ import { newTiles } from "./state/tiles"
 
 // OTHER FUNCTIONS
 // import { aiChoosesTile, tie, winner } from "./lib/applib"
-import { findDropTargets } from "./lib/player1eventlib"
-
-// CONSTANTS
-import * as Action from "./lib/actions"
+import { computeOnDropStateChanges, findDropTargets } from "./lib/player1events"
 
 import "./App.css"
 
@@ -43,14 +40,6 @@ function App() {
   const [isCheck, setIsCheck] = useState(false)
   const [statusMsg, setStatusMsg] = useState("Go!")
   // const [aiStrategy, setAIStrategy] = useState(1)
-
-  const gameState = {
-    pieces1,
-    pieces2,
-    recordedMoves,
-    enPassantOpportunity,
-    canCastle,
-  }
 
   function canCastle() {
     if (isCheck)
@@ -96,16 +85,27 @@ function App() {
   // ***************************
   // EVENT HANDLERS
   function handleOnDragProp(e) {
-    console.log("handleOnDragProp()")
-    setDropTargetMoves(findDropTargets(e.target, gameState))
+    console.log(
+      `handleOnDragProp(): targetTileNum=${e.target.getAttribute(
+        "tile_num"
+      )}  classList="${e.target.classList}"`
+    )
+
+    const onDragState = {
+      pieces1,
+      pieces2,
+      recordedMoves,
+      enPassantOpportunity,
+      canCastle,
+    }
+    setDropTargetMoves(findDropTargets(e.target, onDragState))
   }
 
   function handleOnDropProp(e) {
-    console.log("handleOnDropProp()")
     // prevent default action (open as link for some elements)
     e.preventDefault()
     console.log(
-      `handleOnDropProp: targetTileNum=${e.target.getAttribute(
+      `handleOnDropProp(): targetTileNum=${e.target.getAttribute(
         "tile_num"
       )}  classList="${e.target.classList}"`
     )
@@ -115,60 +115,21 @@ function App() {
       parseInt(e.target.getAttribute("tile_num"))
     )
     if (move === undefined) return
-    let freshPieces1,
-      freshPieces2,
-      freshCastleability = castleability,
-      freshEnPassantOpp = OFF_BOARD
-    switch (move.action) {
-      case Action.MOVE:
-        freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
-        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
-        freshEnPassantOpp = getEnPassantOpp(move)
-        // also en passant opportunity for 2-step Pawn
-        break
-      case Action.CAPTURE:
-        freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
-        freshCastleability = castleabilityObj(move.tarIndex, freshCastleability)
-        freshPieces2 = killPiece(move.tarIndex, pieces2)
-        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
-        break
-      case Action.MOVE_PROMOTE:
-        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
-        freshPieces1 = promotePiece(move.tarIndex, freshPieces1)
-        break
-      case Action.CAPTURE_PROMOTE:
-        freshCastleability = castleabilityObj(move.tarIndex, freshCastleability)
-        freshPieces2 = killPiece(move.tarIndex, pieces2)
-        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
-        freshPieces1 = promotePiece(move.tarIndex, freshPieces1)
-        break
-      case Action.EN_PASSANT:
-        freshPieces2 = killPiece(enPassantOpportunity, pieces2)
-        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
-        break
-      case Action.KINGSIDE_CASTLE:
-        freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
-        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
-        freshPieces1 = movePiece(
-          move.srcIndex + 3,
-          move.srcIndex + 1,
-          freshPieces1
-        )
-        break
-      case Action.QUEENSIDE_CASTLE:
-        freshCastleability = castleabilityObj(move.srcIndex, freshCastleability)
-        freshPieces1 = movePiece(move.srcIndex, move.tarIndex, pieces1)
-        freshPieces1 = movePiece(
-          move.srcIndex - 4,
-          move.srcIndex - 1,
-          freshPieces1
-        )
-        break
+
+    const onDropState = {
+      move: move,
+      pieces1: pieces1,
+      pieces2: pieces2,
+      castleability: castleability,
+      enPassantOpportunity: OFF_BOARD,
     }
-    setCastleability(freshCastleability)
-    if (freshPieces1 !== undefined) setPieces1(freshPieces1)
-    if (freshPieces2 !== undefined) setPieces2(freshPieces2)
-    setEnPassantOpportunity(freshEnPassantOpp)
+    let refreshOnDropState = computeOnDropStateChanges(onDropState)
+    setCastleability(refreshOnDropState.castleability)
+    if (refreshOnDropState.freshPieces1 !== undefined)
+      setPieces1(refreshOnDropState.freshPieces1)
+    if (refreshOnDropState.freshPieces2 !== undefined)
+      setPieces2(refreshOnDropState.freshPieces2)
+    setEnPassantOpportunity(refreshOnDropState.freshEnPassantOpp)
     setDropTargetMoves([])
 
     let instructions

@@ -67,13 +67,13 @@ function getPieceMatchingIndex1(tile_num, pieces) {
   if (pieces?.length) return pieces.find(piece => piece.index === tile_num)
 }
 
-function getPieceMatchingIndex2(tile_num, gameState) {
+function getPieceMatchingIndex2(tile_num, onDragState) {
   let result
-  if (gameState.pieces1?.length)
-    result = gameState.pieces1.find(piece => piece.index === tile_num)
+  if (onDragState.pieces1?.length)
+    result = onDragState.pieces1.find(piece => piece.index === tile_num)
 
-  if (typeof result === "undefined" && gameState.pieces2?.length)
-    result = gameState.pieces2.find(piece => piece.index === tile_num)
+  if (typeof result === "undefined" && onDragState.pieces2?.length)
+    result = onDragState.pieces2.find(piece => piece.index === tile_num)
   return result
 }
 

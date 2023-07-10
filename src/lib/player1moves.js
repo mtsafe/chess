@@ -9,30 +9,30 @@ import { getPieceMatchingIndex1, getPieceMatchingIndex2 } from "../state/pieces"
 import * as Action from "./actions"
 
 // KING MOVES
-function player1King(srcIndex, gameState) {
+function player1King(srcIndex, onDragState) {
   let result = []
   let file = index2File(srcIndex)
   let rank = index2Rank(srcIndex)
-  if (file !== "a") result.push(genericMove(srcIndex, -1, "K", gameState))
-  if (file !== "h") result.push(genericMove(srcIndex, 1, "K", gameState))
+  if (file !== "a") result.push(genericMove(srcIndex, -1, "K", onDragState))
+  if (file !== "h") result.push(genericMove(srcIndex, 1, "K", onDragState))
   if (rank !== 8) {
-    if (file !== "h") result.push(genericMove(srcIndex, -7, "K", gameState))
-    result.push(genericMove(srcIndex, -8, "K", gameState))
-    if (file !== "a") result.push(genericMove(srcIndex, -9, "K", gameState))
+    if (file !== "h") result.push(genericMove(srcIndex, -7, "K", onDragState))
+    result.push(genericMove(srcIndex, -8, "K", onDragState))
+    if (file !== "a") result.push(genericMove(srcIndex, -9, "K", onDragState))
   }
   if (rank !== 1) {
-    if (file !== "a") result.push(genericMove(srcIndex, 7, "K", gameState))
-    result.push(genericMove(srcIndex, 8, "K", gameState))
-    if (file !== "h") result.push(genericMove(srcIndex, 9, "K", gameState))
+    if (file !== "a") result.push(genericMove(srcIndex, 7, "K", onDragState))
+    result.push(genericMove(srcIndex, 8, "K", onDragState))
+    if (file !== "h") result.push(genericMove(srcIndex, 9, "K", onDragState))
   }
-  result.push(kingKingsideCastle(srcIndex, 1, gameState))
-  result.push(kingQueensideCastle(srcIndex, 1, gameState))
+  result.push(kingKingsideCastle(srcIndex, 1, onDragState))
+  result.push(kingQueensideCastle(srcIndex, 1, onDragState))
   return result.filter(Boolean)
 }
 
-function kingKingsideCastle(srcIndex, playerNum, gameState) {
+function kingKingsideCastle(srcIndex, playerNum, onDragState) {
   console.log(`kingKingsideCastle(${srcIndex}, ${playerNum})`)
-  let theCastleablility = gameState.canCastle()
+  let theCastleablility = onDragState.canCastle()
   if (
     ((playerNum === 1 &&
       srcIndex === 60 &&
@@ -40,15 +40,15 @@ function kingKingsideCastle(srcIndex, playerNum, gameState) {
       (playerNum === 2 &&
         srcIndex === 4 &&
         theCastleablility.player2Kingside)) &&
-    !getPieceMatchingIndex2(srcIndex - 1, gameState) !== undefined &&
-    !getPieceMatchingIndex2(srcIndex - 2, gameState) !== undefined
+    !getPieceMatchingIndex2(srcIndex - 1, onDragState) !== undefined &&
+    !getPieceMatchingIndex2(srcIndex - 2, onDragState) !== undefined
   )
     return kingsideCastle(srcIndex)
 }
 
-function kingQueensideCastle(srcIndex, playerNum, gameState) {
+function kingQueensideCastle(srcIndex, playerNum, onDragState) {
   console.log(`kingQueensideCastle(${srcIndex}, ${playerNum})`)
-  let theCastleablility = gameState.canCastle()
+  let theCastleablility = onDragState.canCastle()
   if (
     ((playerNum === 1 &&
       srcIndex === 60 &&
@@ -56,44 +56,45 @@ function kingQueensideCastle(srcIndex, playerNum, gameState) {
       (playerNum === 2 &&
         srcIndex === 4 &&
         theCastleablility.player2Queenside)) &&
-    !getPieceMatchingIndex2(srcIndex - 1, gameState) !== undefined &&
-    !getPieceMatchingIndex2(srcIndex - 2, gameState) !== undefined &&
-    !getPieceMatchingIndex2(srcIndex - 3, gameState) !== undefined
+    !getPieceMatchingIndex2(srcIndex - 1, onDragState) !== undefined &&
+    !getPieceMatchingIndex2(srcIndex - 2, onDragState) !== undefined &&
+    !getPieceMatchingIndex2(srcIndex - 3, onDragState) !== undefined
   )
     return queensideCastle(srcIndex)
 }
 
 // KNIGHT MOVES
-function player1Knight(srcIndex, gameState) {
+function player1Knight(srcIndex, onDragState) {
   let result = []
   let file = index2File(srcIndex)
   let rank = index2Rank(srcIndex)
   if (rank !== 8) {
     if (file !== "h") {
-      if (rank !== 7) result.push(genericMove(srcIndex, -15, "N", gameState))
-      if (file !== "g") result.push(genericMove(srcIndex, -6, "N", gameState))
+      if (rank !== 7) result.push(genericMove(srcIndex, -15, "N", onDragState))
+      if (file !== "g") result.push(genericMove(srcIndex, -6, "N", onDragState))
     }
     if (file !== "a") {
-      if (rank !== 7) result.push(genericMove(srcIndex, -17, "N", gameState))
-      if (file !== "b") result.push(genericMove(srcIndex, -10, "N", gameState))
+      if (rank !== 7) result.push(genericMove(srcIndex, -17, "N", onDragState))
+      if (file !== "b")
+        result.push(genericMove(srcIndex, -10, "N", onDragState))
     }
   }
   if (rank !== 1) {
     if (file !== "h") {
-      if (rank !== 2) result.push(genericMove(srcIndex, 17, "N", gameState))
-      if (file !== "g") result.push(genericMove(srcIndex, 10, "N", gameState))
+      if (rank !== 2) result.push(genericMove(srcIndex, 17, "N", onDragState))
+      if (file !== "g") result.push(genericMove(srcIndex, 10, "N", onDragState))
     }
     if (file !== "a") {
-      if (rank !== 2) result.push(genericMove(srcIndex, 15, "N", gameState))
-      if (file !== "b") result.push(genericMove(srcIndex, 6, "N", gameState))
+      if (rank !== 2) result.push(genericMove(srcIndex, 15, "N", onDragState))
+      if (file !== "b") result.push(genericMove(srcIndex, 6, "N", onDragState))
     }
   }
   return result.filter(Boolean)
 }
 
-function genericMove(srcIndex, tarOffset, letter, gameState) {
+function genericMove(srcIndex, tarOffset, letter, onDragState) {
   let tarIndex = srcIndex + tarOffset
-  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget === undefined)
     return movePieceAction(srcIndex, letter, tarIndex)
   if (pieceAtTarget.player === 2)
@@ -101,31 +102,31 @@ function genericMove(srcIndex, tarOffset, letter, gameState) {
 }
 
 // PAWN MOVES
-function player1Pawn1Step(srcIndex, gameState) {
+function player1Pawn1Step(srcIndex, onDragState) {
   let tarIndex = srcIndex - 8
-  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget === undefined) {
     if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
     return movePieceAction(srcIndex, "P", tarIndex)
   }
 }
 
-function player1Pawn2Step(srcIndex, gameState) {
+function player1Pawn2Step(srcIndex, onDragState) {
   if (index2Rank(srcIndex) !== 2) return
   let tarIndex = srcIndex - 8
-  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget !== undefined) return
   tarIndex = srcIndex - 16
-  pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
+  pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget !== undefined) return
   if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
   return movePieceAction(srcIndex, "P", tarIndex)
 }
 
-function player1PawnCaptureLeft(srcIndex, gameState) {
+function player1PawnCaptureLeft(srcIndex, onDragState) {
   if (index2File(srcIndex) === "a") return
   let tarIndex = srcIndex - 9
-  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
 
   if (pieceAtTarget?.player === 1) return
   if (pieceAtTarget?.player === 2) {
@@ -135,14 +136,14 @@ function player1PawnCaptureLeft(srcIndex, gameState) {
   }
 
   let victimIndex = srcIndex - 1
-  if (victimIndex === gameState.enPassantOpportunity)
+  if (victimIndex === onDragState.enPassantOpportunity)
     return capturePieceEnPassant(srcIndex, tarIndex)
 }
 
-function player1PawnCaptureRight(srcIndex, gameState) {
+function player1PawnCaptureRight(srcIndex, onDragState) {
   if (index2File(srcIndex) === "h") return
   let tarIndex = srcIndex - 7
-  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   // also capture en passant
 
   if (pieceAtTarget?.player === 2) {
@@ -152,31 +153,31 @@ function player1PawnCaptureRight(srcIndex, gameState) {
   }
 
   let victimIndex = srcIndex + 1
-  if (victimIndex === gameState.enPassantOpportunity)
+  if (victimIndex === onDragState.enPassantOpportunity)
     return capturePieceEnPassant(srcIndex, tarIndex)
 }
 
 // QUEEN MOVES
-function player1Queen(srcIndex, gameState) {
-  let result1 = genericBishop(srcIndex, "B", gameState)
-  let result2 = genericRook(srcIndex, "Q", gameState)
+function player1Queen(srcIndex, onDragState) {
+  let result1 = genericBishop(srcIndex, "B", onDragState)
+  let result2 = genericRook(srcIndex, "Q", onDragState)
   return [...result1, ...result2]
 }
 
 // BISHOP MOVES
-function player1Bishop(srcIndex, gameState) {
-  return genericBishop(srcIndex, "B", gameState)
+function player1Bishop(srcIndex, onDragState) {
+  return genericBishop(srcIndex, "B", onDragState)
 }
 
-function genericBishop(srcIndex, letter, gameState) {
-  let result1 = bishopRadiate(1, srcIndex, letter, gameState)
-  let result2 = bishopRadiate(2, srcIndex, letter, gameState)
-  let result3 = bishopRadiate(3, srcIndex, letter, gameState)
-  let result4 = bishopRadiate(4, srcIndex, letter, gameState)
+function genericBishop(srcIndex, letter, onDragState) {
+  let result1 = bishopRadiate(1, srcIndex, letter, onDragState)
+  let result2 = bishopRadiate(2, srcIndex, letter, onDragState)
+  let result3 = bishopRadiate(3, srcIndex, letter, onDragState)
+  let result4 = bishopRadiate(4, srcIndex, letter, onDragState)
   return [...result1, ...result2, ...result3, ...result4].filter(Boolean)
 }
 
-function bishopRadiate(quadrant, srcIndex, letter, gameState) {
+function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
   let tarOffset,
     condition,
     nextPosition,
@@ -223,7 +224,7 @@ function bishopRadiate(quadrant, srcIndex, letter, gameState) {
   rank = index2Rank(tarIndex)
   console.log(`condition=${condition()}`)
   for (; condition(); nextPosition(), tarIndex += tarOffset) {
-    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
+    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex))
     else if (pieceAtTarget.player === 2) {
@@ -237,21 +238,21 @@ function bishopRadiate(quadrant, srcIndex, letter, gameState) {
 }
 
 // ROOK MOVES
-function player1Rook(srcIndex, gameState) {
-  return genericRook(srcIndex, "R", gameState)
+function player1Rook(srcIndex, onDragState) {
+  return genericRook(srcIndex, "R", onDragState)
 }
 
-function genericRook(srcIndex, letter, gameState) {
+function genericRook(srcIndex, letter, onDragState) {
   let file = index2File(srcIndex)
   let rank = index2Rank(srcIndex)
-  let result1 = rookHorizontal("-", srcIndex, letter, rank, gameState)
-  let result2 = rookHorizontal("+", srcIndex, letter, rank, gameState)
-  let result3 = rookVertical("-", srcIndex, letter, file, gameState)
-  let result4 = rookVertical("+", srcIndex, letter, file, gameState)
+  let result1 = rookHorizontal("-", srcIndex, letter, rank, onDragState)
+  let result2 = rookHorizontal("+", srcIndex, letter, rank, onDragState)
+  let result3 = rookVertical("-", srcIndex, letter, file, onDragState)
+  let result4 = rookVertical("+", srcIndex, letter, file, onDragState)
   return [...result1, ...result2, ...result3, ...result4].filter(Boolean)
 }
 
-function rookHorizontal(direction, srcIndex, letter, rank, gameState) {
+function rookHorizontal(direction, srcIndex, letter, rank, onDragState) {
   let column,
     start,
     condition,
@@ -268,7 +269,7 @@ function rookHorizontal(direction, srcIndex, letter, rank, gameState) {
   }
   for (column = start; condition(); nextColumn()) {
     let tarIndex = rc2Index(rank, column)
-    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
+    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex))
     else if (pieceAtTarget.player === 2) {
@@ -281,7 +282,7 @@ function rookHorizontal(direction, srcIndex, letter, rank, gameState) {
   return result
 }
 
-function rookVertical(direction, srcIndex, letter, file, gameState) {
+function rookVertical(direction, srcIndex, letter, file, onDragState) {
   let rank,
     start,
     condition,
@@ -298,7 +299,7 @@ function rookVertical(direction, srcIndex, letter, file, gameState) {
   }
   for (rank = start; condition(); nextRank()) {
     let tarIndex = rf2Index(rank, file)
-    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, gameState)
+    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex))
     else if (pieceAtTarget.player === 2) {

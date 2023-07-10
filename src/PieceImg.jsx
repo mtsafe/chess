@@ -85,10 +85,7 @@ export function PieceImg({
   if (tileShade === 0) className = "interact-img img-border-dark"
   else className = "interact-img img-border-light"
 
-  let draggable = undefined,
-    onDragStart = undefined,
-    onDragOver = undefined,
-    onDrop = undefined
+  let draggable, onDragStart, onDragOver, onDrop
   //  if (tile_num === 48) draggable = true
   if (isDropZone) {
     className += " dropzone"
@@ -96,6 +93,7 @@ export function PieceImg({
     onDrop = e => handleOnDropProp(e)
   } else {
     onDragStart = e => handleOnDragProp(e)
+    draggable = true
   }
   return (
     <img
