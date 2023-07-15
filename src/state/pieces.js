@@ -63,6 +63,10 @@ function getFreshPiecesWithout(tarIndex, pieces) {
     .filter(Boolean)
 }
 
+function getPieceMatchingCode(code, pieces) {
+  if (pieces?.length) return pieces.find(piece => piece.code === code)
+}
+
 function getPieceMatchingIndex1(tile_num, pieces) {
   if (pieces?.length) return pieces.find(piece => piece.index === tile_num)
 }
@@ -116,6 +120,7 @@ export {
   newPieces1,
   newPieces2,
   getFreshPiecesWithout,
+  getPieceMatchingCode,
   getPieceMatchingIndex1,
   getPieceMatchingIndex2,
   killPiece,
