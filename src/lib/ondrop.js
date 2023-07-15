@@ -6,52 +6,11 @@ import {
   getPieceMatchingIndex2,
 } from "../state/pieces"
 import { verifyCastleability } from "../state/castleability"
-import {
-  player1Bishop,
-  player1King,
-  player1Knight,
-  player1Queen,
-  player1Pawn1Step,
-  player1Pawn2Step,
-  player1PawnCaptureLeft,
-  player1PawnCaptureRight,
-  player1Rook,
-} from "./player1moves"
 
 // CONSTANTS
 import * as Action from "./actions"
 
 // EVENT HANDLER SUPPORT FUNCTIONS
-function findDropTargets(pieceElement, onDragState) {
-  let result = []
-  let srcIndex = parseInt(pieceElement.getAttribute("tile_num"))
-  let { letter } = getPieceMatchingIndex2(parseInt(srcIndex), onDragState)
-  switch (letter) {
-    case "P":
-      result.push(player1Pawn1Step(srcIndex, onDragState))
-      result.push(player1Pawn2Step(srcIndex, onDragState))
-      result.push(player1PawnCaptureLeft(srcIndex, onDragState))
-      result.push(player1PawnCaptureRight(srcIndex, onDragState))
-      break
-    case "R":
-      result = player1Rook(srcIndex, onDragState)
-      break
-    case "N":
-      result = player1Knight(srcIndex, onDragState)
-      break
-    case "B":
-      result = player1Bishop(srcIndex, onDragState)
-      break
-    case "Q":
-      result = player1Queen(srcIndex, onDragState)
-      break
-    case "K":
-      result = player1King(srcIndex, onDragState)
-      break
-  }
-  return result.filter(Boolean) // remove undefined elements from array
-}
-
 function computeOnDropStateChanges({
   castleability,
   enPassantOpportunity,
@@ -103,11 +62,10 @@ function computeOnDropStateChanges({
       return
     },
   }
-
-  function computeNewStatesFromAction(action) {
+  ;(() => {
     return (actionValues[action] || actionValues["default"])()
-  }
-  computeNewStatesFromAction(action)
+  })()
+
   return { freshCastleability, freshEnPassantOpp, freshPieces1, freshPieces2 }
 }
-export { computeOnDropStateChanges, findDropTargets }
+export { computeOnDropStateChanges }

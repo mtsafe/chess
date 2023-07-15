@@ -20,7 +20,8 @@ import { newTiles } from "./state/tiles"
 
 // OTHER FUNCTIONS
 // import { aiChoosesTile, tie, winner } from "./lib/applib"
-import { computeOnDropStateChanges, findDropTargets } from "./lib/player1events"
+import { findDropTargets } from "./lib/ondrag"
+import { computeOnDropStateChanges } from "./lib/ondrop"
 
 import "./App.css"
 
