@@ -8,12 +8,11 @@ function index2Rank(index) {
   return 8 - Math.floor(index / 8)
 }
 function index2File(index) {
-  return String.fromCharCode(97 + index - Math.floor(index / 8) * 8)
+  return String.fromCharCode(97 + (index % 8))
 }
 function index2Column(index) {
-  return 1 + index - Math.floor(index / 8) * 8
+  return (index % 8) + 1
 }
-// Treats foot and testLetter as read-only
 
 const winMatrix = [
   [0, 1, 2],
