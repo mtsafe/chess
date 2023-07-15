@@ -35,6 +35,7 @@ function computeOnDropStateChanges({
       freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
     },
     [Action.MOVE_PROMOTE]: () => {
+      freshCastleability = castleability
       freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
       freshPieces1 = promotePiece(tarIndex, freshPieces1)
     },
@@ -45,6 +46,7 @@ function computeOnDropStateChanges({
       freshPieces1 = promotePiece(tarIndex, freshPieces1)
     },
     [Action.EN_PASSANT]: () => {
+      freshCastleability = castleability
       freshPieces2 = killPiece(enPassantOpportunity, pieces2)
       freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
     },

@@ -98,6 +98,7 @@ function App() {
       pieces2,
       recordedMoves,
       enPassantOpportunity,
+      castleability,
       canCastle,
     }
     setDropTargetMoves(findDropTargets(e.target, onDragState))
@@ -119,14 +120,14 @@ function App() {
     if (move === undefined) return
 
     const onDropState = {
-      move: move,
-      pieces1: pieces1,
-      pieces2: pieces2,
-      castleability: castleability,
+      castleability,
       enPassantOpportunity: OFF_BOARD,
+      move,
+      pieces1,
+      pieces2,
     }
     let refreshOnDropState = computeOnDropStateChanges(onDropState)
-    setCastleability(refreshOnDropState.castleability)
+    setCastleability(refreshOnDropState.freshCastleability)
     if (refreshOnDropState.freshPieces1 !== undefined)
       setPieces1(refreshOnDropState.freshPieces1)
     if (refreshOnDropState.freshPieces2 !== undefined)
