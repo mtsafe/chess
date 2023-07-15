@@ -8,6 +8,15 @@ import {
 import { getPieceMatchingIndex1, getPieceMatchingIndex2 } from "../state/pieces"
 import * as Action from "./actions"
 
+// const onDragState = {
+//   pieces1,
+//   pieces2,
+//   recordedMoves,
+//   enPassantOpportunity,
+//   castleability,
+//   canCastle,
+// }
+
 // KING MOVES
 function player1King(srcIndex, onDragState) {
   let result = []
@@ -93,6 +102,7 @@ function player1Knight(srcIndex, onDragState) {
 }
 
 function genericMove(srcIndex, tarOffset, letter, onDragState) {
+  // disallow player to move into check
   let tarIndex = srcIndex + tarOffset
   let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget === undefined)
