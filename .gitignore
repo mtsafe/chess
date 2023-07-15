@@ -15,8 +15,6 @@ dist-ssr
 # cypress sample code
 cypress/e2e/1-getting-started
 cypress/e2e/2-advanced-examples
-cypress/fixtures
-cypress/support
 cypress/screenshots
 cypress/videos
 

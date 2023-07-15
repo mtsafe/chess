@@ -25,3 +25,7 @@ State directory is a collection of functions to do calculations on the parameter
 OnDrag, the possible moves are calculated for that piece and marked as dropzones. They are saved in state: dropTargetMoves.
 
 OnDrop, the move is executed for that piece going to that location by updating the states of pieces1 and pieces2. Since the moves are checked OnDrag as possible, then the validity of the move does not need to be questioned. Just execute the move.
+
+### Gameplay
+
+Player 1 has light shaded pieces and goes first.
