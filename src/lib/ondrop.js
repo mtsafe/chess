@@ -10,7 +10,7 @@ import { verifyCastleability } from "../state/castleability"
 // CONSTANTS
 import * as Action from "./actions"
 
-// EVENT HANDLER SUPPORT FUNCTIONS
+// ONDROP EVENT HANDLER SUPPORT FUNCTIONS
 function computeOnDropStateChanges({
   castleability,
   enPassantOpportunity,

@@ -17,7 +17,7 @@ import {
   player1Rook,
 } from "./player1moves"
 
-// EVENT HANDLER SUPPORT FUNCTIONS
+// ONDRAG EVENT HANDLER SUPPORT FUNCTIONS
 function findDropTargets(pieceElement, onDragState) {
   let result = []
   let srcIndex = parseInt(pieceElement.getAttribute("tile_num"))
