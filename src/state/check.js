@@ -2,7 +2,7 @@ import {
   getPieceMatchingCode,
   getPieceMatchingIndex1,
   getPieceMatchingIndex2,
-} from "../state/pieces"
+} from "./pieces"
 // cannot move into check
 
 // must move out of check
@@ -36,7 +36,9 @@ function orientation(playerNum) {
 
 function isPlayerInCheck(defPieces, atkPieces) {
   let { index: kingIndex } = getPieceMatchingCode("K", defPieces)
-  return atkPieces.every(atkPiece => {
+  return !atkPieces.every(atkPiece => {
+    if (isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces))
+      console.log(`Player is in check from ${atkPiece.code}`)
     return !isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces)
   })
   // atkPieces.every(atkPiece => {

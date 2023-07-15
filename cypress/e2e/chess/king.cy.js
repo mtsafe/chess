@@ -75,14 +75,18 @@ describe("Test king", () => {
     validMoveKingA2B(k, (k += 7))
     validMoveKingA2B(k, (k -= 1))
     validMoveKingA2B(k, (k += 1))
-    //Now do invalid move
+    // now do invalid move
     validMoveKingA2B(k, (k += 1))
     invalidMoveKingA2B(k, k + 1)
-    // now kill the queen
+    // now try to illegally step into check
     validMoveKingA2B(k, (k -= 9))
-    validMoveKingA2B(k, (k -= 8))
-    validMoveKingA2B(k, (k -= 8))
-    validMoveKingA2B(k, (k -= 7))
+    invalidMoveKingA2B(k, (k -= 8))
+
+    // now kill the queen
+    // validMoveKingA2B(k, (k -= 9))
+    // validMoveKingA2B(k, (k -= 8))
+    // validMoveKingA2B(k, (k -= 8))
+    // validMoveKingA2B(k, (k -= 7))
   })
 
   // it("Moves each pawn: single steps, attacks, promotes, and invalid moves", () => {

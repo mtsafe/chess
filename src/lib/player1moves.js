@@ -5,7 +5,18 @@ import {
   rf2Index,
   index2Column,
 } from "./applib"
-import { getPieceMatchingIndex1, getPieceMatchingIndex2 } from "../state/pieces"
+import {
+  newPieces1,
+  newPieces2,
+  getFreshPiecesWithout,
+  getPieceMatchingCode,
+  getPieceMatchingIndex1,
+  getPieceMatchingIndex2,
+  killPiece,
+  movePiece,
+  promotePiece,
+} from "../state/pieces"
+import { isPlayerInCheck } from "../state/check"
 import * as Action from "./actions"
 
 // const onDragState = {
@@ -103,10 +114,11 @@ function player1Knight(srcIndex, onDragState) {
 
 function genericMove(srcIndex, tarOffset, letter, onDragState) {
   // disallow player to move into check
+  // isPlayerInCheck(defPieces, atkPieces)
   let tarIndex = srcIndex + tarOffset
   let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget === undefined)
-    return movePieceAction(srcIndex, letter, tarIndex)
+    return movePieceAction(srcIndex, letter, tarIndex, onDragState)
   if (pieceAtTarget.player === 2)
     return capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
 }
@@ -117,7 +129,7 @@ function player1Pawn1Step(srcIndex, onDragState) {
   let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget === undefined) {
     if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
-    return movePieceAction(srcIndex, "P", tarIndex)
+    return movePieceAction(srcIndex, "P", tarIndex, onDragState)
   }
 }
 
@@ -130,7 +142,7 @@ function player1Pawn2Step(srcIndex, onDragState) {
   pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget !== undefined) return
   if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
-  return movePieceAction(srcIndex, "P", tarIndex)
+  return movePieceAction(srcIndex, "P", tarIndex, onDragState)
 }
 
 function player1PawnCaptureLeft(srcIndex, onDragState) {
@@ -236,7 +248,7 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
   for (; condition(); nextPosition(), tarIndex += tarOffset) {
     let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
     if (pieceAtTarget === undefined)
-      result.push(movePieceAction(srcIndex, letter, tarIndex))
+      result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtTarget.player === 2) {
       result.push(
         capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
@@ -281,7 +293,7 @@ function rookHorizontal(direction, srcIndex, letter, rank, onDragState) {
     let tarIndex = rc2Index(rank, column)
     let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
     if (pieceAtTarget === undefined)
-      result.push(movePieceAction(srcIndex, letter, tarIndex))
+      result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtTarget.player === 2) {
       result.push(
         capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
@@ -311,7 +323,7 @@ function rookVertical(direction, srcIndex, letter, file, onDragState) {
     let tarIndex = rf2Index(rank, file)
     let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
     if (pieceAtTarget === undefined)
-      result.push(movePieceAction(srcIndex, letter, tarIndex))
+      result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtTarget.player === 2) {
       result.push(
         capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
@@ -342,7 +354,16 @@ function capturePieceEnPassant(srcIndex, tarIndex) {
   }
 }
 
-function movePieceAction(srcIndex, srcPiece, tarIndex) {
+function movePieceAction(srcIndex, srcPiece, tarIndex, onDragState) {
+  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+  let defPieces = structuredClone(onDragState.pieces1)
+  let atkPieces = structuredClone(onDragState.pieces2)
+  console.log("movePieceAction: pieceAtSource")
+  console.dir(pieceAtSource)
+  if (pieceAtSource.player === 2)
+    [defPieces, atkPieces] = [atkPieces, defPieces]
+  movePiece(srcIndex, tarIndex, defPieces)
+  if (isPlayerInCheck(defPieces, atkPieces)) return
   return {
     srcIndex,
     srcPiece,
