@@ -4,8 +4,8 @@ import { PieceImg } from "./PieceImg"
 export function SquareTile({
   tile_id,
   tile_num,
-  handleOnDragProp,
-  handleOnDropProp,
+  handleOnDrag_SetDropzones,
+  handleOnDrop_ExecuteMove,
   getPieceMatchingIndexProp,
   isDropZone,
 }) {
@@ -27,10 +27,10 @@ export function SquareTile({
         <PieceImg
           tile_num={tile_num}
           tileShade={tileShade}
-          handleOnDragProp={handleOnDragProp}
+          handleOnDrag_SetDropzones={handleOnDrag_SetDropzones}
           getPieceMatchingIndexProp={getPieceMatchingIndexProp}
           isDropZone={isDropZone}
-          handleOnDropProp={handleOnDropProp}
+          handleOnDrop_ExecuteMove={handleOnDrop_ExecuteMove}
         />
       </div>
     </div>

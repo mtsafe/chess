@@ -2,8 +2,8 @@ import { SquareTile } from "./SquareTile"
 
 export function GameBoard({
   tiles,
-  handleOnDragProp,
-  handleOnDropProp,
+  handleOnDrag_SetDropzones,
+  handleOnDrop_ExecuteMove,
   getPieceMatchingIndexProp,
   getMoveMatchingTarProp,
 }) {
@@ -22,8 +22,8 @@ export function GameBoard({
             key={tile.tile_id}
             tile_id={tile.tile_id}
             tile_num={tile.tile_num}
-            handleOnDragProp={handleOnDragProp}
-            handleOnDropProp={handleOnDropProp}
+            handleOnDrag_SetDropzones={handleOnDrag_SetDropzones}
+            handleOnDrop_ExecuteMove={handleOnDrop_ExecuteMove}
             getPieceMatchingIndexProp={getPieceMatchingIndexProp}
             isDropZone={isDropZone}
           />

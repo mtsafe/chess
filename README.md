@@ -12,7 +12,7 @@ App level functions should do at least one of these things: be passed as props, 
 to handle events, and set state variables.
 
 App level functions that will be passed as props will be named ...Prop.
-App level functions that handle events will be named handle{EventName}.
+App level event handler functions will be named handle{EventName}\_{WhatItDoes}.
 
 ### State setting and directory
 

@@ -15,10 +15,10 @@ import Empty from "./assets/transparent100x100.png"
 export function PieceImg({
   tile_num,
   tileShade,
-  handleOnDragProp,
+  handleOnDrag_SetDropzones,
   getPieceMatchingIndexProp,
   isDropZone,
-  handleOnDropProp,
+  handleOnDrop_ExecuteMove,
 }) {
   let alt, src
   let pieceHere = getPieceMatchingIndexProp(tile_num)
@@ -90,9 +90,9 @@ export function PieceImg({
   if (isDropZone) {
     className += " dropzone"
     onDragOver = e => e.preventDefault()
-    onDrop = e => handleOnDropProp(e)
+    onDrop = e => handleOnDrop_ExecuteMove(e)
   } else {
-    onDragStart = e => handleOnDragProp(e)
+    onDragStart = e => handleOnDrag_SetDropzones(e)
     draggable = true
   }
   return (

@@ -69,7 +69,14 @@ function App() {
     return undefined
   }
 
-  function restartGame() {
+  function changeAI(value) {
+    setAIStrategy(parseInt(value))
+  }
+
+  // ***************************
+  // EVENT HANDLERS
+
+  function handleOnClick_RestartGame() {
     setCastleability(newCastleability())
     setPieces1(newPieces1())
     setPieces2(newPieces2())
@@ -78,15 +85,9 @@ function App() {
     setEnPassantOpportunity(OFF_BOARD)
   }
 
-  function changeAI(value) {
-    setAIStrategy(parseInt(value))
-  }
-
-  // ***************************
-  // EVENT HANDLERS
-  function handleOnDragProp(e) {
+  function handleOnDrag_SetDropzones(e) {
     console.log(
-      `handleOnDragProp(): targetTileNum=${e.target.getAttribute(
+      `handleOnDrag_SetDropzones(): targetTileNum=${e.target.getAttribute(
         "tile_num"
       )}  classList="${e.target.classList}"`
     )
@@ -101,11 +102,11 @@ function App() {
     setDropTargetMoves(findDropTargets(e.target, onDragState))
   }
 
-  function handleOnDropProp(e) {
+  function handleOnDrop_ExecuteMove(e) {
     // prevent default action (open as link for some elements)
     e.preventDefault()
     console.log(
-      `handleOnDropProp(): targetTileNum=${e.target.getAttribute(
+      `handleOnDrop_ExecuteMove(): targetTileNum=${e.target.getAttribute(
         "tile_num"
       )}  classList="${e.target.classList}"`
     )
@@ -147,8 +148,8 @@ function App() {
       <h2>[You Against AI!]</h2>
       <GameBoard
         tiles={tiles}
-        handleOnDragProp={handleOnDragProp}
-        handleOnDropProp={handleOnDropProp}
+        handleOnDrag_SetDropzones={handleOnDrag_SetDropzones}
+        handleOnDrop_ExecuteMove={handleOnDrop_ExecuteMove}
         getPieceMatchingIndexProp={getPieceMatchingIndexProp}
         getMoveMatchingTarProp={getMoveMatchingTarProp}
       />
@@ -156,7 +157,9 @@ function App() {
         <GameStatus statusMsg={statusMsg} isCheck={isCheck} />
         <div>
           <span>
-            <NewGameButton restartGame={restartGame} />
+            <NewGameButton
+              handleOnClick_RestartGame={handleOnClick_RestartGame}
+            />
             <AISelector changeAI={changeAI} />
           </span>
         </div>
