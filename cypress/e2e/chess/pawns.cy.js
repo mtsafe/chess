@@ -2,7 +2,7 @@ function hitRestartButton() {
   cy.get("#restart-button").click()
 }
 
-function validMovePawnA2B(a, b) {
+function validPawnMoveA2B(a, b) {
   let dataTransfer = new DataTransfer()
   cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).should("be.visible")
   cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).trigger("dragstart", {
@@ -14,7 +14,7 @@ function validMovePawnA2B(a, b) {
   cy.get(`div[tile_id="${b}"] div img[alt="Your pawn"]`).should("be.visible")
 }
 
-function invalidMovePawnA2B(a, b) {
+function invalidPawnMoveA2B(a, b) {
   let dataTransfer = new DataTransfer()
   if (a < 0 || a > 63) return
   cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).should("be.visible")
@@ -26,7 +26,7 @@ function invalidMovePawnA2B(a, b) {
   cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).should("be.visible")
 }
 
-function validPromotePawnA2B(a, b) {
+function validPawnPromoteA2B(a, b) {
   let dataTransfer = new DataTransfer()
   cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).should("be.visible")
   cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).trigger("dragstart", {
@@ -44,28 +44,28 @@ describe("Test pawns", () => {
   })
 
   it("Moves each pawn double step", () => {
-    for (let i = 0; i < 8; i++) validMovePawnA2B(i + 48, i + 32)
+    for (let i = 0; i < 8; i++) validPawnMoveA2B(i + 48, i + 32)
   })
 
   it("Moves each pawn: single steps, attacks, promotes, and invalid moves", () => {
     for (let i = 0; i < 8; i++) {
       for (let j = 48; j > 23; j -= 8) {
-        validMovePawnA2B(i + j, i + j - 8)
+        validPawnMoveA2B(i + j, i + j - 8)
       }
     }
 
     // Step off board left, right
-    invalidMovePawnA2B(16, 7)
-    invalidMovePawnA2B(16, 15)
-    invalidMovePawnA2B(16, 23)
-    invalidMovePawnA2B(23, 24)
-    invalidMovePawnA2B(23, 16)
-    invalidMovePawnA2B(23, 32)
+    invalidPawnMoveA2B(16, 7)
+    invalidPawnMoveA2B(16, 15)
+    invalidPawnMoveA2B(16, 23)
+    invalidPawnMoveA2B(23, 24)
+    invalidPawnMoveA2B(23, 16)
+    invalidPawnMoveA2B(23, 32)
 
     // Step forward & backward
     for (let i = 16; i < 24; i++) {
-      invalidMovePawnA2B(i, i - 8)
-      invalidMovePawnA2B(i, i + 8)
+      invalidPawnMoveA2B(i, i - 8)
+      invalidPawnMoveA2B(i, i + 8)
     }
 
     // attack left, right
@@ -73,19 +73,20 @@ describe("Test pawns", () => {
     for (let i = 16; i < 24; i++) {
       if (i % 2 === 0) attack = -7
       else attack = -9
-      validMovePawnA2B(i, i + attack)
+      validPawnMoveA2B(i, i + attack)
     }
 
     // Step forward
     for (let i = 8; i < 16; i++) {
-      invalidMovePawnA2B(i, i - 8)
+      invalidPawnMoveA2B(i, i - 8)
     }
 
     // attack left, right
     for (let i = 8; i < 16; i++) {
       if (i % 2 === 0) attack = -7
       else attack = -9
-      validPromotePawnA2B(i, i + attack)
+      validPawnPromoteA2B(i, i + attack)
+      cy.get(`div[tile_id="${i}"] div img[alt=""]`).should("be.visible")
     }
   })
 })
