@@ -40,7 +40,7 @@ function App() {
   //  const [moves, setMoves] = useState([])
   const [isCheck, setIsCheck] = useState(false)
   const [statusMsg, setStatusMsg] = useState("Go!")
-  // const [aiStrategy, setAIStrategy] = useState(1)
+  const [aiStrategy, setAIStrategy] = useState("3")
 
   function canCastle() {
     if (isCheck)
@@ -70,12 +70,12 @@ function App() {
     return undefined
   }
 
-  function changeAI(value) {
-    setAIStrategy(parseInt(value))
-  }
-
   // ***************************
   // EVENT HANDLERS
+
+  function handleOnChange_AIAlgoMode(value) {
+    setAIStrategy(parseInt(value))
+  }
 
   function handleOnClick_RestartGame() {
     setCastleability(newCastleability())
@@ -162,7 +162,7 @@ function App() {
             <NewGameButton
               handleOnClick_RestartGame={handleOnClick_RestartGame}
             />
-            <AISelector changeAI={changeAI} />
+            <AISelector handleOnChange_AIAlgoMode={handleOnChange_AIAlgoMode} />
           </span>
         </div>
       </div>

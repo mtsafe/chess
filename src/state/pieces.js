@@ -1,4 +1,15 @@
-import { rf2Index } from "../lib/applib"
+import {
+  rc2Index,
+  rf2Index,
+  index2Rank,
+  index2File,
+  index2Column,
+  aiChoosesTile,
+  numMovesLeft,
+  tie,
+  locateOneMoveWin,
+  winner,
+} from "../lib/applib"
 // STATE SUPPORT FUNCTIONS
 
 function newPieces1() {

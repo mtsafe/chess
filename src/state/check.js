@@ -1,11 +1,15 @@
 import {
+  newPieces1,
+  newPieces2,
+  getFreshPiecesWithout,
   getPieceMatchingCode,
   getPieceMatchingIndex1,
   getPieceMatchingIndex2,
+  killPiece,
+  movePiece,
+  promotePiece,
 } from "./pieces"
-// cannot move into check
 
-// must move out of check
 const angleToOffset = {
   0: 1,
   45: -7,
@@ -37,19 +41,8 @@ function orientation(playerNum) {
 function isPlayerInCheck(defPieces, atkPieces) {
   let { index: kingIndex } = getPieceMatchingCode("K", defPieces)
   return !atkPieces.every(atkPiece => {
-    if (isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces))
-      console.log(`Player is in check from ${atkPiece.code}`)
     return !isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces)
   })
-  // atkPieces.every(atkPiece => {
-  //   if (isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces)) {
-  //     console.log("isPlayerInCheckFrom() returned TRUE")
-  //     console.log("isPlayerInCheck() returning TRUE")
-  //   }
-  //   return !isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces)
-  //   })
-  // console.log("isPlayerInCheck() returning FALSE")
-  // return false
 }
 
 function isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces) {
@@ -58,13 +51,11 @@ function isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces) {
       kingIndex
     )
   )
-    console.log(`=== King @${kingIndex} is covered by ${atkPiece.code}`)
-
-  return getTilesCovered[atkPiece.letter](
-    atkPiece,
-    atkPieces,
-    defPieces
-  ).includes(kingIndex)
+    return getTilesCovered[atkPiece.letter](
+      atkPiece,
+      atkPieces,
+      defPieces
+    ).includes(kingIndex)
 }
 
 const getTilesCovered = {
@@ -76,15 +67,10 @@ const getTilesCovered = {
       srcIndex + angleToOffset[45] * way,
       srcIndex + angleToOffset[135] * way,
     ]
-    // return getTilesCoveredByOffsets(
-    //   [angleToOffset[45] * way, angleToOffset[135] * way],
-    //   srcIndex
-    // )
   },
   N: (atkPiece, atkPieces, defPieces) => {
     let srcIndex = atkPiece.index
 
-    console.log(`<<< knight ${srcIndex} covers >>>`)
     return getTilesCoveredByOffsets(knightOffsets, srcIndex)
   },
   B: (atkPiece, atkPieces, defPieces) => {
@@ -127,7 +113,6 @@ function getTilesCoveredByOffsets(offsets, srcIndex) {
     tarIndex = srcIndex + offset
     if (areLocal(tarIndex, srcIndex)) result.push(tarIndex)
   }
-  console.dir(result)
   return result
 }
 
