@@ -84,6 +84,7 @@ const getTilesCovered = {
   N: (atkPiece, atkPieces, defPieces) => {
     let srcIndex = atkPiece.index
 
+    console.log(`<<< knight ${srcIndex} covers >>>`)
     return getTilesCoveredByOffsets(knightOffsets, srcIndex)
   },
   B: (atkPiece, atkPieces, defPieces) => {
@@ -122,10 +123,11 @@ function areLocal(index1, index2) {
 function getTilesCoveredByOffsets(offsets, srcIndex) {
   let tarIndex,
     result = []
-  for (const offset in offsets) {
+  for (const offset of offsets) {
     tarIndex = srcIndex + offset
     if (areLocal(tarIndex, srcIndex)) result.push(tarIndex)
   }
+  console.dir(result)
   return result
 }
 
