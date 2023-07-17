@@ -1,5 +1,7 @@
 import { getEnPassantOpp } from "../state/enPassantOpportunity"
 import {
+  getDefAtk,
+  getMovPlayer,
   killPiece,
   movePiece,
   promotePiece,
@@ -18,13 +20,17 @@ function computeOnDropStateChanges({
   pieces1,
   pieces2,
 }) {
+  console.log("computeOnDropStateChanges()")
   let { action, srcIndex, srcPiece, tarIndex, tarPiece } = move
   let freshCastleability, freshEnPassantOpp, freshPieces1, freshPieces2
+  let thePlayer
 
   const actionValues = {
     [Action.MOVE]: () => {
+      thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
       freshCastleability = verifyCastleability(srcIndex, castleability)
-      freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+      if (thePlayer == 1) freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+      else freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
       freshEnPassantOpp = getEnPassantOpp(move)
       // also en passant opportunity for 2-step Pawn
     },

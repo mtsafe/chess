@@ -10,8 +10,11 @@ import {
   locateOneMoveWin,
   winner,
 } from "../lib/applib"
-// STATE SUPPORT FUNCTIONS
 
+// STATE SUPPORT CONSTANTS
+const orientation = { 1: -1, 2: 1 }
+
+// STATE SUPPORT FUNCTIONS
 function newPieces1() {
   // player one is light shade
   let result = [
@@ -112,7 +115,16 @@ function makeQueen(tarIndex, pieces) {
 function movePiece(srcIndex, tarIndex, pieces) {
   console.log(`movePiece(${srcIndex}, ${tarIndex})`)
   let piece = getPieceMatchingIndex1(srcIndex, pieces)
+  if (piece === undefined) console.log("srcIndex not found in pieces")
   if (piece === undefined) return
+
+  console.log("Moved piece set looks like")
+  console.dir(
+    pieces.map(p => {
+      if (p.index === srcIndex) p.index = tarIndex
+      return p
+    })
+  )
 
   return pieces.map(p => {
     if (p.index === srcIndex) p.index = tarIndex
@@ -127,10 +139,30 @@ function promotePiece(tarIndex, pieces) {
   return makeQueen(tarIndex, pieces)
 }
 
+function getMovPlayer(srcIndex, pieces1, pieces2) {
+  let pieceAtSource = getPieceMatchingIndex1(srcIndex, pieces1.concat(pieces2))
+
+  return pieceAtSource?.player
+}
+
+function getDefAtk(srcIndex, pieces1, pieces2) {
+  let pieceAtSource = getPieceMatchingIndex1(srcIndex, pieces1.concat(pieces2))
+  let defPieces = pieces1
+  let atkPieces = pieces2
+  console.log("getDefAtk()")
+
+  if (pieceAtSource.player === 2)
+    [defPieces, atkPieces] = [atkPieces, defPieces]
+  return { defPieces, atkPieces }
+}
+
 export {
+  orientation,
   newPieces1,
   newPieces2,
   getFreshPiecesWithout,
+  getDefAtk,
+  getMovPlayer,
   getPieceMatchingCode,
   getPieceMatchingIndex1,
   getPieceMatchingIndex2,

@@ -140,6 +140,7 @@ function App() {
   }
   // ***************************
   // EXECUTION BEGINS (OTHER THAN STATE HOOK DECLARATIONS)
+
   let foot = tiles.map(tile => {
     return tile.letter
   })

@@ -10,12 +10,12 @@ import {
   player1King,
   player1Knight,
   player1Queen,
-  player1Pawn1Step,
+  pawn1Step,
   player1Pawn2Step,
   player1PawnCaptureLeft,
   player1PawnCaptureRight,
   player1Rook,
-} from "./player1moves"
+} from "./playermoves"
 
 // ONDRAG EVENT HANDLER SUPPORT FUNCTIONS
 function findDropTargets(pieceElement, onDragState) {
@@ -24,7 +24,7 @@ function findDropTargets(pieceElement, onDragState) {
   let { letter } = getPieceMatchingIndex2(parseInt(srcIndex), onDragState)
   switch (letter) {
     case "P":
-      result.push(player1Pawn1Step(srcIndex, onDragState))
+      result.push(pawn1Step(srcIndex, onDragState))
       result.push(player1Pawn2Step(srcIndex, onDragState))
       result.push(player1PawnCaptureLeft(srcIndex, onDragState))
       result.push(player1PawnCaptureRight(srcIndex, onDragState))

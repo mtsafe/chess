@@ -49,7 +49,7 @@ describe("Test AIStrategies", () => {
     validMoveA2B(62, 62 - 17, 1, "knight")
     validMoveA2B(60, 60 + 2, 1, "king")
     // Move player 2 pieces
-    // validMoveA2B(8, 24, 2, "pawn")
+    validMoveA2B(8, 16, 2, "pawn")
 
     // Select Test Mode 2 = player takes turns
     cy.get("#ai-algo").select("Test Mode 2")
