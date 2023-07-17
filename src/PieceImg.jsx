@@ -71,7 +71,7 @@ export function PieceImg({
         src = DarkBishop
         break
       case "N":
-        alt = "Computer's Knight"
+        alt = "Computer's knight"
         src = DarkKnight
         break
       case "R":

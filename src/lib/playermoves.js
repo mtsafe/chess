@@ -129,24 +129,31 @@ function pawn1Step(srcIndex, onDragState) {
   console.log(`pawn1Step(${srcIndex}, onDragState)`)
   let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
   let tarIndex = srcIndex + 8 * orientation[pieceAtSource.player]
-  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
-  console.log("pieceAtTarget =")
-  console.dir(pieceAtTarget)
-  if (pieceAtTarget === undefined) {
-    if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
-    return movePieceAction(srcIndex, "P", tarIndex, onDragState)
-  }
+  if (getPieceMatchingIndex2(tarIndex, onDragState) !== undefined) return
+  if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
+  return movePieceAction(srcIndex, "P", tarIndex, onDragState)
 }
 
-function player1Pawn2Step(srcIndex, onDragState) {
-  if (index2Rank(srcIndex) !== 2) return
-  let tarIndex = srcIndex - 8
-  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
-  if (pieceAtTarget !== undefined) return
-  tarIndex = srcIndex - 16
-  pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
-  if (pieceAtTarget !== undefined) return
-  if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
+function isPawnOnFrontLine(srcIndex, onDragState) {
+  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+  if (orientation[pieceAtSource.player] === -1) {
+    if (index2Rank(srcIndex) == 2) return true
+  } else if (index2Rank(srcIndex) == 7) return true
+  return false
+}
+
+function pawn2Step(srcIndex, onDragState) {
+  if (!isPawnOnFrontLine(srcIndex, onDragState))
+    console.log("Pawn is not on the front line to 2 step.")
+  if (!isPawnOnFrontLine(srcIndex, onDragState)) return
+
+  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+  let tarIndex = srcIndex + 8 * orientation[pieceAtSource.player]
+  if (getPieceMatchingIndex2(tarIndex, onDragState) !== undefined) return
+
+  tarIndex = srcIndex + 16 * orientation[pieceAtSource.player]
+  if (getPieceMatchingIndex2(tarIndex, onDragState) !== undefined) return
+
   return movePieceAction(srcIndex, "P", tarIndex, onDragState)
 }
 
@@ -434,7 +441,7 @@ export {
   player1Knight,
   player1Queen,
   pawn1Step,
-  player1Pawn2Step,
+  pawn2Step,
   player1PawnCaptureLeft,
   player1PawnCaptureRight,
   player1Rook,
