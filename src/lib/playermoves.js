@@ -30,7 +30,7 @@ import * as Action from "./actions"
 // }
 
 // KING MOVES
-function player1King(srcIndex, onDragState) {
+function kingStep(srcIndex, onDragState) {
   let result = []
   let file = index2File(srcIndex)
   let rank = index2Rank(srcIndex)
@@ -46,8 +46,9 @@ function player1King(srcIndex, onDragState) {
     result.push(genericMove(srcIndex, 8, "K", onDragState))
     if (file !== "h") result.push(genericMove(srcIndex, 9, "K", onDragState))
   }
-  result.push(kingKingsideCastle(srcIndex, 1, onDragState))
-  result.push(kingQueensideCastle(srcIndex, 1, onDragState))
+  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+  result.push(kingKingsideCastle(srcIndex, pieceAtSource.player, onDragState))
+  result.push(kingQueensideCastle(srcIndex, pieceAtSource.player, onDragState))
   return result.filter(Boolean)
 }
 
@@ -61,8 +62,8 @@ function kingKingsideCastle(srcIndex, playerNum, onDragState) {
       (playerNum === 2 &&
         srcIndex === 4 &&
         theCastleablility.player2Kingside)) &&
-    !getPieceMatchingIndex2(srcIndex - 1, onDragState) !== undefined &&
-    !getPieceMatchingIndex2(srcIndex - 2, onDragState) !== undefined
+    getPieceMatchingIndex2(srcIndex + 1, onDragState) === undefined &&
+    getPieceMatchingIndex2(srcIndex + 2, onDragState) === undefined
   )
     return kingsideCastle(srcIndex)
 }
@@ -437,7 +438,7 @@ function kingsideCastle(srcIndex) {
 
 export {
   player1Bishop,
-  player1King,
+  kingStep,
   player1Knight,
   player1Queen,
   pawn1Step,

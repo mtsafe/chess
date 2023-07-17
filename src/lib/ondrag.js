@@ -7,7 +7,7 @@ import {
 
 import {
   player1Bishop,
-  player1King,
+  kingStep,
   player1Knight,
   player1Queen,
   pawn1Step,
@@ -42,7 +42,7 @@ function findDropTargets(pieceElement, onDragState) {
       result = player1Queen(srcIndex, onDragState)
       break
     case "K":
-      result = player1King(srcIndex, onDragState)
+      result = kingStep(srcIndex, onDragState)
       break
   }
   return result.filter(Boolean) // remove undefined elements from array

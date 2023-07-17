@@ -29,42 +29,79 @@ function computeOnDropStateChanges({
     [Action.MOVE]: () => {
       thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
       freshCastleability = verifyCastleability(srcIndex, castleability)
-      if (thePlayer == 1) freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+      if (thePlayer === 1) freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
       else freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
       freshEnPassantOpp = getEnPassantOpp(move)
       // also en passant opportunity for 2-step Pawn
     },
     [Action.CAPTURE]: () => {
+      thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
       freshCastleability = verifyCastleability(srcIndex, castleability)
       freshCastleability = verifyCastleability(tarIndex, freshCastleability)
-      freshPieces2 = killPiece(tarIndex, pieces2)
-      freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+      if (thePlayer === 1) {
+        freshPieces2 = killPiece(tarIndex, pieces2)
+        freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+      } else {
+        freshPieces1 = killPiece(tarIndex, pieces1)
+        freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
+      }
     },
     [Action.MOVE_PROMOTE]: () => {
+      thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
       freshCastleability = castleability
-      freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
-      freshPieces1 = promotePiece(tarIndex, freshPieces1)
+      if (thePlayer === 1) {
+        freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+        freshPieces1 = promotePiece(tarIndex, freshPieces1)
+      } else {
+        freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
+        freshPieces2 = promotePiece(tarIndex, freshPieces2)
+      }
     },
     [Action.CAPTURE_PROMOTE]: () => {
+      thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
       freshCastleability = verifyCastleability(tarIndex, castleability)
-      freshPieces2 = killPiece(tarIndex, pieces2)
-      freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
-      freshPieces1 = promotePiece(tarIndex, freshPieces1)
+      if (thePlayer === 1) {
+        freshPieces2 = killPiece(tarIndex, pieces2)
+        freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+        freshPieces1 = promotePiece(tarIndex, freshPieces1)
+      } else {
+        freshPieces1 = killPiece(tarIndex, pieces1)
+        freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
+        freshPieces2 = promotePiece(tarIndex, freshPieces2)
+      }
     },
     [Action.EN_PASSANT]: () => {
+      thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
       freshCastleability = castleability
-      freshPieces2 = killPiece(enPassantOpportunity, pieces2)
-      freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+      if (thePlayer === 1) {
+        freshPieces2 = killPiece(enPassantOpportunity, pieces2)
+        freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+      } else {
+        freshPieces1 = killPiece(enPassantOpportunity, pieces1)
+        freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
+      }
     },
     [Action.KINGSIDE_CASTLE]: () => {
+      thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
       freshCastleability = verifyCastleability(srcIndex, castleability)
-      freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
-      freshPieces1 = movePiece(srcIndex + 3, srcIndex + 1, freshPieces1)
+      if (thePlayer === 1) {
+        freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+        freshPieces1 = movePiece(srcIndex + 3, srcIndex + 1, freshPieces1)
+      } else {
+        freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
+        freshPieces2 = movePiece(srcIndex + 3, srcIndex + 1, freshPieces2)
+      }
     },
     [Action.QUEENSIDE_CASTLE]: () => {
+      thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
       freshCastleability = verifyCastleability(srcIndex, castleability)
-      freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
-      freshPieces1 = movePiece(srcIndex - 4, srcIndex - 1, freshPieces1)
+      if (thePlayer === 1) {
+        freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
+        freshPieces1 = movePiece(srcIndex - 4, srcIndex - 1, freshPieces1)
+      } else {
+        freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
+        freshPieces2 = movePiece(srcIndex - 4, srcIndex - 1, freshPieces2)
+      }
     },
     default: () => {
       return
