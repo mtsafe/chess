@@ -13,9 +13,8 @@ export function GameBoard({
         let isDropZone = false
 
         if (getMoveMatchingTarProp(tile.tile_num) !== undefined)
-          console.log("marking square " + tile.tile_num)
-        if (getMoveMatchingTarProp(tile.tile_num) !== undefined)
           isDropZone = true
+        if (isDropZone) console.log(`- square ${tile.tile_num} isDropZone`)
         return (
           <SquareTile
             {...tile}

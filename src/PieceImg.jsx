@@ -87,6 +87,7 @@ export function PieceImg({
 
   let draggable, onDragStart, onDragOver, onDrop
   //  if (tile_num === 48) draggable = true
+  if (isDropZone) console.log(`--- isDropZone=${isDropZone}`)
   if (isDropZone) {
     className += " dropzone"
     onDragOver = e => e.preventDefault()

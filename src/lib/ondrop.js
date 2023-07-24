@@ -7,7 +7,7 @@ import {
   promotePiece,
   getPieceMatchingIndex2,
 } from "../state/pieces"
-import { verifyCastleability } from "../state/castleability"
+import { castleabilityUpdater } from "../state/castleability"
 
 // CONSTANTS
 import * as Action from "./actions"
@@ -28,7 +28,7 @@ function computeOnDropStateChanges({
   const actionValues = {
     [Action.MOVE]: () => {
       thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
-      freshCastleability = verifyCastleability(srcIndex, castleability)
+      freshCastleability = castleabilityUpdater(srcIndex, castleability)
       if (thePlayer === 1) freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
       else freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
       freshEnPassantOpp = getEnPassantOpp(move)
@@ -36,8 +36,8 @@ function computeOnDropStateChanges({
     },
     [Action.CAPTURE]: () => {
       thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
-      freshCastleability = verifyCastleability(srcIndex, castleability)
-      freshCastleability = verifyCastleability(tarIndex, freshCastleability)
+      freshCastleability = castleabilityUpdater(srcIndex, castleability)
+      freshCastleability = castleabilityUpdater(tarIndex, freshCastleability)
       if (thePlayer === 1) {
         freshPieces2 = killPiece(tarIndex, pieces2)
         freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
@@ -59,7 +59,7 @@ function computeOnDropStateChanges({
     },
     [Action.CAPTURE_PROMOTE]: () => {
       thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
-      freshCastleability = verifyCastleability(tarIndex, castleability)
+      freshCastleability = castleabilityUpdater(tarIndex, castleability)
       if (thePlayer === 1) {
         freshPieces2 = killPiece(tarIndex, pieces2)
         freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
@@ -83,7 +83,7 @@ function computeOnDropStateChanges({
     },
     [Action.KINGSIDE_CASTLE]: () => {
       thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
-      freshCastleability = verifyCastleability(srcIndex, castleability)
+      freshCastleability = castleabilityUpdater(srcIndex, castleability)
       if (thePlayer === 1) {
         freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
         freshPieces1 = movePiece(srcIndex + 3, srcIndex + 1, freshPieces1)
@@ -94,7 +94,7 @@ function computeOnDropStateChanges({
     },
     [Action.QUEENSIDE_CASTLE]: () => {
       thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
-      freshCastleability = verifyCastleability(srcIndex, castleability)
+      freshCastleability = castleabilityUpdater(srcIndex, castleability)
       if (thePlayer === 1) {
         freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
         freshPieces1 = movePiece(srcIndex - 4, srcIndex - 1, freshPieces1)

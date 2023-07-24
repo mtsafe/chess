@@ -53,34 +53,64 @@ function kingStep(srcIndex, onDragState) {
 }
 
 function kingKingsideCastle(srcIndex, playerNum, onDragState) {
-  console.log(`kingKingsideCastle(${srcIndex}, ${playerNum})`)
+  console.log(`kingKingsideCastle(${srcIndex}, player=${playerNum})`)
   let theCastleablility = onDragState.canCastle()
   if (
     ((playerNum === 1 &&
       srcIndex === 60 &&
-      theCastleablility.player1Kingside) ||
+      theCastleablility.player1Kingside &&
+      !isPlayerInCheck(onDragState.pieces1, onDragState.pieces2)) ||
       (playerNum === 2 &&
         srcIndex === 4 &&
-        theCastleablility.player2Kingside)) &&
+        theCastleablility.player2Kingside &&
+        !isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))) &&
     getPieceMatchingIndex2(srcIndex + 1, onDragState) === undefined &&
-    getPieceMatchingIndex2(srcIndex + 2, onDragState) === undefined
+    getPieceMatchingIndex2(srcIndex + 2, onDragState) === undefined &&
+    isSimulateMovePieceGood(srcIndex, srcIndex + 1, onDragState) &&
+    isSimulateMovePieceGood(srcIndex, srcIndex + 2, onDragState)
   )
     return kingsideCastle(srcIndex)
 }
 
 function kingQueensideCastle(srcIndex, playerNum, onDragState) {
-  console.log(`kingQueensideCastle(${srcIndex}, ${playerNum})`)
+  console.log(`kingQueensideCastle(${srcIndex}, player=${playerNum})`)
   let theCastleablility = onDragState.canCastle()
+  // if (
+  //   (playerNum === 1 &&
+  //     srcIndex === 60 &&
+  //     theCastleablility.player1Queenside &&
+  //     !isPlayerInCheck(onDragState.pieces1, onDragState.pieces2)) ||
+  //   (playerNum === 2 &&
+  //     srcIndex === 4 &&
+  //     theCastleablility.player2Queenside &&
+  //     !isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))
+  // )
+  //   console.log(">>> kingQueensideCastle Test 1 = TRUE")
+  // if (
+  //   getPieceMatchingIndex2(srcIndex - 1, onDragState) === undefined &&
+  //   getPieceMatchingIndex2(srcIndex - 2, onDragState) === undefined &&
+  //   getPieceMatchingIndex2(srcIndex - 3, onDragState) === undefined
+  // )
+  //   console.log(">>> kingQueensideCastle Test 2 = TRUE")
+  // if (isSimulateMovePieceGood(srcIndex, srcIndex - 1, onDragState))
+  //   console.log(">>> kingQueensideCastle Test 3A = TRUE")
+  // if (isSimulateMovePieceGood(srcIndex, srcIndex - 2, onDragState))
+  //   console.log(">>> kingQueensideCastle Test 3B = TRUE")
+
   if (
     ((playerNum === 1 &&
       srcIndex === 60 &&
-      theCastleablility.player1Queenside) ||
+      theCastleablility.player1Queenside &&
+      !isPlayerInCheck(onDragState.pieces1, onDragState.pieces2)) ||
       (playerNum === 2 &&
         srcIndex === 4 &&
-        theCastleablility.player2Queenside)) &&
-    !getPieceMatchingIndex2(srcIndex - 1, onDragState) !== undefined &&
-    !getPieceMatchingIndex2(srcIndex - 2, onDragState) !== undefined &&
-    !getPieceMatchingIndex2(srcIndex - 3, onDragState) !== undefined
+        theCastleablility.player2Queenside &&
+        !isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))) &&
+    getPieceMatchingIndex2(srcIndex - 1, onDragState) === undefined &&
+    getPieceMatchingIndex2(srcIndex - 2, onDragState) === undefined &&
+    getPieceMatchingIndex2(srcIndex - 3, onDragState) === undefined &&
+    isSimulateMovePieceGood(srcIndex, srcIndex - 1, onDragState) &&
+    isSimulateMovePieceGood(srcIndex, srcIndex - 2, onDragState)
   )
     return queensideCastle(srcIndex)
 }
@@ -115,8 +145,7 @@ function player1Knight(srcIndex, onDragState) {
 }
 
 function genericMove(srcIndex, tarOffset, letter, onDragState) {
-  // disallow player to move into check
-  // isPlayerInCheck(defPieces, atkPieces)
+  console.log(`genericMove(srcIndex, tarOffset, letter, onDragState)`)
   let tarIndex = srcIndex + tarOffset
   let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget === undefined)
@@ -213,6 +242,7 @@ function genericBishop(srcIndex, letter, onDragState) {
 }
 
 function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
+  console.log(`bishopRadiate(quadrant, srcIndex, letter, onDragState)`)
   let tarOffset,
     condition,
     nextPosition,
@@ -288,6 +318,7 @@ function genericRook(srcIndex, letter, onDragState) {
 }
 
 function rookHorizontal(direction, srcIndex, letter, rank, onDragState) {
+  console.log(`rookHorizontal(direction, srcIndex, letter, rank, onDragState)`)
   let column,
     start,
     condition,
@@ -318,6 +349,7 @@ function rookHorizontal(direction, srcIndex, letter, rank, onDragState) {
 }
 
 function rookVertical(direction, srcIndex, letter, file, onDragState) {
+  console.log(`rookVertical(direction, srcIndex, letter, file, onDragState)`)
   let rank,
     start,
     condition,
@@ -368,12 +400,14 @@ function capturePieceEnPassant(srcIndex, tarIndex) {
 }
 
 function isSimulateMovePieceGood(srcIndex, tarIndex, onDragState) {
-  // Simulate move piece to check that it is valid
+  // Simulate move piece to check that it is valid / not into check
   let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
   let defPieces = structuredClone(onDragState.pieces1)
   let atkPieces = structuredClone(onDragState.pieces2)
-  console.log("isSimulateMovePieceGood: pieceAtSource")
-  console.dir(pieceAtSource)
+  console.log(
+    `isSimulateMovePieceGood: ${pieceAtSource.name}@${pieceAtSource.index}`
+  )
+  // console.dir(pieceAtSource)
 
   if (pieceAtSource.player === 2)
     [defPieces, atkPieces] = [atkPieces, defPieces]

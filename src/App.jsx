@@ -8,7 +8,7 @@ import { NewGameButton } from "./NewGameButton"
 
 // FUNCTIONS SUPPORTING STATE
 import { getEnPassantOpp } from "./state/enPassantOpportunity"
-import { verifyCastleability, newCastleability } from "./state/castleability"
+import { castleabilityUpdater, newCastleability } from "./state/castleability"
 import {
   newPieces1,
   newPieces2,
@@ -88,7 +88,7 @@ function App() {
 
   function handleOnDrag_SetDropzones(e) {
     console.log(
-      `handleOnDrag_SetDropzones(): targetTileNum=${e.target.getAttribute(
+      `<==EVENT===\nhandleOnDrag_SetDropzones(): targetTileNum=${e.target.getAttribute(
         "tile_num"
       )}  classList="${e.target.classList}"`
     )
@@ -108,7 +108,7 @@ function App() {
     // prevent default action (open as link for some elements)
     e.preventDefault()
     console.log(
-      `handleOnDrop_ExecuteMove(): targetTileNum=${e.target.getAttribute(
+      `===EVENT==>\nhandleOnDrop_ExecuteMove(): targetTileNum=${e.target.getAttribute(
         "tile_num"
       )}  classList="${e.target.classList}"`
     )

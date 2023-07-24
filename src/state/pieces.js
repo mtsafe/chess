@@ -118,13 +118,13 @@ function movePiece(srcIndex, tarIndex, pieces) {
   if (piece === undefined) console.log("srcIndex not found in pieces")
   if (piece === undefined) return
 
-  console.log("Moved piece set looks like")
-  console.dir(
-    pieces.map(p => {
-      if (p.index === srcIndex) p.index = tarIndex
-      return p
-    })
-  )
+  // console.log("Moved piece set looks like")
+  // console.dir(
+  //   pieces.map(p => {
+  //     if (p.index === srcIndex) p.index = tarIndex
+  //     return p
+  //   })
+  // )
 
   return pieces.map(p => {
     if (p.index === srcIndex) p.index = tarIndex

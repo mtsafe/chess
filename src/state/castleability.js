@@ -7,7 +7,7 @@ function newCastleability() {
   }
 }
 
-function verifyCastleability(srcIndex, oldCastleability) {
+function castleabilityUpdater(srcIndex, oldCastleability) {
   const castleabilityUpdaterPositionTable = {
     0: { ...oldCastleability, player2Queenside: false },
     4: { ...oldCastleability, player2Kingside: false, player2Queenside: false },
@@ -28,4 +28,4 @@ function verifyCastleability(srcIndex, oldCastleability) {
   )
 }
 
-export { verifyCastleability, newCastleability }
+export { castleabilityUpdater, newCastleability }
