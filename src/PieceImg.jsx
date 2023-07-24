@@ -92,7 +92,7 @@ export function PieceImg({
     className += " dropzone"
     onDragOver = e => e.preventDefault()
     onDrop = e => handleOnDrop_ExecuteMove(e)
-  } else {
+  } else if (typeof pieceHere !== "undefined") {
     onDragStart = e => handleOnDrag_SetDropzones(e)
     draggable = true
   }

@@ -39,11 +39,11 @@ function invalidMoveA2B(a, b, player, pName) {
   cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should("be.visible")
 }
 
-function checkPosition(a, player, pName) {
+function validatePosition(a, player, pName) {
   const playerStr = ["", "Your", "Computer's"]
   let imgSelector = `alt="${playerStr[player]} ${pName}"`
   if (a < 0 || a > 63) {
-    console.log(`Code Error: checkPosition(${a}, ${position}, ${pName})`)
+    console.log(`Code Error: validatePosition(${a}, ${position}, ${pName})`)
     return
   }
   cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should("be.visible")
@@ -124,12 +124,12 @@ describe("Test check", () => {
     validMovePlayer2(q2, (q2 += 16), "queen")
     // now try to illegally queenside castle covered by check by queen
     invalidMovePlayer2(k2, k2 - 2, "king")
-    checkPosition(qr2, 2, "rook")
+    validatePosition(qr2, 2, "rook")
     // back up player 1 queen
     validMovePlayer1(q1, (q1 += 8), "queen")
     // now try to legally queenside castle while b8 is covered by check by queen
     validMovePlayer2(k2, (k2 -= 2), "king")
-    checkPosition((qr2 += 3), 2, "rook")
+    validatePosition((qr2 += 3), 2, "rook")
   })
 
   it("Cannot kingside castle into check", () => {
@@ -160,7 +160,7 @@ describe("Test check", () => {
     validMovePlayer1(kn1, (kn1 -= 15), "knight")
     // now try to legally kingside castle
     validMovePlayer1(k1, (k1 += 2), "king")
-    checkPosition((kr1 -= 2), 1, "rook")
+    validatePosition((kr1 -= 2), 1, "rook")
 
     // set up player 2 for kingside castle
     validMovePlayer2(kn2, (kn2 += 15), "knight")
@@ -174,12 +174,12 @@ describe("Test check", () => {
 
     // now try to illegally queenside castle covered by check by bishop
     invalidMovePlayer2(k2, k2 + 2, "king")
-    checkPosition(qr2, 2, "rook")
+    validatePosition(qr2, 2, "rook")
     // move player 1 bishop to cover rook
     validMovePlayer1(qb1, (qb1 -= 9), "bishop")
     validMovePlayer1(qb1, (qb1 += 7), "bishop")
     // now try to legally kingside castle while h8 is covered by bishop
     validMovePlayer2(k2, (k2 += 2), "king")
-    checkPosition((kr2 -= 2), 2, "rook")
+    validatePosition((kr2 -= 2), 2, "rook")
   })
 })
