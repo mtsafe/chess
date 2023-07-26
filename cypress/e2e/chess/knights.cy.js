@@ -1,35 +1,18 @@
-function hitRestartButton() {
-  cy.get("#restart-button").click()
-}
+import {
+  chessmen,
+  validMovePlayer1,
+  validMovePlayer2,
+  invalidMovePlayer1,
+  invalidMovePlayer2,
+  validatePosition,
+} from "./testmoves"
 
 function validMoveKnightA2B(a, b) {
-  let dataTransfer = new DataTransfer()
-  cy.get(`div[tile_id="${a}"] div img[alt="Your knight"]`).should("be.visible")
-  cy.get(`div[tile_id="${a}"] div img[alt="Your knight"]`).trigger(
-    "dragstart",
-    {
-      dataTransfer,
-    }
-  )
-  cy.get(`div[tile_id="${b}"] div img`).trigger("drop", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img[alt="Your knight"]`).should("be.visible")
+  validMovePlayer1(a, b, "knight")
 }
 
 function invalidMoveKnightA2B(a, b) {
-  let dataTransfer = new DataTransfer()
-  if (a < 0 || a > 63) return
-  cy.get(`div[tile_id="${a}"] div img[alt="Your knight"]`).should("be.visible")
-  cy.get(`div[tile_id="${a}"] div img[alt="Your knight"]`).trigger(
-    "dragstart",
-    {
-      dataTransfer,
-    }
-  )
-  if (b >= 0 && b <= 63)
-    cy.get(`div[tile_id="${b}"] div img`).trigger("drop", { dataTransfer })
-  cy.get(`div[tile_id="${a}"] div img[alt="Your knight"]`).should("be.visible")
+  invalidMovePlayer1(a, b, "knight")
 }
 
 describe("Test knights", () => {
@@ -42,52 +25,51 @@ describe("Test knights", () => {
       forward = -8,
       backward = 8,
       left = -1,
-      right = 1,
-      k1 = 57,
-      k2 = 62
+      right = 1
+    let { qn1, kn1 } = chessmen
     // move knights every way
     jump = forward * 2 + left * 1
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
     jump = forward * 1 + right * 2
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
     jump = backward * 1 + left * 2
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
     jump = backward * 2 + right * 1
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
     jump = forward * 2 + right * 1
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
     jump = forward * 1 + left * 2
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
     jump = backward * 1 + right * 2
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
     jump = backward * 2 + left * 1
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
 
     // move knights onto same team pieces and off board
     jump = forward * 1 + left * 2
-    invalidMoveKnightA2B(k1, k1 + jump)
-    invalidMoveKnightA2B(k2, k2 + jump)
+    invalidMoveKnightA2B(qn1, qn1 + jump)
+    invalidMoveKnightA2B(kn1, kn1 + jump)
     jump = forward * 1 + right * 2
-    invalidMoveKnightA2B(k1, k1 + jump)
-    invalidMoveKnightA2B(k2, k2 + jump)
+    invalidMoveKnightA2B(qn1, qn1 + jump)
+    invalidMoveKnightA2B(kn1, kn1 + jump)
 
     // move knights to capture
     jump = forward * 2 + left * 1
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
     jump = forward * 2 + right * 1
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
     jump = forward * 2 + left * 1
-    validMoveKnightA2B(k1, (k1 += jump))
-    validMoveKnightA2B(k2, (k2 += jump))
+    validMoveKnightA2B(qn1, (qn1 += jump))
+    validMoveKnightA2B(kn1, (kn1 += jump))
   })
 })

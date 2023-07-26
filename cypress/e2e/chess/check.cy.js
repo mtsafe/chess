@@ -1,53 +1,11 @@
-function validMovePlayer1(a, b, pName) {
-  validMoveA2B(a, b, 1, pName)
-}
-function validMovePlayer2(a, b, pName) {
-  validMoveA2B(a, b, 2, pName)
-}
-function invalidMovePlayer1(a, b, pName) {
-  invalidMoveA2B(a, b, 1, pName)
-}
-function invalidMovePlayer2(a, b, pName) {
-  invalidMoveA2B(a, b, 2, pName)
-}
-
-function validMoveA2B(a, b, player, pName) {
-  let dataTransfer = new DataTransfer()
-  const playerStr = ["", "Your", "Computer's"]
-  let imgSelector = `alt="${playerStr[player]} ${pName}"`
-  cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should("be.visible")
-  cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).trigger("dragstart", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img`).trigger("drop", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img[${imgSelector}]`).should("be.visible")
-}
-
-function invalidMoveA2B(a, b, player, pName) {
-  let dataTransfer = new DataTransfer()
-  const playerStr = ["", "Your", "Computer's"]
-  let imgSelector = `alt="${playerStr[player]} ${pName}"`
-  if (a < 0 || a > 63) return
-  cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should("be.visible")
-  cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).trigger("dragstart", {
-    dataTransfer,
-  })
-  if (b >= 0 && b <= 63)
-    cy.get(`div[tile_id="${b}"] div img`).trigger("drop", { dataTransfer })
-  cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should("be.visible")
-}
-
-function validatePosition(a, player, pName) {
-  const playerStr = ["", "Your", "Computer's"]
-  let imgSelector = `alt="${playerStr[player]} ${pName}"`
-  if (a < 0 || a > 63) {
-    console.log(`Code Error: validatePosition(${a}, ${position}, ${pName})`)
-    return
-  }
-  cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should("be.visible")
-}
+import {
+  chessmen,
+  validMovePlayer1,
+  validMovePlayer2,
+  invalidMovePlayer1,
+  invalidMovePlayer2,
+  validatePosition,
+} from "./testmoves"
 
 describe("Test check", () => {
   beforeEach(() => {
@@ -55,26 +13,7 @@ describe("Test check", () => {
   })
 
   it("Cannot move king into check", () => {
-    let pd1 = 51,
-      pe1 = 52,
-      qb1 = 58,
-      q1 = 59,
-      k1 = 60,
-      kb1 = 61,
-      kn1 = 62,
-      kr1 = 63
-    let qr2 = 0,
-      qn2 = 1,
-      qb2 = 2,
-      q2 = 3,
-      k2 = 4,
-      kb2 = 5,
-      kn2 = 6,
-      kr2 = 7,
-      pe2 = 12,
-      pf2 = 13,
-      pg2 = 14,
-      ph2 = 15
+    let { pd1, pe1, q1, k1, qr2, qn2, qb2, q2, k2 } = chessmen
     // move kings near pawns
     validMovePlayer1(pe1, (pe1 -= 16), "pawn")
     validMovePlayer1(k1, (k1 -= 8), "king")
@@ -133,26 +72,8 @@ describe("Test check", () => {
   })
 
   it("Cannot kingside castle into check", () => {
-    let pd1 = 51,
-      pe1 = 52,
-      qb1 = 58,
-      q1 = 59,
-      k1 = 60,
-      kb1 = 61,
-      kn1 = 62,
-      kr1 = 63
-    let qr2 = 0,
-      qn2 = 1,
-      qb2 = 2,
-      q2 = 3,
-      k2 = 4,
-      kb2 = 5,
-      kn2 = 6,
-      kr2 = 7,
-      pe2 = 12,
-      pf2 = 13,
-      pg2 = 14,
-      ph2 = 15
+    let { pd1, pe1, qb1, k1, kb1, kn1, kr1, qr2, k2, kb2, kn2, kr2, pe2, pg2 } =
+      chessmen
 
     // set up player 1 for kingside castle
     validMovePlayer1(pe1, (pe1 -= 16), "pawn")

@@ -1,29 +1,18 @@
-function hitRestartButton() {
-  cy.get("#restart-button").click()
-}
+import {
+  chessmen,
+  validMovePlayer1,
+  validMovePlayer2,
+  invalidMovePlayer1,
+  invalidMovePlayer2,
+  validatePosition,
+} from "./testmoves"
 
 function validPawnMoveA2B(a, b) {
-  let dataTransfer = new DataTransfer()
-  cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).should("be.visible")
-  cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).trigger("dragstart", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img`).trigger("drop", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img[alt="Your pawn"]`).should("be.visible")
+  validMovePlayer1(a, b, "pawn")
 }
 
 function invalidPawnMoveA2B(a, b) {
-  let dataTransfer = new DataTransfer()
-  if (a < 0 || a > 63) return
-  cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).should("be.visible")
-  cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).trigger("dragstart", {
-    dataTransfer,
-  })
-  if (b >= 0 && b <= 63)
-    cy.get(`div[tile_id="${b}"] div img`).trigger("drop", { dataTransfer })
-  cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).should("be.visible")
+  invalidMovePlayer1(a, b, "pawn")
 }
 
 function validPawnPromoteA2B(a, b) {

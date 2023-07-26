@@ -1,55 +1,22 @@
-function hitRestartButton() {
-  cy.get("#restart-button").click()
-}
+import {
+  chessmen,
+  validMovePlayer1,
+  validMovePlayer2,
+  invalidMovePlayer1,
+  invalidMovePlayer2,
+  validatePosition,
+} from "./testmoves"
 
 function validMoveKingA2B(a, b) {
-  let dataTransfer = new DataTransfer()
-  cy.get(`div[tile_id="${a}"] div img[alt="Your king"]`).should("be.visible")
-  cy.get(`div[tile_id="${a}"] div img[alt="Your king"]`).trigger("dragstart", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img`).trigger("drop", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img[alt="Your king"]`).should("be.visible")
+  validMovePlayer1(a, b, "king")
 }
 
 function invalidMoveKingA2B(a, b) {
-  let dataTransfer = new DataTransfer()
-  if (a < 0 || a > 63) return
-  cy.get(`div[tile_id="${a}"] div img[alt="Your king"]`).should("be.visible")
-  cy.get(`div[tile_id="${a}"] div img[alt="Your king"]`).trigger("dragstart", {
-    dataTransfer,
-  })
-  if (b >= 0 && b <= 63)
-    cy.get(`div[tile_id="${b}"] div img`).trigger("drop", { dataTransfer })
-  cy.get(`div[tile_id="${a}"] div img[alt="Your king"]`).should("be.visible")
-}
-
-function castleA2B(a, b) {
-  let dataTransfer = new DataTransfer()
-  cy.get(`div[tile_id="${a}"] div img[alt="Your king"]`).should("be.visible")
-  cy.get(`div[tile_id="${a}"] div img[alt="Your king"]`).trigger("dragstart", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img`).trigger("drop", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img[alt="Your king"]`).should("be.visible")
-  if (b === 58)
-    cy.get(`div[tile_id="${59}"] div img[alt="Your rook"]`).should("be.visible")
-  else
-    cy.get(`div[tile_id="${61}"] div img[alt="Your rook"]`).should("be.visible")
+  invalidMovePlayer1(a, b, "king")
 }
 
 function validPawnMoveA2B(a, b) {
-  let dataTransfer = new DataTransfer()
-  cy.get(`div[tile_id="${a}"] div img[alt="Your pawn"]`).trigger("dragstart", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img`).trigger("drop", {
-    dataTransfer,
-  })
+  validMovePlayer1(a, b, "pawn")
 }
 
 describe("Test king", () => {
@@ -81,53 +48,5 @@ describe("Test king", () => {
     // now try to illegally step into check
     validMoveKingA2B(k, (k -= 9))
     invalidMoveKingA2B(k, (k -= 8))
-
-    // now kill the queen
-    // validMoveKingA2B(k, (k -= 9))
-    // validMoveKingA2B(k, (k -= 8))
-    // validMoveKingA2B(k, (k -= 8))
-    // validMoveKingA2B(k, (k -= 7))
   })
-
-  // it("Moves each pawn: single steps, attacks, promotes, and invalid moves", () => {
-  //   for (let i = 0; i < 8; i++) {
-  //     for (let j = 48; j > 23; j -= 8) {
-  //       validPawnMoveA2B(i + j, i + j - 8)
-  //     }
-  //   }
-
-  //   // Step off board left, right
-  //   invalidPawnMoveA2B(16, 7)
-  //   invalidPawnMoveA2B(16, 15)
-  //   invalidPawnMoveA2B(16, 23)
-  //   invalidPawnMoveA2B(23, 24)
-  //   invalidPawnMoveA2B(23, 16)
-  //   invalidPawnMoveA2B(23, 32)
-
-  //   // Step forward & backward
-  //   for (let i = 16; i < 24; i++) {
-  //     invalidPawnMoveA2B(i, i - 8)
-  //     invalidPawnMoveA2B(i, i + 8)
-  //   }
-
-  //   // attack left, right
-  //   let attack
-  //   for (let i = 16; i < 24; i++) {
-  //     if (i % 2 === 0) attack = -7
-  //     else attack = -9
-  //     validPawnMoveA2B(i, i + attack)
-  //   }
-
-  //   // Step forward
-  //   for (let i = 8; i < 16; i++) {
-  //     invalidPawnMoveA2B(i, i - 8)
-  //   }
-
-  //   // attack left, right
-  //   for (let i = 8; i < 16; i++) {
-  //     if (i % 2 === 0) attack = -7
-  //     else attack = -9
-  //     validPawnPromoteA2B(i, i + attack)
-  //   }
-  // })
 })
