@@ -22,6 +22,8 @@ function validPawnMoveA2B(a, b) {
 describe("Test king", () => {
   beforeEach(() => {
     cy.visit("http://127.0.0.1:5173/")
+    // Select Test Mode 1 = player moves any pieces
+    cy.get("#ai-algo").select("Test Mode 1")
   })
 
   it("Moves king: steps, attacks, and invalid moves", () => {

@@ -30,6 +30,8 @@ function validPawnPromoteA2B(a, b) {
 describe("Test pawns", () => {
   beforeEach(() => {
     cy.visit("http://127.0.0.1:5173/")
+    // Select Test Mode 1 = player moves any pieces
+    cy.get("#ai-algo").select("Test Mode 1")
   })
 
   it("Moves each pawn double step", () => {

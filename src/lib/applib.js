@@ -14,6 +14,13 @@ function index2Column(index) {
   return (index % 8) + 1
 }
 
+function getGameStatus(gamePlay, recordedMoves) {
+  let takingTurns = gamePlay !== 0
+  let whosTurn = 0
+  if (takingTurns) whosTurn = (recordedMoves?.length % 2) + 1
+  return { takingTurns, whosTurn }
+}
+
 const winMatrix = [
   [0, 1, 2],
   [0, 4, 8],
@@ -69,10 +76,10 @@ function bossLvl1(foot) {
   return spitBaller(foot)
 }
 
-function aiChoosesTile(aiStrategy, foot) {
+function aiChoosesTile(gamePlay, foot) {
   // aiChoosesTile returns an index as a string type.
-  // aiStrategy is a number type.
-  switch (aiStrategy) {
+  // gamePlay is a number type.
+  switch (gamePlay) {
     case 0:
       return walker(foot)
     case 1:
@@ -173,6 +180,7 @@ export {
   index2Rank,
   index2File,
   index2Column,
+  getGameStatus,
   aiChoosesTile,
   numMovesLeft,
   tie,

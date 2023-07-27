@@ -10,6 +10,8 @@ import {
 describe("Test check", () => {
   beforeEach(() => {
     cy.visit("http://127.0.0.1:5173/")
+    // Select Test Mode 1 = player moves any pieces
+    cy.get("#ai-algo").select("Test Mode 1")
   })
 
   it("Cannot move king into check", () => {

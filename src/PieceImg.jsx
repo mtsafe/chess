@@ -15,6 +15,7 @@ import Empty from "./assets/transparent100x100.png"
 export function PieceImg({
   tile_num,
   tileShade,
+  gameStatus,
   handleOnDrag_SetDropzones,
   getPieceMatchingIndexProp,
   isDropZone,
@@ -86,15 +87,16 @@ export function PieceImg({
   else className = "interact-img img-border-light"
 
   let draggable, onDragStart, onDragOver, onDrop
-  //  if (tile_num === 48) draggable = true
   if (isDropZone) console.log(`--- isDropZone=${isDropZone}`)
   if (isDropZone) {
     className += " dropzone"
     onDragOver = e => e.preventDefault()
     onDrop = e => handleOnDrop_ExecuteMove(e)
   } else if (typeof pieceHere !== "undefined") {
-    onDragStart = e => handleOnDrag_SetDropzones(e)
-    draggable = true
+    if (gameStatus.whosTurn === pieceHere.player || gameStatus.whosTurn === 0) {
+      onDragStart = e => handleOnDrag_SetDropzones(e)
+      draggable = true
+    }
   }
   return (
     <img

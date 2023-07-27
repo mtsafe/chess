@@ -20,6 +20,7 @@ import { newTiles } from "./state/tiles"
 
 // OTHER FUNCTIONS
 // import { aiChoosesTile, tie, winner } from "./lib/applib"
+import { getGameStatus } from "./lib/applib"
 import { findDropTargets } from "./lib/ondrag"
 import { computeOnDropStateChanges } from "./lib/ondrop"
 
@@ -37,11 +38,13 @@ function App() {
   const [castleability, setCastleability] = useState(newCastleability())
   const [enPassantOpportunity, setEnPassantOpportunity] = useState(OFF_BOARD)
 
-  //  const [moves, setMoves] = useState([])
   const [isCheck, setIsCheck] = useState(false)
   const [statusMsg, setStatusMsg] = useState("Go!")
-  const [aiStrategy, setAIStrategy] = useState("3")
+  const [gamePlay, setGamePlay] = useState("3")
 
+  const gameStatus = getGameStatus(gamePlay, recordedMoves)
+
+  console.log(`TURN: Player ${gameStatus.whosTurn}`)
   function canCastle() {
     if (isCheck)
       return {
@@ -74,7 +77,8 @@ function App() {
   // EVENT HANDLERS
 
   function handleOnChange_AIAlgoMode(value) {
-    setAIStrategy(parseInt(value))
+    const selection = parseInt(value)
+    setGamePlay(selection)
   }
 
   function handleOnClick_RestartGame() {
@@ -135,8 +139,8 @@ function App() {
     setEnPassantOpportunity(refreshOnDropState.freshEnPassantOpp)
     setDropTargetMoves([])
 
-    let instructions
-    setRecordedMoves(instructions)
+    let instructions = move
+    setRecordedMoves([...recordedMoves, instructions])
   }
   // ***************************
   // EXECUTION BEGINS (OTHER THAN STATE HOOK DECLARATIONS)
@@ -151,6 +155,7 @@ function App() {
       <h2>[You Against AI!]</h2>
       <GameBoard
         tiles={tiles}
+        gameStatus={gameStatus}
         handleOnDrag_SetDropzones={handleOnDrag_SetDropzones}
         handleOnDrop_ExecuteMove={handleOnDrop_ExecuteMove}
         getPieceMatchingIndexProp={getPieceMatchingIndexProp}
@@ -204,7 +209,7 @@ export default App
 //     return
 //   }
 
-//   aiClaimsTile(aiChoosesTile(aiStrategy, foot))
+//   aiClaimsTile(aiChoosesTile(gamePlay, foot))
 //   if (winner(foot, "O")) {
 //     displayLoser()
 //     return
