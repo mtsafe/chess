@@ -21,4 +21,32 @@ describe("Test check", () => {
       "be.visible"
     )
   })
+
+  it("Action CAPTURE object works properly", () => {
+    // Needs test code
+  })
+
+  it("Action EN_PASSANT object works properly", () => {
+    // Needs test code
+  })
+
+  it("Action MOVE object works properly", () => {
+    // Needs test code
+  })
+
+  it("Action CAPTURE_PROMOTE object works properly", () => {
+    // Needs test code
+  })
+
+  it("Action MOVE_PROMOTE object works properly", () => {
+    // Needs test code
+  })
+
+  it("Action KINGSIDE_CASTLE object works properly", () => {
+    // Needs test code
+  })
+
+  it("Action QUEENSIDE_CASTLE object works properly", () => {
+    // Needs test code
+  })
 })

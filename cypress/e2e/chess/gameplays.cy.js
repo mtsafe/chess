@@ -7,7 +7,7 @@ import {
   validatePosition,
 } from "./testmoves"
 
-describe("Test AIStrategies", () => {
+describe("Test Gameplay Modes", () => {
   beforeEach(() => {
     cy.visit("http://127.0.0.1:5173/")
     cy.get("#ai-algo").should("be.visible")

@@ -12,8 +12,7 @@ import {
   player1Queen,
   pawn1Step,
   pawn2Step,
-  player1PawnCaptureLeft,
-  player1PawnCaptureRight,
+  pawnCapture,
   player1Rook,
 } from "./playermoves"
 
@@ -26,8 +25,8 @@ function findDropTargets(pieceElement, onDragState) {
     case "P":
       result.push(pawn1Step(srcIndex, onDragState))
       result.push(pawn2Step(srcIndex, onDragState))
-      result.push(player1PawnCaptureLeft(srcIndex, onDragState))
-      result.push(player1PawnCaptureRight(srcIndex, onDragState))
+      result.push(pawnCapture("L", srcIndex, onDragState))
+      result.push(pawnCapture("R", srcIndex, onDragState))
       break
     case "R":
       result = player1Rook(srcIndex, onDragState)

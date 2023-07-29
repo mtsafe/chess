@@ -75,27 +75,6 @@ function kingKingsideCastle(srcIndex, playerNum, onDragState) {
 function kingQueensideCastle(srcIndex, playerNum, onDragState) {
   console.log(`kingQueensideCastle(${srcIndex}, player=${playerNum})`)
   let theCastleablility = onDragState.canCastle()
-  // if (
-  //   (playerNum === 1 &&
-  //     srcIndex === 60 &&
-  //     theCastleablility.player1Queenside &&
-  //     !isPlayerInCheck(onDragState.pieces1, onDragState.pieces2)) ||
-  //   (playerNum === 2 &&
-  //     srcIndex === 4 &&
-  //     theCastleablility.player2Queenside &&
-  //     !isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))
-  // )
-  //   console.log(">>> kingQueensideCastle Test 1 = TRUE")
-  // if (
-  //   getPieceMatchingIndex2(srcIndex - 1, onDragState) === undefined &&
-  //   getPieceMatchingIndex2(srcIndex - 2, onDragState) === undefined &&
-  //   getPieceMatchingIndex2(srcIndex - 3, onDragState) === undefined
-  // )
-  //   console.log(">>> kingQueensideCastle Test 2 = TRUE")
-  // if (isSimulateMovePieceGood(srcIndex, srcIndex - 1, onDragState))
-  //   console.log(">>> kingQueensideCastle Test 3A = TRUE")
-  // if (isSimulateMovePieceGood(srcIndex, srcIndex - 2, onDragState))
-  //   console.log(">>> kingQueensideCastle Test 3B = TRUE")
 
   if (
     ((playerNum === 1 &&
@@ -151,7 +130,7 @@ function genericMove(srcIndex, tarOffset, letter, onDragState) {
   if (pieceAtTarget === undefined)
     return movePieceAction(srcIndex, letter, tarIndex, onDragState)
   if (pieceAtTarget.player === 2)
-    return capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+    return createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
 }
 
 // PAWN MOVES
@@ -187,38 +166,36 @@ function pawn2Step(srcIndex, onDragState) {
   return movePieceAction(srcIndex, "P", tarIndex, onDragState)
 }
 
-function player1PawnCaptureLeft(srcIndex, onDragState) {
-  if (index2File(srcIndex) === "a") return
-  let tarIndex = srcIndex - 9
+function pawnCapture(leftRight, srcIndex, onDragState) {
+  const lr =
+    leftRight === "L"
+      ? {
+          badFile: "a",
+          atkSideVal: -1,
+        }
+      : {
+          badFile: "h",
+          atkSideVal: 1,
+        }
+  if (index2File(srcIndex) === lr.badFile) return
+  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+  if (pieceAtSource === undefined) return
+  let tarIndex =
+    srcIndex + 8 * orientation[pieceAtSource.player] + lr.atkSideVal
   let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
+  if (pieceAtTarget === undefined) return
 
-  if (pieceAtTarget?.player === 1) return
-  if (pieceAtTarget?.player === 2) {
-    if (index2Rank(tarIndex) === 8)
-      return pawnCapturePromote(srcIndex, tarIndex, pieceAtTarget.letter)
-    return capturePiece(srcIndex, "P", tarIndex, pieceAtTarget.letter)
-  }
+  if (
+    (pieceAtTarget.player === 1 && index2Rank(tarIndex) === 1) ||
+    (pieceAtTarget.player === 2 && index2Rank(tarIndex) === 8)
+  )
+    return pawnCapturePromote(srcIndex, tarIndex, pieceAtTarget.letter)
 
-  let victimIndex = srcIndex - 1
+  let victimIndex = srcIndex + lr.atkSideVal
   if (victimIndex === onDragState.enPassantOpportunity)
-    return capturePieceEnPassant(srcIndex, tarIndex)
-}
+    return createActionEnPassant(srcIndex, tarIndex)
 
-function player1PawnCaptureRight(srcIndex, onDragState) {
-  if (index2File(srcIndex) === "h") return
-  let tarIndex = srcIndex - 7
-  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
-  // also capture en passant
-
-  if (pieceAtTarget?.player === 2) {
-    if (index2Rank(tarIndex) === 8)
-      return pawnCapturePromote(srcIndex, tarIndex, pieceAtTarget.letter)
-    return capturePiece(srcIndex, "P", tarIndex, pieceAtTarget.letter)
-  }
-
-  let victimIndex = srcIndex + 1
-  if (victimIndex === onDragState.enPassantOpportunity)
-    return capturePieceEnPassant(srcIndex, tarIndex)
+  return createActionCapture(srcIndex, "P", tarIndex, pieceAtTarget.letter)
 }
 
 // QUEEN MOVES
@@ -294,7 +271,7 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtTarget.player === 2) {
       result.push(
-        capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+        createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
       )
       break
     } else break
@@ -340,7 +317,7 @@ function rookHorizontal(direction, srcIndex, letter, rank, onDragState) {
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtTarget.player === 2) {
       result.push(
-        capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+        createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
       )
       break
     } else break
@@ -371,7 +348,7 @@ function rookVertical(direction, srcIndex, letter, file, onDragState) {
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtTarget.player === 2) {
       result.push(
-        capturePiece(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+        createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
       )
       break
     } else break
@@ -379,7 +356,7 @@ function rookVertical(direction, srcIndex, letter, file, onDragState) {
   return result
 }
 
-function capturePiece(srcIndex, srcPiece, tarIndex, tarPiece) {
+function createActionCapture(srcIndex, srcPiece, tarIndex, tarPiece) {
   return {
     srcIndex,
     srcPiece,
@@ -389,7 +366,7 @@ function capturePiece(srcIndex, srcPiece, tarIndex, tarPiece) {
   }
 }
 
-function capturePieceEnPassant(srcIndex, tarIndex) {
+function createActionEnPassant(srcIndex, tarIndex) {
   return {
     srcIndex,
     srcPiece: "P",
@@ -477,7 +454,6 @@ export {
   player1Queen,
   pawn1Step,
   pawn2Step,
-  player1PawnCaptureLeft,
-  player1PawnCaptureRight,
+  pawnCapture,
   player1Rook,
 }
