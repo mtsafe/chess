@@ -74,10 +74,10 @@ function computeOnDropStateChanges({
       thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
       freshCastleability = castleability
       if (thePlayer === 1) {
-        freshPieces2 = killPiece(enPassantOpportunity, pieces2)
+        freshPieces2 = killPiece(tarIndex + 8, pieces2)
         freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
       } else {
-        freshPieces1 = killPiece(enPassantOpportunity, pieces1)
+        freshPieces1 = killPiece(tarIndex - 8, pieces1)
         freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
       }
     },

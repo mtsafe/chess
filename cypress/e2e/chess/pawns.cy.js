@@ -59,6 +59,15 @@ describe("Test player 1 pawns", () => {
       validMovePlayer1(i, i + attack, "pawn")
     }
   })
+
+  it("Moves each pawn single steps and en passants", () => {
+    let i, j
+    for (i = 6; i >= 0; i--) {
+      for (j = 48; j > 24; j -= 8) validMovePlayer1(i + j, i + j - 8, "pawn")
+      validMovePlayer2(i + 8 + 1, i + 8 + 17, "pawn")
+      validMovePlayer1(i + j, i + j - 7, "pawn")
+    }
+  })
 })
 
 describe("Test player 2 pawns", () => {
@@ -111,6 +120,15 @@ describe("Test player 2 pawns", () => {
       if (i % 2 === 0) attack = 9
       else attack = 7
       validMovePlayer2(i, i + attack, "pawn")
+    }
+  })
+
+  it("Moves each pawn single steps and en passants", () => {
+    let i, j
+    for (i = 6; i >= 0; i--) {
+      for (j = 8; j < 32; j += 8) validMovePlayer2(i + j, i + j + 8, "pawn")
+      validMovePlayer1(i + 48 + 1, i + 48 - 15, "pawn")
+      validMovePlayer2(i + j, i + j + 9, "pawn")
     }
   })
 })

@@ -184,17 +184,21 @@ function pawnCapture(leftRight, srcIndex, onDragState) {
   let tarIndex =
     srcIndex + 8 * orientation[pieceAtSource.player] + lr.atkSideVal
   let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
-  if (pieceAtTarget === undefined) return
+  if (pieceAtTarget === undefined) {
+    let victimIndex = srcIndex + lr.atkSideVal
+    console.log(
+      `does victimIndex{${victimIndex}} === onDragState.enPassantOpportunity{${onDragState.enPassantOpportunity}}`
+    )
+    if (victimIndex === onDragState.enPassantOpportunity)
+      return createActionEnPassant(srcIndex, tarIndex)
+    return
+  }
 
   if (
     (pieceAtTarget.player === 1 && index2Rank(tarIndex) === 1) ||
     (pieceAtTarget.player === 2 && index2Rank(tarIndex) === 8)
   )
     return pawnCapturePromote(srcIndex, tarIndex, pieceAtTarget.letter)
-
-  let victimIndex = srcIndex + lr.atkSideVal
-  if (victimIndex === onDragState.enPassantOpportunity)
-    return createActionEnPassant(srcIndex, tarIndex)
 
   return createActionCapture(srcIndex, "P", tarIndex, pieceAtTarget.letter)
 }

@@ -59,7 +59,33 @@ describe("Test check", () => {
   })
 
   it("Action EN_PASSANT object works properly", () => {
-    // Needs test code
+    // Select Test Mode 2 = player moves pieces taking turns
+    cy.get("#ai-algo").select("Test Mode 2")
+    cy.get("#ai-algo").should("have.value", "1")
+    let up = -8,
+      down = 8,
+      left = -1,
+      right = 1,
+      kingsidecastle = 2
+    let { pa1, pb1, pc1, pd1, pe1, pf1, pg1, ph1 } = chessmen
+    let { qr1, qn1, qb1, q1, k1, kb1, kn1, kr1 } = chessmen
+    let { pa2, pb2, pc2, pd2, pe2, pf2, pg2, ph2 } = chessmen
+    let { qr2, qn2, qb2, q2, k2, kb2, kn2, kr2 } = chessmen
+    // Move players 1 & 2 pawns out to en passant
+    // 1. b4 g5
+    // 2. b5 g4
+    // 3. f4 gEf3
+    // 4. a3 c5
+    // 5. bEc6
+    validMovePlayer1(pb1, (pb1 += 2 * up), "pawn")
+    validMovePlayer2(pg2, (pg2 += 2 * down), "pawn")
+    validMovePlayer1(pb1, (pb1 += up), "pawn")
+    validMovePlayer2(pg2, (pg2 += down), "pawn")
+    validMovePlayer1(pf1, (pf1 += 2 * up), "pawn")
+    validMovePlayer2(pg2, (pg2 += down + left), "pawn")
+    validMovePlayer1(pa1, (pa1 += up), "pawn")
+    validMovePlayer2(pc2, (pc2 += 2 * down), "pawn")
+    validMovePlayer1(pb1, (pb1 += up + right), "pawn")
   })
 
   it("Action MOVE object works properly", () => {
