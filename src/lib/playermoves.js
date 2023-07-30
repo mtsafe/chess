@@ -285,7 +285,7 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
 }
 
 // ROOK MOVES
-function player1Rook(srcIndex, onDragState) {
+function rookMovement(srcIndex, onDragState) {
   return genericRook(srcIndex, "R", onDragState)
 }
 
@@ -316,11 +316,13 @@ function rookHorizontal(direction, srcIndex, letter, rank, onDragState) {
     nextColumn = () => column--
   }
   for (column = start; condition(); nextColumn()) {
+    let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+    if (pieceAtSource === undefined) return
     let tarIndex = rc2Index(rank, column)
     let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
-    else if (pieceAtTarget.player === 2) {
+    else if (pieceAtSource.player !== pieceAtTarget.player) {
       result.push(
         createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
       )
@@ -347,11 +349,13 @@ function rookVertical(direction, srcIndex, letter, file, onDragState) {
     nextRank = () => rank--
   }
   for (rank = start; condition(); nextRank()) {
+    let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+    if (pieceAtSource === undefined) return
     let tarIndex = rf2Index(rank, file)
     let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
-    else if (pieceAtTarget.player === 2) {
+    else if (pieceAtSource.player !== pieceAtTarget.player) {
       result.push(
         createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
       )
@@ -460,5 +464,5 @@ export {
   pawn1Step,
   pawn2Step,
   pawnCapture,
-  player1Rook,
+  rookMovement,
 }

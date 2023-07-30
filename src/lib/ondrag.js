@@ -13,7 +13,7 @@ import {
   pawn1Step,
   pawn2Step,
   pawnCapture,
-  player1Rook,
+  rookMovement,
 } from "./playermoves"
 
 // ONDRAG EVENT HANDLER SUPPORT FUNCTIONS
@@ -29,7 +29,7 @@ function findDropTargets(pieceElement, onDragState) {
       result.push(pawnCapture("R", srcIndex, onDragState))
       break
     case "R":
-      result = player1Rook(srcIndex, onDragState)
+      result = rookMovement(srcIndex, onDragState)
       break
     case "N":
       result = player1Knight(srcIndex, onDragState)
