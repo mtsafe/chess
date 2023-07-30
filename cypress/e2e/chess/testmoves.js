@@ -61,6 +61,11 @@ function validMoveA2B(a, b, player, pName) {
   cy.get(`div[tile_id="${b}"] div img`).trigger("drop", {
     dataTransfer,
   })
+  // Check for pawn promotion
+  if ((b < 8 || b > 55) && pName === "pawn")
+    imgSelector = `alt="${playerStr[player]} queen"`
+  // validate positions a and b
+  cy.get(`div[tile_id="${a}"] div img[alt=""]`).should("be.visible")
   cy.get(`div[tile_id="${b}"] div img[${imgSelector}]`).should("be.visible")
 }
 
@@ -68,13 +73,18 @@ function invalidMoveA2B(a, b, player, pName) {
   let dataTransfer = new DataTransfer()
   const playerStr = ["", "Your", "Computer's"]
   let imgSelector = `alt="${playerStr[player]} ${pName}"`
-  if (a < 0 || a > 63) return
+  // any pieces off the board should be invisible
+  if (a < 0 || a > 63)
+    cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should(
+      "not.be.visible"
+    )
+  // all pieces must be visible (no invisible pieces)
   cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should("be.visible")
   cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).trigger("dragstart", {
     dataTransfer,
   })
-  if (b >= 0 && b <= 63)
-    cy.get(`div[tile_id="${b}"] div img`).trigger("drop", { dataTransfer })
+  // piece stays at tile "a" on an invalid move
+  cy.get(`div[tile_id="${b}"] div img`).trigger("drop", { dataTransfer })
   cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should("be.visible")
 }
 

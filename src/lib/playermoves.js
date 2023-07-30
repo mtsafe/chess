@@ -139,7 +139,8 @@ function pawn1Step(srcIndex, onDragState) {
   let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
   let tarIndex = srcIndex + 8 * orientation[pieceAtSource.player]
   if (getPieceMatchingIndex2(tarIndex, onDragState) !== undefined) return
-  if (index2Rank(tarIndex) === 8) return pawnMovePromote(srcIndex, tarIndex)
+  if (index2Rank(tarIndex) === 1 || index2Rank(tarIndex) === 8)
+    return pawnMovePromote(srcIndex, tarIndex)
   return movePieceAction(srcIndex, "P", tarIndex, onDragState)
 }
 

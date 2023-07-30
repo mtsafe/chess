@@ -7,27 +7,6 @@ import {
   validatePosition,
 } from "./testmoves"
 
-function validPawnPromoteA2B(a, b, player) {
-  let dataTransfer = new DataTransfer()
-  let whoseStr = "Your"
-  if (player === 2) whoseStr = "Computer's"
-  cy.get(`div[tile_id="${a}"] div img[alt="${whoseStr} pawn"]`).should(
-    "be.visible"
-  )
-  cy.get(`div[tile_id="${a}"] div img[alt="${whoseStr} pawn"]`).trigger(
-    "dragstart",
-    {
-      dataTransfer,
-    }
-  )
-  cy.get(`div[tile_id="${b}"] div img`).trigger("drop", {
-    dataTransfer,
-  })
-  cy.get(`div[tile_id="${b}"] div img[alt="${whoseStr} queen"]`).should(
-    "be.visible"
-  )
-}
-
 describe("Test player 1 pawns", () => {
   beforeEach(() => {
     cy.visit("http://127.0.0.1:5173/")
@@ -73,12 +52,11 @@ describe("Test player 1 pawns", () => {
       invalidMovePlayer1(i, i - 8, "pawn")
     }
 
-    // attack left, right
+    // attack left, right and promote
     for (let i = 8; i < 16; i++) {
       if (i % 2 === 0) attack = -7
       else attack = -9
-      validPawnPromoteA2B(i, i + attack, 1)
-      cy.get(`div[tile_id="${i}"] div img[alt=""]`).should("be.visible")
+      validMovePlayer1(i, i + attack, "pawn")
     }
   })
 })
@@ -128,12 +106,11 @@ describe("Test player 2 pawns", () => {
       invalidMovePlayer2(i, i + 8, "pawn")
     }
 
-    // attack left, right
+    // attack left, right and promote
     for (let i = 48; i < 56; i++) {
       if (i % 2 === 0) attack = 9
       else attack = 7
-      validPawnPromoteA2B(i, i + attack, 2)
-      cy.get(`div[tile_id="${i}"] div img[alt=""]`).should("be.visible")
+      validMovePlayer2(i, i + attack, "pawn")
     }
   })
 })

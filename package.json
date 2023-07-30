@@ -9,7 +9,7 @@
     "cy:run": "cypress run --spec \"cypress/e2e/chess/*.cy.js\"",
     "cy:pawns": "cypress run --spec \"cypress/e2e/chess/pawns.cy.js\"",
     "cy:runai": "cypress run --spec \"cypress/e2e/chess/gameplays.cy.js\"",
-    "cy:runcheck": "cypress run --spec \"cypress/e2e/chess/check.cy.js\"",
+    "cy:runbasics": "cypress run --spec \"cypress/e2e/chess/basics.cy.js\"",
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "predeploy": "npm run build",
