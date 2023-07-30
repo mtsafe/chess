@@ -73,17 +73,12 @@ function invalidMoveA2B(a, b, player, pName) {
   let dataTransfer = new DataTransfer()
   const playerStr = ["", "Your", "Computer's"]
   let imgSelector = `alt="${playerStr[player]} ${pName}"`
-  // any pieces off the board should be invisible
-  if (a < 0 || a > 63)
-    cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should(
-      "not.be.visible"
-    )
-  // all pieces must be visible (no invisible pieces)
+  // there is no off the board in the DOM;
+  // trying to test bad a or b values is undefined and bad testing
   cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should("be.visible")
   cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).trigger("dragstart", {
     dataTransfer,
   })
-  // piece stays at tile "a" on an invalid move
   cy.get(`div[tile_id="${b}"] div img`).trigger("drop", { dataTransfer })
   cy.get(`div[tile_id="${a}"] div img[${imgSelector}]`).should("be.visible")
 }

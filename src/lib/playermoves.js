@@ -95,7 +95,7 @@ function kingQueensideCastle(srcIndex, playerNum, onDragState) {
 }
 
 // KNIGHT MOVES
-function player1Knight(srcIndex, onDragState) {
+function knightMovement(srcIndex, onDragState) {
   let result = []
   let file = index2File(srcIndex)
   let rank = index2Rank(srcIndex)
@@ -204,14 +204,14 @@ function pawnCapture(leftRight, srcIndex, onDragState) {
 }
 
 // QUEEN MOVES
-function player1Queen(srcIndex, onDragState) {
+function QueenMovement(srcIndex, onDragState) {
   let result1 = genericBishop(srcIndex, "B", onDragState)
   let result2 = genericRook(srcIndex, "Q", onDragState)
   return [...result1, ...result2]
 }
 
 // BISHOP MOVES
-function player1Bishop(srcIndex, onDragState) {
+function bishopMovement(srcIndex, onDragState) {
   return genericBishop(srcIndex, "B", onDragState)
 }
 
@@ -271,10 +271,12 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
   rank = index2Rank(tarIndex)
   console.log(`condition=${condition()}`)
   for (; condition(); nextPosition(), tarIndex += tarOffset) {
+    let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+    if (pieceAtSource === undefined) return
     let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
-    else if (pieceAtTarget.player === 2) {
+    else if (pieceAtSource.player !== pieceAtTarget.player) {
       result.push(
         createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
       )
@@ -457,10 +459,10 @@ function kingsideCastle(srcIndex) {
 }
 
 export {
-  player1Bishop,
+  bishopMovement,
   kingStep,
-  player1Knight,
-  player1Queen,
+  knightMovement,
+  QueenMovement,
   pawn1Step,
   pawn2Step,
   pawnCapture,

@@ -7,18 +7,6 @@ import {
   validatePosition,
 } from "./testmoves"
 
-function validMoveRookA2B(a, b) {
-  validMovePlayer1(a, b, "rook")
-}
-
-function invalidMoveRookA2B(a, b) {
-  invalidMovePlayer1(a, b, "rook")
-}
-
-function validPawnMoveA2B(a, b) {
-  validMovePlayer1(a, b, "pawn")
-}
-
 describe("Test rook", () => {
   beforeEach(() => {
     cy.visit("http://127.0.0.1:5173/")

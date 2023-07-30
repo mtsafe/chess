@@ -6,10 +6,10 @@ import {
 } from "../state/pieces"
 
 import {
-  player1Bishop,
+  bishopMovement,
   kingStep,
-  player1Knight,
-  player1Queen,
+  knightMovement,
+  QueenMovement,
   pawn1Step,
   pawn2Step,
   pawnCapture,
@@ -32,13 +32,13 @@ function findDropTargets(pieceElement, onDragState) {
       result = rookMovement(srcIndex, onDragState)
       break
     case "N":
-      result = player1Knight(srcIndex, onDragState)
+      result = knightMovement(srcIndex, onDragState)
       break
     case "B":
-      result = player1Bishop(srcIndex, onDragState)
+      result = bishopMovement(srcIndex, onDragState)
       break
     case "Q":
-      result = player1Queen(srcIndex, onDragState)
+      result = QueenMovement(srcIndex, onDragState)
       break
     case "K":
       result = kingStep(srcIndex, onDragState)
