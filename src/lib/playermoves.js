@@ -125,11 +125,13 @@ function knightMovement(srcIndex, onDragState) {
 
 function genericMove(srcIndex, tarOffset, letter, onDragState) {
   console.log(`genericMove(srcIndex, tarOffset, letter, onDragState)`)
+  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+  if (pieceAtSource === undefined) return
   let tarIndex = srcIndex + tarOffset
   let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget === undefined)
     return movePieceAction(srcIndex, letter, tarIndex, onDragState)
-  if (pieceAtTarget.player === 2)
+  else if (pieceAtSource.player !== pieceAtTarget.player)
     return createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
 }
 
