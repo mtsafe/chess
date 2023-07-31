@@ -7,26 +7,21 @@ import {
 
 import {
   bishopMovement,
-  kingStep,
+  kingMovement,
   knightMovement,
   QueenMovement,
-  pawn1Step,
-  pawn2Step,
-  pawnCapture,
+  pawnMovement,
   rookMovement,
 } from "./playermoves"
 
 // ONDRAG EVENT HANDLER SUPPORT FUNCTIONS
 function findDropTargets(pieceElement, onDragState) {
-  let result = []
+  let result
   let srcIndex = parseInt(pieceElement.getAttribute("tile_num"))
   let { letter } = getPieceMatchingIndex2(parseInt(srcIndex), onDragState)
   switch (letter) {
     case "P":
-      result.push(pawn1Step(srcIndex, onDragState))
-      result.push(pawn2Step(srcIndex, onDragState))
-      result.push(pawnCapture("L", srcIndex, onDragState))
-      result.push(pawnCapture("R", srcIndex, onDragState))
+      result = pawnMovement(srcIndex, onDragState)
       break
     case "R":
       result = rookMovement(srcIndex, onDragState)
@@ -41,7 +36,7 @@ function findDropTargets(pieceElement, onDragState) {
       result = QueenMovement(srcIndex, onDragState)
       break
     case "K":
-      result = kingStep(srcIndex, onDragState)
+      result = kingMovement(srcIndex, onDragState)
       break
   }
   return result.filter(Boolean) // remove undefined elements from array

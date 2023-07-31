@@ -13,6 +13,7 @@ import {
   getPieceMatchingCode,
   getPieceMatchingIndex1,
   getPieceMatchingIndex2,
+  isVacantTile,
   killPiece,
   movePiece,
   promotePiece,
@@ -30,7 +31,7 @@ import * as Action from "./actions"
 // }
 
 // KING MOVES
-function kingStep(srcIndex, onDragState) {
+function kingMovement(srcIndex, onDragState) {
   let result = []
   let file = index2File(srcIndex)
   let rank = index2Rank(srcIndex)
@@ -46,48 +47,49 @@ function kingStep(srcIndex, onDragState) {
     result.push(genericMove(srcIndex, 8, "K", onDragState))
     if (file !== "h") result.push(genericMove(srcIndex, 9, "K", onDragState))
   }
-  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  result.push(kingKingsideCastle(srcIndex, pieceAtSource.player, onDragState))
-  result.push(kingQueensideCastle(srcIndex, pieceAtSource.player, onDragState))
+  result.push(kingKingsideCastle(srcIndex, onDragState))
+  result.push(kingQueensideCastle(srcIndex, onDragState))
   return result.filter(Boolean)
 }
 
-function kingKingsideCastle(srcIndex, playerNum, onDragState) {
-  console.log(`kingKingsideCastle(${srcIndex}, player=${playerNum})`)
+function kingKingsideCastle(srcIndex, onDragState) {
+  console.log(`kingKingsideCastle(${srcIndex})`)
+  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
   let theCastleablility = onDragState.canCastle()
   if (
-    ((playerNum === 1 &&
+    ((pieceAtSource.player === 1 &&
       srcIndex === 60 &&
       theCastleablility.player1Kingside &&
       !isPlayerInCheck(onDragState.pieces1, onDragState.pieces2)) ||
-      (playerNum === 2 &&
+      (pieceAtSource.player === 2 &&
         srcIndex === 4 &&
         theCastleablility.player2Kingside &&
         !isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))) &&
-    getPieceMatchingIndex2(srcIndex + 1, onDragState) === undefined &&
-    getPieceMatchingIndex2(srcIndex + 2, onDragState) === undefined &&
+    isVacantTile(srcIndex + 1, onDragState) &&
+    isVacantTile(srcIndex + 2, onDragState) &&
     isSimulateMovePieceGood(srcIndex, srcIndex + 1, onDragState) &&
     isSimulateMovePieceGood(srcIndex, srcIndex + 2, onDragState)
   )
     return kingsideCastle(srcIndex)
 }
 
-function kingQueensideCastle(srcIndex, playerNum, onDragState) {
-  console.log(`kingQueensideCastle(${srcIndex}, player=${playerNum})`)
+function kingQueensideCastle(srcIndex, onDragState) {
+  console.log(`kingQueensideCastle(${srcIndex})`)
+  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
   let theCastleablility = onDragState.canCastle()
 
   if (
-    ((playerNum === 1 &&
+    ((pieceAtSource.player === 1 &&
       srcIndex === 60 &&
       theCastleablility.player1Queenside &&
       !isPlayerInCheck(onDragState.pieces1, onDragState.pieces2)) ||
-      (playerNum === 2 &&
+      (pieceAtSource.player === 2 &&
         srcIndex === 4 &&
         theCastleablility.player2Queenside &&
         !isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))) &&
-    getPieceMatchingIndex2(srcIndex - 1, onDragState) === undefined &&
-    getPieceMatchingIndex2(srcIndex - 2, onDragState) === undefined &&
-    getPieceMatchingIndex2(srcIndex - 3, onDragState) === undefined &&
+    isVacantTile(srcIndex - 1, onDragState) &&
+    isVacantTile(srcIndex - 2, onDragState) &&
+    isVacantTile(srcIndex - 3, onDragState) &&
     isSimulateMovePieceGood(srcIndex, srcIndex - 1, onDragState) &&
     isSimulateMovePieceGood(srcIndex, srcIndex - 2, onDragState)
   )
@@ -140,7 +142,7 @@ function pawn1Step(srcIndex, onDragState) {
   console.log(`pawn1Step(${srcIndex}, onDragState)`)
   let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
   let tarIndex = srcIndex + 8 * orientation[pieceAtSource.player]
-  if (getPieceMatchingIndex2(tarIndex, onDragState) !== undefined) return
+  if (!isVacantTile(tarIndex, onDragState)) return
   if (index2Rank(tarIndex) === 1 || index2Rank(tarIndex) === 8)
     return pawnMovePromote(srcIndex, tarIndex)
   return movePieceAction(srcIndex, "P", tarIndex, onDragState)
@@ -160,11 +162,12 @@ function pawn2Step(srcIndex, onDragState) {
   if (!isPawnOnFrontLine(srcIndex, onDragState)) return
 
   let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  let tarIndex = srcIndex + 8 * orientation[pieceAtSource.player]
-  if (getPieceMatchingIndex2(tarIndex, onDragState) !== undefined) return
+  let step = 8 * orientation[pieceAtSource.player]
+  let tarIndex = srcIndex + step
+  if (!isVacantTile(tarIndex, onDragState)) return
 
-  tarIndex = srcIndex + 16 * orientation[pieceAtSource.player]
-  if (getPieceMatchingIndex2(tarIndex, onDragState) !== undefined) return
+  tarIndex += step
+  if (!isVacantTile(tarIndex, onDragState)) return
 
   return movePieceAction(srcIndex, "P", tarIndex, onDragState)
 }
@@ -203,6 +206,15 @@ function pawnCapture(leftRight, srcIndex, onDragState) {
     return pawnCapturePromote(srcIndex, tarIndex, pieceAtTarget.letter)
 
   return createActionCapture(srcIndex, "P", tarIndex, pieceAtTarget.letter)
+}
+
+function pawnMovement(srcIndex, onDragState) {
+  let result = []
+  result.push(pawn1Step(srcIndex, onDragState))
+  result.push(pawn2Step(srcIndex, onDragState))
+  result.push(pawnCapture("L", srcIndex, onDragState))
+  result.push(pawnCapture("R", srcIndex, onDragState))
+  return result
 }
 
 // QUEEN MOVES
@@ -462,11 +474,9 @@ function kingsideCastle(srcIndex) {
 
 export {
   bishopMovement,
-  kingStep,
+  kingMovement,
   knightMovement,
   QueenMovement,
-  pawn1Step,
-  pawn2Step,
-  pawnCapture,
+  pawnMovement,
   rookMovement,
 }

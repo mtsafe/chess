@@ -95,6 +95,10 @@ function getPieceMatchingIndex2(tile_num, onDragState) {
   return result
 }
 
+function isVacantTile(tile_num, onDragState) {
+  return getPieceMatchingIndex2(tile_num, onDragState) === undefined
+}
+
 function killPiece(tarIndex, pieces) {
   console.log(`killPiece(${tarIndex})`)
   let victim = getPieceMatchingIndex1(tarIndex, pieces)
@@ -166,6 +170,7 @@ export {
   getPieceMatchingCode,
   getPieceMatchingIndex1,
   getPieceMatchingIndex2,
+  isVacantTile,
   killPiece,
   movePiece,
   promotePiece,
