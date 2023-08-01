@@ -1,6 +1,6 @@
 #!/bin/bash
 
-npm run cy:run | tee ./tmp/run.out
+npm run cy:allnovid | tee ./tmp/run.out
 
 if fgrep 'All specs passed!' ./tmp/run.out  ; then
 

@@ -21,7 +21,7 @@ function findDropTargets(pieceElement, onDragState) {
   let { letter } = getPieceMatchingIndex2(parseInt(srcIndex), onDragState)
   switch (letter) {
     case "P":
-      result = pawnMovement(srcIndex, onDragState)
+      result = pawnMovement({ srcIndex, onDragState })
       break
     case "R":
       result = rookMovement(srcIndex, onDragState)

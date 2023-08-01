@@ -16,12 +16,11 @@ import * as Action from "./actions"
 function isSimulateMovePieceGood(srcIndex, tarIndex, onDragState) {
   // Simulate move piece to check that it is valid / not into check
   let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  let defPieces = structuredClone(onDragState.pieces1)
-  let atkPieces = structuredClone(onDragState.pieces2)
   console.log(
     `isSimulateMovePieceGood: ${pieceAtSource.name}@${pieceAtSource.index}`
   )
-  // console.dir(pieceAtSource)
+  let defPieces = structuredClone(onDragState.pieces1)
+  let atkPieces = structuredClone(onDragState.pieces2)
 
   if (pieceAtSource.player === 2)
     [defPieces, atkPieces] = [atkPieces, defPieces]

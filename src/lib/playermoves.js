@@ -13,13 +13,23 @@ import {
   getPieceMatchingCode,
   getPieceMatchingIndex1,
   getPieceMatchingIndex2,
+  getSrcAndTarPieces,
   isVacantTile,
   killPiece,
   movePiece,
   promotePiece,
 } from "../state/pieces"
 import { isPlayerInCheck } from "../state/check"
-import * as Action from "./actions"
+import {
+  isSimulateMovePieceGood,
+  createActionCapture,
+  createActionEnPassant,
+  movePieceAction,
+  pawnCapturePromote,
+  pawnMovePromote,
+  kingsideCastle,
+  queensideCastle,
+} from "./actionObjs"
 
 // const onDragState = {
 //   pieces1,
@@ -54,14 +64,14 @@ function kingMovement(srcIndex, onDragState) {
 
 function kingKingsideCastle(srcIndex, onDragState) {
   console.log(`kingKingsideCastle(${srcIndex})`)
-  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+  let { player } = getPieceMatchingIndex2(srcIndex, onDragState)
   let theCastleablility = onDragState.canCastle()
   if (
-    ((pieceAtSource.player === 1 &&
+    ((player === 1 &&
       srcIndex === 60 &&
       theCastleablility.player1Kingside &&
       !isPlayerInCheck(onDragState.pieces1, onDragState.pieces2)) ||
-      (pieceAtSource.player === 2 &&
+      (player === 2 &&
         srcIndex === 4 &&
         theCastleablility.player2Kingside &&
         !isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))) &&
@@ -75,15 +85,15 @@ function kingKingsideCastle(srcIndex, onDragState) {
 
 function kingQueensideCastle(srcIndex, onDragState) {
   console.log(`kingQueensideCastle(${srcIndex})`)
-  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+  let { player } = getPieceMatchingIndex2(srcIndex, onDragState)
   let theCastleablility = onDragState.canCastle()
 
   if (
-    ((pieceAtSource.player === 1 &&
+    ((player === 1 &&
       srcIndex === 60 &&
       theCastleablility.player1Queenside &&
       !isPlayerInCheck(onDragState.pieces1, onDragState.pieces2)) ||
-      (pieceAtSource.player === 2 &&
+      (player === 2 &&
         srcIndex === 4 &&
         theCastleablility.player2Queenside &&
         !isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))) &&
@@ -127,10 +137,12 @@ function knightMovement(srcIndex, onDragState) {
 
 function genericMove(srcIndex, tarOffset, letter, onDragState) {
   console.log(`genericMove(srcIndex, tarOffset, letter, onDragState)`)
-  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  if (pieceAtSource === undefined) return
   let tarIndex = srcIndex + tarOffset
-  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
+  let { pieceAtSource, pieceAtTarget } = getSrcAndTarPieces(
+    srcIndex,
+    tarIndex,
+    onDragState
+  )
   if (pieceAtTarget === undefined)
     return movePieceAction(srcIndex, letter, tarIndex, onDragState)
   else if (pieceAtSource.player !== pieceAtTarget.player)
@@ -140,8 +152,8 @@ function genericMove(srcIndex, tarOffset, letter, onDragState) {
 // PAWN MOVES
 function pawn1Step(srcIndex, onDragState) {
   console.log(`pawn1Step(${srcIndex}, onDragState)`)
-  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  let tarIndex = srcIndex + 8 * orientation[pieceAtSource.player]
+  let { player } = getPieceMatchingIndex2(srcIndex, onDragState)
+  let tarIndex = srcIndex + 8 * orientation[player]
   if (!isVacantTile(tarIndex, onDragState)) return
   if (index2Rank(tarIndex) === 1 || index2Rank(tarIndex) === 8)
     return pawnMovePromote(srcIndex, tarIndex)
@@ -149,20 +161,18 @@ function pawn1Step(srcIndex, onDragState) {
 }
 
 function isPawnOnFrontLine(srcIndex, onDragState) {
-  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  if (orientation[pieceAtSource.player] === -1) {
+  let { player } = getPieceMatchingIndex2(srcIndex, onDragState)
+  if (player === 1) {
     if (index2Rank(srcIndex) == 2) return true
   } else if (index2Rank(srcIndex) == 7) return true
   return false
 }
 
 function pawn2Step(srcIndex, onDragState) {
-  if (!isPawnOnFrontLine(srcIndex, onDragState))
-    console.log("Pawn is not on the front line to 2 step.")
   if (!isPawnOnFrontLine(srcIndex, onDragState)) return
 
-  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  let step = 8 * orientation[pieceAtSource.player]
+  let { player } = getPieceMatchingIndex2(srcIndex, onDragState)
+  let step = 8 * orientation[player]
   let tarIndex = srcIndex + step
   if (!isVacantTile(tarIndex, onDragState)) return
 
@@ -172,25 +182,27 @@ function pawn2Step(srcIndex, onDragState) {
   return movePieceAction(srcIndex, "P", tarIndex, onDragState)
 }
 
-function pawnCapture(leftRight, srcIndex, onDragState) {
-  const lr =
-    leftRight === "L"
-      ? {
-          badFile: "a",
-          atkSideVal: -1,
-        }
-      : {
-          badFile: "h",
-          atkSideVal: 1,
-        }
-  if (index2File(srcIndex) === lr.badFile) return
-  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  if (pieceAtSource === undefined) return
-  let tarIndex =
-    srcIndex + 8 * orientation[pieceAtSource.player] + lr.atkSideVal
+function pawnCaptures(srcIndex, onDragState) {
+  let result1 = pawnCaptureRL(
+    { badFile: "a", atkSideVal: -1 },
+    srcIndex,
+    onDragState
+  )
+  let result2 = pawnCaptureRL(
+    { badFile: "h", atkSideVal: 1 },
+    srcIndex,
+    onDragState
+  )
+  return [result1, result2]
+}
+
+function pawnCaptureRL(leftRight, srcIndex, onDragState) {
+  if (index2File(srcIndex) === leftRight.badFile) return
+  let { player } = getPieceMatchingIndex2(srcIndex, onDragState)
+  let tarIndex = srcIndex + 8 * orientation[player] + leftRight.atkSideVal
   let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget === undefined) {
-    let victimIndex = srcIndex + lr.atkSideVal
+    let victimIndex = srcIndex + leftRight.atkSideVal
     console.log(
       `does victimIndex{${victimIndex}} === onDragState.enPassantOpportunity{${onDragState.enPassantOpportunity}}`
     )
@@ -208,13 +220,11 @@ function pawnCapture(leftRight, srcIndex, onDragState) {
   return createActionCapture(srcIndex, "P", tarIndex, pieceAtTarget.letter)
 }
 
-function pawnMovement(srcIndex, onDragState) {
+function pawnMovement({ srcIndex, onDragState }) {
   let result = []
   result.push(pawn1Step(srcIndex, onDragState))
   result.push(pawn2Step(srcIndex, onDragState))
-  result.push(pawnCapture("L", srcIndex, onDragState))
-  result.push(pawnCapture("R", srcIndex, onDragState))
-  return result
+  return result.concat(pawnCaptures(srcIndex, onDragState))
 }
 
 // QUEEN MOVES
@@ -285,9 +295,11 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
   rank = index2Rank(tarIndex)
   console.log(`condition=${condition()}`)
   for (; condition(); nextPosition(), tarIndex += tarOffset) {
-    let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-    if (pieceAtSource === undefined) return
-    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
+    let { pieceAtSource, pieceAtTarget } = getSrcAndTarPieces(
+      srcIndex,
+      tarIndex,
+      onDragState
+    )
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtSource.player !== pieceAtTarget.player) {
@@ -332,10 +344,12 @@ function rookHorizontal(direction, srcIndex, letter, rank, onDragState) {
     nextColumn = () => column--
   }
   for (column = start; condition(); nextColumn()) {
-    let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-    if (pieceAtSource === undefined) return
     let tarIndex = rc2Index(rank, column)
-    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
+    let { pieceAtSource, pieceAtTarget } = getSrcAndTarPieces(
+      srcIndex,
+      tarIndex,
+      onDragState
+    )
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtSource.player !== pieceAtTarget.player) {
@@ -365,10 +379,12 @@ function rookVertical(direction, srcIndex, letter, file, onDragState) {
     nextRank = () => rank--
   }
   for (rank = start; condition(); nextRank()) {
-    let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-    if (pieceAtSource === undefined) return
     let tarIndex = rf2Index(rank, file)
-    let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
+    let { pieceAtSource, pieceAtTarget } = getSrcAndTarPieces(
+      srcIndex,
+      tarIndex,
+      onDragState
+    )
     if (pieceAtTarget === undefined)
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtSource.player !== pieceAtTarget.player) {
@@ -379,97 +395,6 @@ function rookVertical(direction, srcIndex, letter, file, onDragState) {
     } else break
   }
   return result
-}
-
-function createActionCapture(srcIndex, srcPiece, tarIndex, tarPiece) {
-  return {
-    srcIndex,
-    srcPiece,
-    action: Action.CAPTURE,
-    tarIndex,
-    tarPiece,
-  }
-}
-
-function createActionEnPassant(srcIndex, tarIndex) {
-  return {
-    srcIndex,
-    srcPiece: "P",
-    action: Action.EN_PASSANT,
-    tarIndex,
-    tarPiece: "P",
-  }
-}
-
-function isSimulateMovePieceGood(srcIndex, tarIndex, onDragState) {
-  // Simulate move piece to check that it is valid / not into check
-  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  let defPieces = structuredClone(onDragState.pieces1)
-  let atkPieces = structuredClone(onDragState.pieces2)
-  console.log(
-    `isSimulateMovePieceGood: ${pieceAtSource.name}@${pieceAtSource.index}`
-  )
-  // console.dir(pieceAtSource)
-
-  if (pieceAtSource.player === 2)
-    [defPieces, atkPieces] = [atkPieces, defPieces]
-  movePiece(srcIndex, tarIndex, defPieces)
-  return !isPlayerInCheck(defPieces, atkPieces)
-}
-
-function movePieceAction(srcIndex, srcPiece, tarIndex, onDragState) {
-  console.log(
-    `movePieceAction(${srcIndex}, ${srcPiece}, ${tarIndex}, onDragState)`
-  )
-  if (isSimulateMovePieceGood(srcIndex, tarIndex, onDragState))
-    return {
-      srcIndex,
-      srcPiece,
-      action: Action.MOVE,
-      tarIndex,
-      tarPiece: "",
-    }
-}
-
-function queensideCastle(srcIndex) {
-  return {
-    srcIndex,
-    srcPiece: "K",
-    action: Action.QUEENSIDE_CASTLE,
-    tarIndex: srcIndex - 2,
-    tarPiece: "N",
-  }
-}
-
-function pawnCapturePromote(srcIndex, tarIndex, tarPiece) {
-  return {
-    srcIndex,
-    srcPiece: "P",
-    action: Action.CAPTURE_PROMOTE,
-    tarIndex,
-    tarPiece,
-  }
-}
-
-function pawnMovePromote(srcIndex, tarIndex) {
-  console.log(`pawnMovePromote(${srcIndex}, ${tarIndex})`)
-  return {
-    srcIndex,
-    srcPiece: "P",
-    action: Action.MOVE_PROMOTE,
-    tarIndex,
-    tarPiece: "",
-  }
-}
-
-function kingsideCastle(srcIndex) {
-  return {
-    srcIndex,
-    srcPiece: "K",
-    action: Action.KINGSIDE_CASTLE,
-    tarIndex: srcIndex + 2,
-    tarPiece: "N",
-  }
 }
 
 export {

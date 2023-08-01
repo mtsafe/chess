@@ -95,6 +95,12 @@ function getPieceMatchingIndex2(tile_num, onDragState) {
   return result
 }
 
+function getSrcAndTarPieces(srcIndex, tarIndex, onDragState) {
+  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
+  let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
+  return { pieceAtSource, pieceAtTarget }
+}
+
 function isVacantTile(tile_num, onDragState) {
   return getPieceMatchingIndex2(tile_num, onDragState) === undefined
 }
@@ -170,6 +176,7 @@ export {
   getPieceMatchingCode,
   getPieceMatchingIndex1,
   getPieceMatchingIndex2,
+  getSrcAndTarPieces,
   isVacantTile,
   killPiece,
   movePiece,
