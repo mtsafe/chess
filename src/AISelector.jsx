@@ -9,7 +9,7 @@ export function AISelector({ handleOnChange_AIAlgoMode }) {
         onChange={e => handleOnChange_AIAlgoMode(e.target.value)}
       >
         <option value="0">Test Mode 1</option>
-        <option value="1">Test Mode 2</option>
+        <option value="1">2 Player Mode</option>
         <option value="2">Walker</option>
         <option value="3">Spit Baller</option>
         <option value="4">Offender</option>

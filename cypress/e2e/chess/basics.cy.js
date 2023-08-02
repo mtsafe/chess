@@ -32,8 +32,8 @@ describe("Test check", () => {
   })
 
   it("Action CAPTURE object works properly", () => {
-    // Select Test Mode 2 = player moves pieces taking turns
-    cy.get("#ai-algo").select("Test Mode 2")
+    // Select 2 Player Mode = player moves pieces taking turns
+    cy.get("#ai-algo").select("2 Player Mode")
     cy.get("#ai-algo").should("have.value", "1")
     let up = -8,
       down = 8,
@@ -59,8 +59,8 @@ describe("Test check", () => {
   })
 
   it("Action EN_PASSANT object works properly", () => {
-    // Select Test Mode 2 = player moves pieces taking turns
-    cy.get("#ai-algo").select("Test Mode 2")
+    // Select 2 Player Mode = player moves pieces taking turns
+    cy.get("#ai-algo").select("2 Player Mode")
     cy.get("#ai-algo").should("have.value", "1")
     let up = -8,
       down = 8,
@@ -89,8 +89,8 @@ describe("Test check", () => {
   })
 
   it("Action MOVE object works properly", () => {
-    // Select Test Mode 2 = player moves pieces taking turns
-    cy.get("#ai-algo").select("Test Mode 2")
+    // Select 2 Player Mode = player moves pieces taking turns
+    cy.get("#ai-algo").select("2 Player Mode")
     cy.get("#ai-algo").should("have.value", "1")
     let up = -8,
       down = 8,
@@ -108,8 +108,8 @@ describe("Test check", () => {
   })
 
   it("Action CAPTURE_PROMOTE object works properly", () => {
-    // Select Test Mode 2 = player moves pieces taking turns
-    cy.get("#ai-algo").select("Test Mode 2")
+    // Select 2 Player Mode = player moves pieces taking turns
+    cy.get("#ai-algo").select("2 Player Mode")
     cy.get("#ai-algo").should("have.value", "1")
     let up = -8,
       down = 8,
@@ -139,8 +139,8 @@ describe("Test check", () => {
   })
 
   it("Action MOVE_PROMOTE object works properly", () => {
-    // Select Test Mode 2 = player moves pieces taking turns
-    cy.get("#ai-algo").select("Test Mode 2")
+    // Select 2 Player Mode = player moves pieces taking turns
+    cy.get("#ai-algo").select("2 Player Mode")
     cy.get("#ai-algo").should("have.value", "1")
     let up = -8,
       down = 8,
@@ -173,8 +173,8 @@ describe("Test check", () => {
   })
 
   it("Action KINGSIDE_CASTLE object works properly", () => {
-    // Select Test Mode 2 = player moves pieces taking turns
-    cy.get("#ai-algo").select("Test Mode 2")
+    // Select 2 Player Mode = player moves pieces taking turns
+    cy.get("#ai-algo").select("2 Player Mode")
     cy.get("#ai-algo").should("have.value", "1")
     let up = -8,
       down = 8,
@@ -201,8 +201,8 @@ describe("Test check", () => {
   })
 
   it("Action QUEENSIDE_CASTLE object works properly", () => {
-    // Select Test Mode 2 = player moves pieces taking turns
-    cy.get("#ai-algo").select("Test Mode 2")
+    // Select 2 Player Mode = player moves pieces taking turns
+    cy.get("#ai-algo").select("2 Player Mode")
     cy.get("#ai-algo").should("have.value", "1")
     let up = -8,
       down = 8,

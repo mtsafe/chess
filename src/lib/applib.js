@@ -17,13 +17,6 @@ function index2Column(index) {
   return (index % 8) + 1
 }
 
-function getGameStatus(gamePlay, moveActions) {
-  let takingTurns = gamePlay !== 0
-  let whosTurn = 0
-  if (takingTurns) whosTurn = (moveActions?.length % 2) + 1
-  return { takingTurns, whosTurn }
-}
-
 const winMatrix = [
   [0, 1, 2],
   [0, 4, 8],
@@ -184,7 +177,6 @@ export {
   index2Rank,
   index2File,
   index2Column,
-  getGameStatus,
   aiChoosesTile,
   numMovesLeft,
   tie,

@@ -8,9 +8,9 @@ describe("Test AISelector", () => {
     cy.get("#ai-algo").should("be.visible")
     cy.get("#ai-algo").select("Test Mode 1")
     cy.get("#ai-algo").should("have.value", "0")
-    cy.get("#ai-algo").select("Test Mode 2")
+    cy.get("#ai-algo").select("2 Player Mode")
     cy.get("#ai-algo").should("have.value", "1")
     // Select Test Mode 1 = player moves any pieces
-    // Select Test Mode 2 = player takes turns
+    // Select 2 Player Mode = player takes turns
   })
 })

@@ -64,9 +64,9 @@ describe("Test Gameplay Modes", () => {
     validMovePlayer2(k2, (k2 += kingsidecastle), "king")
   })
 
-  it("Test AI Algo Test Mode 2: Taking turns", () => {
-    // Select Test Mode 2 = player moves pieces taking turns
-    cy.get("#ai-algo").select("Test Mode 2")
+  it("Test AI Algo 2 Player Mode: Taking turns", () => {
+    // Select 2 Player Mode = player moves pieces taking turns
+    cy.get("#ai-algo").select("2 Player Mode")
     cy.get("#ai-algo").should("have.value", "1")
     let up = -8,
       down = 8,
@@ -117,8 +117,8 @@ describe("Test Gameplay Modes", () => {
     validMovePlayer2(pe2, (pe2 += 2 * down), "pawn")
     validMovePlayer2(pg2, (pg2 += 2 * down), "pawn")
 
-    // Select Test Mode 2 = player takes turns
-    cy.get("#ai-algo").select("Test Mode 2")
+    // Select 2 Player Mode = player takes turns
+    cy.get("#ai-algo").select("2 Player Mode")
     cy.get("#ai-algo").should("have.value", "1")
     // Invalid pawn first moves already moved
     invalidMovePlayer1(pa1, pa1 + 2 * up, "pawn")

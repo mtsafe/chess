@@ -14,4 +14,8 @@ if fgrep 'All specs passed!' ./tmp/run.out  ; then
   cp src/state/* ./bak/state > /dev/null 2>&1
   cp src/lib/* ./bak/lib > /dev/null 2>&1
 
+  theFiles1=`ls ./bak/src/*.jsx ./bak/src/*.css ./bak/state/*.js ./bak/lib/*.js ./bin/* ./cypress/e2e/chess/*.js`
+  theFiles2=`ls ./*.js ./*.md ./package.json ./*.html ./*.css ./.gitignore ./.github/workflows/*.yml`
+  linesCount1=`wc -l ${theFiles1} ${theFiles2} | grep total`
+  echo "${linesCount1} lines!"
 fi

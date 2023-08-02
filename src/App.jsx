@@ -2,7 +2,7 @@ import { useState } from "react"
 
 // FUNCTION COMPONENTS
 import { GameBoard } from "./GameBoard"
-import { GameStatus } from "./GameStatus"
+import { GameStatusMsg } from "./GameStatusMsg"
 import { AISelector } from "./AISelector"
 import { NewGameButton } from "./NewGameButton"
 
@@ -20,7 +20,7 @@ import { newTiles } from "./state/tiles"
 
 // OTHER FUNCTIONS
 // import { aiChoosesTile, tie, winner } from "./lib/applib"
-import { getGameStatus } from "./lib/applib"
+import { newStatusMsg, getGameStatus } from "./state/gamestatusmsg"
 import { findDropTargets } from "./lib/ondrag"
 import { computeOnDropStateChanges } from "./lib/ondrop"
 
@@ -39,12 +39,11 @@ function App() {
   const [enPassantOpportunity, setEnPassantOpportunity] = useState(OFF_BOARD)
 
   const [isCheck, setIsCheck] = useState(false)
-  const [statusMsg, setStatusMsg] = useState("Go!")
   const [gamePlay, setGamePlay] = useState("3")
 
   const gameStatus = getGameStatus(gamePlay, moveActions)
+  const statusMsg = newStatusMsg(gameStatus)
 
-  console.log(`TURN: Player ${gameStatus.whosTurn}`)
   function canCastle() {
     if (isCheck)
       return {
@@ -86,8 +85,8 @@ function App() {
     setPieces1(newPieces1())
     setPieces2(newPieces2())
     setTiles(newTiles())
-    setStatusMsg("Go!")
     setEnPassantOpportunity(OFF_BOARD)
+    setStatusMsg("Go!")
   }
 
   function handleOnDrag_SetDropzones(e) {
@@ -162,7 +161,7 @@ function App() {
         getMoveMatchingTarProp={getMoveMatchingTarProp}
       />
       <div>
-        <GameStatus statusMsg={statusMsg} isCheck={isCheck} />
+        <GameStatusMsg statusMsg={statusMsg} isCheck={isCheck} />
         <div>
           <span>
             <NewGameButton
