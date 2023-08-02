@@ -130,9 +130,8 @@ function linearTilesCovered(angles, atkPiece, atkPieces, defPieces) {
 }
 
 function straightStepsCovered(srcIndex, step, atkPieces, defPieces) {
-  let t,
-    s,
-    result = []
+  let t, s
+  let result = []
   for (
     t = srcIndex + step, s = srcIndex;
     areLocal(t, s);
@@ -148,26 +147,5 @@ function straightStepsCovered(srcIndex, step, atkPieces, defPieces) {
   }
   return result
 }
-
-// function straightSteps(srcIndex, step, atkPieces, defPieces) {
-//   let t,
-//     s,
-//     result = []
-//   for (
-//     t = srcIndex + step, s = srcIndex;
-//     areLocal(t, s);
-//     t += step, s += step
-//   ) {
-//     if (getPieceMatchingIndex1(t, atkPieces)) {
-//       break
-//     }
-//     if (getPieceMatchingIndex1(t, defPieces)) {
-//       result.push(t)
-//       break
-//     }
-//     result.push(t)
-//   }
-//   return result
-// }
 
 export { isPlayerInCheck }

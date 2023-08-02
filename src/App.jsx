@@ -34,7 +34,7 @@ function App() {
   const [pieces1, setPieces1] = useState(newPieces1)
   const [pieces2, setPieces2] = useState(newPieces2)
   const [dropTargetMoves, setDropTargetMoves] = useState([])
-  const [recordedMoves, setRecordedMoves] = useState([])
+  const [moveActions, setMoveActions] = useState([])
   const [castleability, setCastleability] = useState(newCastleability())
   const [enPassantOpportunity, setEnPassantOpportunity] = useState(OFF_BOARD)
 
@@ -42,7 +42,7 @@ function App() {
   const [statusMsg, setStatusMsg] = useState("Go!")
   const [gamePlay, setGamePlay] = useState("3")
 
-  const gameStatus = getGameStatus(gamePlay, recordedMoves)
+  const gameStatus = getGameStatus(gamePlay, moveActions)
 
   console.log(`TURN: Player ${gameStatus.whosTurn}`)
   function canCastle() {
@@ -100,7 +100,7 @@ function App() {
     const onDragState = {
       pieces1,
       pieces2,
-      recordedMoves,
+      moveActions,
       enPassantOpportunity,
       castleability,
       canCastle,
@@ -139,8 +139,8 @@ function App() {
     setEnPassantOpportunity(refreshOnDropState.freshEnPassantOpp)
     setDropTargetMoves([])
 
-    let instructions = move
-    setRecordedMoves([...recordedMoves, instructions])
+    let moveAction = move
+    setMoveActions([...moveActions, moveAction])
   }
   // ***************************
   // EXECUTION BEGINS (OTHER THAN STATE HOOK DECLARATIONS)

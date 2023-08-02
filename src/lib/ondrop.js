@@ -5,6 +5,7 @@ import {
   killPiece,
   movePiece,
   promotePiece,
+  getPieceMatchingIndex1,
   getPieceMatchingIndex2,
 } from "../state/pieces"
 import { castleabilityUpdater } from "../state/castleability"
@@ -27,11 +28,15 @@ function computeOnDropStateChanges({
 
   const actionValues = {
     [Action.MOVE]: () => {
-      thePlayer = getMovPlayer(srcIndex, pieces1, pieces2)
+      let { letter, player } = getPieceMatchingIndex1(
+        srcIndex,
+        pieces1.concat(pieces2)
+      )
+      thePlayer = player
       freshCastleability = castleabilityUpdater(srcIndex, castleability)
       if (thePlayer === 1) freshPieces1 = movePiece(srcIndex, tarIndex, pieces1)
       else freshPieces2 = movePiece(srcIndex, tarIndex, pieces2)
-      freshEnPassantOpp = getEnPassantOpp(move)
+      freshEnPassantOpp = getEnPassantOpp(move, letter)
       // also en passant opportunity for 2-step Pawn
     },
     [Action.CAPTURE]: () => {

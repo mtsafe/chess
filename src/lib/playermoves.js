@@ -21,20 +21,19 @@ import {
 } from "../state/pieces"
 import { isPlayerInCheck } from "../state/check"
 import {
-  isSimulateMovePieceGood,
   createActionCapture,
-  createActionEnPassant,
+  enPassantAction,
   movePieceAction,
-  pawnCapturePromote,
-  pawnMovePromote,
-  kingsideCastle,
-  queensideCastle,
+  capturePromoteAction,
+  movePromoteAction,
+  kingsideCastleAction,
+  queensideCastleAction,
 } from "./actionObjs"
 
 // const onDragState = {
 //   pieces1,
 //   pieces2,
-//   recordedMoves,
+//   moveActions,
 //   enPassantOpportunity,
 //   castleability,
 //   canCastle,
@@ -76,11 +75,9 @@ function kingKingsideCastle(srcIndex, onDragState) {
         theCastleablility.player2Kingside &&
         !isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))) &&
     isVacantTile(srcIndex + 1, onDragState) &&
-    isVacantTile(srcIndex + 2, onDragState) &&
-    isSimulateMovePieceGood(srcIndex, srcIndex + 1, onDragState) &&
-    isSimulateMovePieceGood(srcIndex, srcIndex + 2, onDragState)
+    isVacantTile(srcIndex + 2, onDragState)
   )
-    return kingsideCastle(srcIndex)
+    return kingsideCastleAction(srcIndex, onDragState)
 }
 
 function kingQueensideCastle(srcIndex, onDragState) {
@@ -99,11 +96,9 @@ function kingQueensideCastle(srcIndex, onDragState) {
         !isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))) &&
     isVacantTile(srcIndex - 1, onDragState) &&
     isVacantTile(srcIndex - 2, onDragState) &&
-    isVacantTile(srcIndex - 3, onDragState) &&
-    isSimulateMovePieceGood(srcIndex, srcIndex - 1, onDragState) &&
-    isSimulateMovePieceGood(srcIndex, srcIndex - 2, onDragState)
+    isVacantTile(srcIndex - 3, onDragState)
   )
-    return queensideCastle(srcIndex)
+    return queensideCastleAction(srcIndex, onDragState)
 }
 
 // KNIGHT MOVES
@@ -146,7 +141,13 @@ function genericMove(srcIndex, tarOffset, letter, onDragState) {
   if (pieceAtTarget === undefined)
     return movePieceAction(srcIndex, letter, tarIndex, onDragState)
   else if (pieceAtSource.player !== pieceAtTarget.player)
-    return createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+    return createActionCapture(
+      srcIndex,
+      letter,
+      tarIndex,
+      pieceAtTarget.letter,
+      onDragState
+    )
 }
 
 // PAWN MOVES
@@ -156,7 +157,7 @@ function pawn1Step(srcIndex, onDragState) {
   let tarIndex = srcIndex + 8 * orientation[player]
   if (!isVacantTile(tarIndex, onDragState)) return
   if (index2Rank(tarIndex) === 1 || index2Rank(tarIndex) === 8)
-    return pawnMovePromote(srcIndex, tarIndex)
+    return movePromoteAction(srcIndex, tarIndex, onDragState)
   return movePieceAction(srcIndex, "P", tarIndex, onDragState)
 }
 
@@ -207,7 +208,7 @@ function pawnCaptureRL(leftRight, srcIndex, onDragState) {
       `does victimIndex{${victimIndex}} === onDragState.enPassantOpportunity{${onDragState.enPassantOpportunity}}`
     )
     if (victimIndex === onDragState.enPassantOpportunity)
-      return createActionEnPassant(srcIndex, tarIndex)
+      return enPassantAction(srcIndex, tarIndex, onDragState)
     return
   }
 
@@ -215,9 +216,20 @@ function pawnCaptureRL(leftRight, srcIndex, onDragState) {
     (pieceAtTarget.player === 1 && index2Rank(tarIndex) === 1) ||
     (pieceAtTarget.player === 2 && index2Rank(tarIndex) === 8)
   )
-    return pawnCapturePromote(srcIndex, tarIndex, pieceAtTarget.letter)
+    return capturePromoteAction(
+      srcIndex,
+      tarIndex,
+      pieceAtTarget.letter,
+      onDragState
+    )
 
-  return createActionCapture(srcIndex, "P", tarIndex, pieceAtTarget.letter)
+  return createActionCapture(
+    srcIndex,
+    "P",
+    tarIndex,
+    pieceAtTarget.letter,
+    onDragState
+  )
 }
 
 function pawnMovement({ srcIndex, onDragState }) {
@@ -304,7 +316,13 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtSource.player !== pieceAtTarget.player) {
       result.push(
-        createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+        createActionCapture(
+          srcIndex,
+          letter,
+          tarIndex,
+          pieceAtTarget.letter,
+          onDragState
+        )
       )
       break
     } else break
@@ -354,7 +372,13 @@ function rookHorizontal(direction, srcIndex, letter, rank, onDragState) {
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtSource.player !== pieceAtTarget.player) {
       result.push(
-        createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+        createActionCapture(
+          srcIndex,
+          letter,
+          tarIndex,
+          pieceAtTarget.letter,
+          onDragState
+        )
       )
       break
     } else break
@@ -389,7 +413,13 @@ function rookVertical(direction, srcIndex, letter, file, onDragState) {
       result.push(movePieceAction(srcIndex, letter, tarIndex, onDragState))
     else if (pieceAtSource.player !== pieceAtTarget.player) {
       result.push(
-        createActionCapture(srcIndex, letter, tarIndex, pieceAtTarget.letter)
+        createActionCapture(
+          srcIndex,
+          letter,
+          tarIndex,
+          pieceAtTarget.letter,
+          onDragState
+        )
       )
       break
     } else break

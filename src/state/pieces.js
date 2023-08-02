@@ -77,6 +77,12 @@ function getFreshPiecesWithout(tarIndex, pieces) {
     .filter(Boolean)
 }
 
+function getMovPlayer(srcIndex, pieces1, pieces2) {
+  let pieceAtSource = getPieceMatchingIndex1(srcIndex, pieces1.concat(pieces2))
+
+  return pieceAtSource?.player
+}
+
 function getPieceMatchingCode(code, pieces) {
   if (pieces?.length) return pieces.find(piece => piece.code === code)
 }
@@ -86,13 +92,9 @@ function getPieceMatchingIndex1(tile_num, pieces) {
 }
 
 function getPieceMatchingIndex2(tile_num, onDragState) {
-  let result
-  if (onDragState.pieces1?.length)
-    result = onDragState.pieces1.find(piece => piece.index === tile_num)
-
-  if (typeof result === "undefined" && onDragState.pieces2?.length)
-    result = onDragState.pieces2.find(piece => piece.index === tile_num)
-  return result
+  let pieces = onDragState.pieces1
+  pieces = pieces.concat(onDragState.pieces2)
+  return getPieceMatchingIndex1(tile_num, pieces)
 }
 
 function getSrcAndTarPieces(srcIndex, tarIndex, onDragState) {
@@ -125,16 +127,7 @@ function makeQueen(tarIndex, pieces) {
 function movePiece(srcIndex, tarIndex, pieces) {
   console.log(`movePiece(${srcIndex}, ${tarIndex})`)
   let piece = getPieceMatchingIndex1(srcIndex, pieces)
-  if (piece === undefined) console.log("srcIndex not found in pieces")
   if (piece === undefined) return
-
-  // console.log("Moved piece set looks like")
-  // console.dir(
-  //   pieces.map(p => {
-  //     if (p.index === srcIndex) p.index = tarIndex
-  //     return p
-  //   })
-  // )
 
   return pieces.map(p => {
     if (p.index === srcIndex) p.index = tarIndex
@@ -147,12 +140,6 @@ function promotePiece(tarIndex, pieces) {
   let newQueen = getPieceMatchingIndex1(tarIndex, pieces)
   if (newQueen === undefined) return
   return makeQueen(tarIndex, pieces)
-}
-
-function getMovPlayer(srcIndex, pieces1, pieces2) {
-  let pieceAtSource = getPieceMatchingIndex1(srcIndex, pieces1.concat(pieces2))
-
-  return pieceAtSource?.player
 }
 
 function getDefAtk(srcIndex, pieces1, pieces2) {

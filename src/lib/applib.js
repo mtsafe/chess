@@ -4,6 +4,9 @@ function rc2Index(rank, column) {
 function rf2Index(rank, file) {
   return (8 - rank) * 8 + file.charCodeAt(0) - 97
 }
+function index2RF(index) {
+  index2File(index) + index2Rank(index)
+}
 function index2Rank(index) {
   return 8 - Math.floor(index / 8)
 }
@@ -14,10 +17,10 @@ function index2Column(index) {
   return (index % 8) + 1
 }
 
-function getGameStatus(gamePlay, recordedMoves) {
+function getGameStatus(gamePlay, moveActions) {
   let takingTurns = gamePlay !== 0
   let whosTurn = 0
-  if (takingTurns) whosTurn = (recordedMoves?.length % 2) + 1
+  if (takingTurns) whosTurn = (moveActions?.length % 2) + 1
   return { takingTurns, whosTurn }
 }
 
@@ -177,6 +180,7 @@ function winner(foot, testLetter) {
 export {
   rc2Index,
   rf2Index,
+  index2RF,
   index2Rank,
   index2File,
   index2Column,

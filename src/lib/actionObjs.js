@@ -1,4 +1,18 @@
 import {
+  rc2Index,
+  rf2Index,
+  index2RF,
+  index2Rank,
+  index2File,
+  index2Column,
+  aiChoosesTile,
+  numMovesLeft,
+  tie,
+  locateOneMoveWin,
+  winner,
+} from "../lib/applib"
+
+import {
   orientation,
   newPieces1,
   newPieces2,
@@ -13,103 +27,187 @@ import {
 import { isPlayerInCheck } from "../state/check"
 import * as Action from "./actions"
 
-function isSimulateMovePieceGood(srcIndex, tarIndex, onDragState) {
+// "Reversible Algebraic Notation" as per Wikipedia
+function algebraicNotation({ action, srcIndex, srcPiece, tarIndex, tarPiece }) {
+  switch (action) {
+    case Action.CAPTURE:
+      return `${srcPiece === "P" ? "" : srcPiece}${index2RF(srcIndex)}x${
+        tarPiece === "P" ? "" : tarPiece
+      }${index2RF(tarIndex)}`
+    case Action.EN_PASSANT:
+      return `${index2RF(srcIndex)}x${index2RF(tarIndex)} e.p.`
+    case Action.MOVE:
+      return `${srcPiece === "P" ? "" : srcPiece}${index2RF(
+        srcIndex
+      )}-${index2RF(tarIndex)}`
+    case Action.CAPTURE_PROMOTE:
+      return `${index2RF(srcIndex)}x${tarPiece}${index2RF(tarIndex)}Q`
+    case Action.MOVE_PROMOTE:
+      return `${index2RF(srcIndex)}-${index2RF(tarIndex)}Q`
+    case Action.KINGSIDE_CASTLE:
+      return "0-0-0"
+    case Action.QUEENSIDE_CASTLE:
+      return "0-0"
+  }
+}
+
+function isSimulationGood(srcIndex, tarIndex, victimIndex, onDragState) {
   // Simulate move piece to check that it is valid / not into check
   let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  console.log(
-    `isSimulateMovePieceGood: ${pieceAtSource.name}@${pieceAtSource.index}`
-  )
+  console.log(`isSimulationGood: ${pieceAtSource.name}@${pieceAtSource.index}`)
   let defPieces = structuredClone(onDragState.pieces1)
   let atkPieces = structuredClone(onDragState.pieces2)
 
   if (pieceAtSource.player === 2)
     [defPieces, atkPieces] = [atkPieces, defPieces]
+  killPiece(victimIndex, atkPieces)
   movePiece(srcIndex, tarIndex, defPieces)
   return !isPlayerInCheck(defPieces, atkPieces)
 }
 
-function createActionCapture(srcIndex, srcPiece, tarIndex, tarPiece) {
-  return {
+function createActionCapture(
+  srcIndex,
+  srcPiece,
+  tarIndex,
+  tarPiece,
+  onDragState
+) {
+  let moveObj = {
+    action: Action.CAPTURE,
+    algNote: "",
+    onDragState,
     srcIndex,
     srcPiece,
-    action: Action.CAPTURE,
     tarIndex,
     tarPiece,
   }
+
+  moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
+
+  return moveObj
 }
 
-function createActionEnPassant(srcIndex, tarIndex) {
-  return {
-    srcIndex,
-    srcPiece: "P",
-    action: Action.EN_PASSANT,
-    tarIndex,
-    tarPiece: "P",
+function enPassantAction(srcIndex, tarIndex, onDragState) {
+  let victimIndex = rf2Index(index2Rank(srcIndex), index2File(tarIndex))
+  if (isSimulationGood(srcIndex, tarIndex, victimIndex, onDragState)) {
+    let moveObj = {
+      action: Action.EN_PASSANT,
+      algNote: "",
+      onDragState,
+      srcIndex,
+      srcPiece: "P",
+      tarIndex,
+      tarPiece: "P",
+    }
+
+    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
+
+    return moveObj
   }
 }
 
 function movePieceAction(srcIndex, srcPiece, tarIndex, onDragState) {
-  console.log(
-    `movePieceAction(${srcIndex}, ${srcPiece}, ${tarIndex}, onDragState)`
-  )
-  if (isSimulateMovePieceGood(srcIndex, tarIndex, onDragState))
-    return {
+  if (isSimulationGood(srcIndex, tarIndex, srcIndex, onDragState)) {
+    let moveObj = {
+      action: Action.MOVE,
+      algNote: "",
+      onDragState,
       srcIndex,
       srcPiece,
-      action: Action.MOVE,
       tarIndex,
       tarPiece: "",
     }
-}
 
-function pawnCapturePromote(srcIndex, tarIndex, tarPiece) {
-  return {
-    srcIndex,
-    srcPiece: "P",
-    action: Action.CAPTURE_PROMOTE,
-    tarIndex,
-    tarPiece,
+    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
+
+    return moveObj
   }
 }
 
-function pawnMovePromote(srcIndex, tarIndex) {
-  console.log(`pawnMovePromote(${srcIndex}, ${tarIndex})`)
-  return {
-    srcIndex,
-    srcPiece: "P",
-    action: Action.MOVE_PROMOTE,
-    tarIndex,
-    tarPiece: "",
+function capturePromoteAction(srcIndex, tarIndex, tarPiece, onDragState) {
+  if (isSimulationGood(srcIndex, tarIndex, tarIndex, onDragState)) {
+    let moveObj = {
+      action: Action.CAPTURE_PROMOTE,
+      algNote: "",
+      onDragState,
+      srcIndex,
+      srcPiece: "P",
+      tarIndex,
+      tarPiece,
+    }
+
+    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
+
+    return moveObj
   }
 }
 
-function kingsideCastle(srcIndex) {
-  return {
-    srcIndex,
-    srcPiece: "K",
-    action: Action.KINGSIDE_CASTLE,
-    tarIndex: srcIndex + 2,
-    tarPiece: "N",
+function movePromoteAction(srcIndex, tarIndex, onDragState) {
+  if (isSimulationGood(srcIndex, tarIndex, srcIndex, onDragState)) {
+    let moveObj = {
+      action: Action.MOVE_PROMOTE,
+      algNote: "",
+      onDragState,
+      srcIndex,
+      srcPiece: "P",
+      tarIndex,
+      tarPiece: "",
+    }
+
+    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
+
+    return moveObj
   }
 }
 
-function queensideCastle(srcIndex) {
-  return {
-    srcIndex,
-    srcPiece: "K",
-    action: Action.QUEENSIDE_CASTLE,
-    tarIndex: srcIndex - 2,
-    tarPiece: "N",
+function kingsideCastleAction(srcIndex, onDragState) {
+  if (
+    isSimulationGood(srcIndex, srcIndex + 1, srcIndex, onDragState) &&
+    isSimulationGood(srcIndex, srcIndex + 2, srcIndex, onDragState)
+  ) {
+    let moveObj = {
+      action: Action.KINGSIDE_CASTLE,
+      algNote: "",
+      onDragState,
+      srcIndex,
+      srcPiece: "K",
+      tarIndex: srcIndex + 2,
+      tarPiece: "",
+    }
+
+    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
+
+    return moveObj
+  }
+}
+
+function queensideCastleAction(srcIndex, onDragState) {
+  if (
+    isSimulationGood(srcIndex, srcIndex - 1, srcIndex, onDragState) &&
+    isSimulationGood(srcIndex, srcIndex - 2, srcIndex, onDragState)
+  ) {
+    let moveObj = {
+      action: Action.QUEENSIDE_CASTLE,
+      algNote: "",
+      onDragState,
+      srcIndex,
+      srcPiece: "K",
+      tarIndex: srcIndex - 2,
+      tarPiece: "",
+    }
+
+    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
+
+    return moveObj
   }
 }
 
 export {
-  isSimulateMovePieceGood,
   createActionCapture,
-  createActionEnPassant,
+  enPassantAction,
   movePieceAction,
-  pawnCapturePromote,
-  pawnMovePromote,
-  kingsideCastle,
-  queensideCastle,
+  capturePromoteAction,
+  movePromoteAction,
+  kingsideCastleAction,
+  queensideCastleAction,
 }
