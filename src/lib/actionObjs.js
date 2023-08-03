@@ -60,31 +60,26 @@ function isSimulationGood(srcIndex, tarIndex, victimIndex, onDragState) {
 
   if (pieceAtSource.player === 2)
     [defPieces, atkPieces] = [atkPieces, defPieces]
-  killPiece(victimIndex, atkPieces)
-  movePiece(srcIndex, tarIndex, defPieces)
+  let unkilledPieces = killPiece(victimIndex, atkPieces)
+  if (unkilledPieces !== undefined) atkPieces = unkilledPieces
+  defPieces = movePiece(srcIndex, tarIndex, defPieces)
   return !isPlayerInCheck(defPieces, atkPieces)
 }
 
-function createActionCapture(
-  srcIndex,
-  srcPiece,
-  tarIndex,
-  tarPiece,
-  onDragState
-) {
-  let moveObj = {
-    action: Action.CAPTURE,
-    algNote: "",
-    onDragState,
-    srcIndex,
-    srcPiece,
-    tarIndex,
-    tarPiece,
+function captureAction(srcIndex, srcPiece, tarIndex, tarPiece, onDragState) {
+  if (isSimulationGood(srcIndex, tarIndex, tarIndex, onDragState)) {
+    let moveObj = {
+      action: Action.CAPTURE,
+      algNote: "",
+      onDragState,
+      srcIndex,
+      srcPiece,
+      tarIndex,
+      tarPiece,
+    }
+
+    return { ...moveObj, algNote: algebraicNotation(moveObj) }
   }
-
-  moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
-
-  return moveObj
 }
 
 function enPassantAction(srcIndex, tarIndex, onDragState) {
@@ -100,9 +95,7 @@ function enPassantAction(srcIndex, tarIndex, onDragState) {
       tarPiece: "P",
     }
 
-    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
-
-    return moveObj
+    return { ...moveObj, algNote: algebraicNotation(moveObj) }
   }
 }
 
@@ -118,9 +111,7 @@ function movePieceAction(srcIndex, srcPiece, tarIndex, onDragState) {
       tarPiece: "",
     }
 
-    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
-
-    return moveObj
+    return { ...moveObj, algNote: algebraicNotation(moveObj) }
   }
 }
 
@@ -136,9 +127,7 @@ function capturePromoteAction(srcIndex, tarIndex, tarPiece, onDragState) {
       tarPiece,
     }
 
-    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
-
-    return moveObj
+    return { ...moveObj, algNote: algebraicNotation(moveObj) }
   }
 }
 
@@ -154,9 +143,7 @@ function movePromoteAction(srcIndex, tarIndex, onDragState) {
       tarPiece: "",
     }
 
-    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
-
-    return moveObj
+    return { ...moveObj, algNote: algebraicNotation(moveObj) }
   }
 }
 
@@ -175,9 +162,7 @@ function kingsideCastleAction(srcIndex, onDragState) {
       tarPiece: "",
     }
 
-    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
-
-    return moveObj
+    return { ...moveObj, algNote: algebraicNotation(moveObj) }
   }
 }
 
@@ -196,14 +181,12 @@ function queensideCastleAction(srcIndex, onDragState) {
       tarPiece: "",
     }
 
-    moveObj = { ...moveObj, algNote: algebraicNotation(moveObj) }
-
-    return moveObj
+    return { ...moveObj, algNote: algebraicNotation(moveObj) }
   }
 }
 
 export {
-  createActionCapture,
+  captureAction,
   enPassantAction,
   movePieceAction,
   capturePromoteAction,

@@ -231,4 +231,74 @@ describe("Test check", () => {
     validMovePlayer1(k1, (k1 += kingsidecastle), "king")
     validatePosition((kr1 += 2 * left), 1, "rook")
   })
+
+  it("Cannot get out of check by king attacking into check", () => {
+    cy.get("#ai-algo").select("2 Player Mode")
+    let up = -8,
+      down = 8,
+      left = -1,
+      right = 1,
+      kingsidecastle = 2,
+      queensidecastle = -2
+    let { pa1, pb1, pc1, pd1, pe1, pf1, pg1, ph1 } = chessmen
+    let { qr1, qn1, qb1, q1, k1, kb1, kn1, kr1 } = chessmen
+    let { pa2, pb2, pc2, pd2, pe2, pf2, pg2, ph2 } = chessmen
+    let { qr2, qn2, qb2, q2, k2, kb2, kn2, kr2 } = chessmen
+    // move kings near pawns
+    // 1. e2-e4 e7-e6
+    validMovePlayer1(pe1, (pe1 += 2 * up), "pawn")
+    validMovePlayer2(pe2, (pe2 += down), "pawn")
+    // 2. d2-d3 b7-b6
+    validMovePlayer1(pd1, (pd1 += up), "pawn")
+    validMovePlayer2(pb2, (pb2 += down), "pawn")
+    // 3. Bc1-d2 b6-b5
+    validMovePlayer1(qb1, (qb1 += up + right), "bishop")
+    validMovePlayer2(pb2, (pb2 += down), "pawn")
+    // 4. Qd1-g4 b5-b4
+    validMovePlayer1(q1, (q1 += 3 * up + 3 * right), "queen")
+    validMovePlayer2(pb2, (pb2 += down), "pawn")
+    // 5. Bd2xb4 a7-a6
+    validMovePlayer1(qb1, (qb1 += 2 * up + 2 * left), "bishop")
+    validMovePlayer2(pa2, (pa2 += down), "pawn")
+    // 6. Qg4-g5 a6-a5
+    validMovePlayer1(q1, (q1 += up), "queen")
+    validMovePlayer2(pa2, (pa2 += down), "pawn")
+    // 7. Qg5-e7+ ... Queen 1 places check; Ke8xe7 ... Invalid Move
+    validMovePlayer1(q1, (q1 += 2 * up + 2 * left), "queen")
+    invalidMovePlayer2(k2, (k2 += down), "king")
+    // King 2 is still in check from bishop at b4
+    // 7. Qg5-e7+ Bf8xe7 ... Instead bishop takes queen
+    validMovePlayer2(kb2, (kb2 += down + left), "bishop")
+  })
+
+  it("Cannot get out of check by king attacking into check [INVERTED]", () => {
+    cy.get("#ai-algo").select("2 Player Mode")
+    let up = -8,
+      down = 8,
+      left = -1,
+      right = 1,
+      kingsidecastle = 2,
+      queensidecastle = -2
+    let { pa1, pb1, pc1, pd1, pe1, pf1, pg1, ph1 } = chessmen
+    let { qr1, qn1, qb1, q1, k1, kb1, kn1, kr1 } = chessmen
+    let { pa2, pb2, pc2, pd2, pe2, pf2, pg2, ph2 } = chessmen
+    let { qr2, qn2, qb2, q2, k2, kb2, kn2, kr2 } = chessmen
+    // move kings near pawns
+    validMovePlayer1(ph1, (ph1 += up), "pawn")
+    validMovePlayer2(pe2, (pe2 += 2 * down), "pawn")
+    validMovePlayer1(pe1, (pe1 += up), "pawn")
+    validMovePlayer2(pd2, (pd2 += down), "pawn")
+    validMovePlayer1(pb1, (pb1 += up), "pawn")
+    validMovePlayer2(qb2, (qb2 += down + right), "bishop")
+    validMovePlayer1(pb1, (pb1 += up), "pawn")
+    validMovePlayer2(q2, (q2 += 3 * down + 3 * right), "queen")
+    validMovePlayer1(pb1, (pb1 += up), "pawn")
+    validMovePlayer2(qb2, (qb2 += 2 * down + 2 * left), "bishop")
+    validMovePlayer1(pa1, (pa1 += up), "pawn")
+    validMovePlayer2(q2, (q2 += down), "queen")
+    validMovePlayer1(pa1, (pa1 += up), "pawn")
+    validMovePlayer2(q2, (q2 += 2 * down + 2 * left), "queen")
+    invalidMovePlayer1(k1, (k1 += up), "king")
+    validMovePlayer1(kb1, (kb1 += up + left), "bishop")
+  })
 })

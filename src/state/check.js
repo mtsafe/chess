@@ -46,16 +46,16 @@ function isPlayerInCheck(defPieces, atkPieces) {
 }
 
 function isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces) {
-  if (
-    getTilesCovered[atkPiece.letter](atkPiece, atkPieces, defPieces).includes(
-      kingIndex
-    )
-  )
-    return getTilesCovered[atkPiece.letter](
-      atkPiece,
-      atkPieces,
-      defPieces
-    ).includes(kingIndex)
+  // if (
+  //   getTilesCovered[atkPiece.letter](atkPiece, atkPieces, defPieces).includes(
+  //     kingIndex
+  //   )
+  // )
+  return getTilesCovered[atkPiece.letter](
+    atkPiece,
+    atkPieces,
+    defPieces
+  ).includes(kingIndex)
 }
 
 const getTilesCovered = {

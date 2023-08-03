@@ -38,13 +38,13 @@ function App() {
   const [castleability, setCastleability] = useState(newCastleability())
   const [enPassantOpportunity, setEnPassantOpportunity] = useState(OFF_BOARD)
 
-  const [isCheck, setIsCheck] = useState(false)
+  // const [isCheck, setIsCheck] = useState(false)
   const [gamePlay, setGamePlay] = useState("3")
 
   const gameStatus = getGameStatus(gamePlay, moveActions)
-  const statusMsg = newStatusMsg(gameStatus)
+  const statusMsg = newStatusMsg(gameStatus, pieces1, pieces2)
 
-  function canCastle() {
+  function canCastle(isCheck) {
     if (isCheck)
       return {
         player1Kingside: false,
@@ -161,7 +161,7 @@ function App() {
         getMoveMatchingTarProp={getMoveMatchingTarProp}
       />
       <div>
-        <GameStatusMsg statusMsg={statusMsg} isCheck={isCheck} />
+        <GameStatusMsg statusMsg={statusMsg} />
         <div>
           <span>
             <NewGameButton

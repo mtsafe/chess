@@ -12,7 +12,7 @@ import {
   QueenMovement,
   pawnMovement,
   rookMovement,
-} from "./playermoves"
+} from "./pieceMovements"
 
 // ONDRAG EVENT HANDLER SUPPORT FUNCTIONS
 function findDropTargets(pieceElement, onDragState) {

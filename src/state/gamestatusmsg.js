@@ -1,9 +1,17 @@
-function newStatusMsg({ takingTurns, whosTurn }) {
-  let statusMsg = "Go!"
+import { isPlayerInCheck } from "./check"
+
+function newStatusMsg({ takingTurns, whosTurn }, pieces1, pieces2) {
+  let check,
+    statusMsg = "Go!"
   if (takingTurns) {
     statusMsg = `TURN: Player ${whosTurn}`
     console.log(`${statusMsg}`)
   }
+  if (
+    (whosTurn === 1 && isPlayerInCheck(pieces1, pieces2)) ||
+    (whosTurn === 2 && isPlayerInCheck(pieces2, pieces1))
+  )
+    statusMsg += " CHECK!"
   return statusMsg
 }
 
