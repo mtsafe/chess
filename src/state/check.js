@@ -38,24 +38,60 @@ function orientation(playerNum) {
   else return -1
 }
 
+// const onDragState = {
+//   pieces1,
+//   pieces2,
+//   enPassantOpportunity,
+//   castleability,
+//   canCastle,
+// }
+// const moveObj = {
+//   action,
+//   algNote,
+//   onDragState,
+//   srcIndex,
+//   srcPiece,
+//   tarIndex,
+//   tarPiece,
+// }
+
+function isCheckMate(defPieces, atkPieces, onDragState) {
+  if (!isPlayerInCheck(defPieces, atkPieces)) return false
+  return !canPlayerNotBeInCheckAfterMoving(defPieces, atkPieces, onDragState)
+}
+
 function isPlayerInCheck(defPieces, atkPieces) {
-  let { index: kingIndex } = getPieceMatchingCode("K", defPieces)
+  let kingPiece = getPieceMatchingCode("K", defPieces)
+  if (kingPiece === undefined) return false
   return !atkPieces.every(atkPiece => {
-    return !isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces)
+    return !isPlayerInCheckFrom(atkPiece, kingPiece.index, atkPieces, defPieces)
   })
 }
 
+function isStaleMate(defPieces, atkPieces, onDragState) {
+  if (isPlayerInCheck(defPieces, atkPieces)) return false
+  return !canPlayerNotBeInCheckAfterMoving(defPieces, atkPieces, onDragState)
+}
+
 function isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces) {
-  // if (
-  //   getTilesCovered[atkPiece.letter](atkPiece, atkPieces, defPieces).includes(
-  //     kingIndex
-  //   )
-  // )
   return getTilesCovered[atkPiece.letter](
     atkPiece,
     atkPieces,
     defPieces
   ).includes(kingIndex)
+}
+
+function canPlayerNotBeInCheckAfterMoving(defPieces, atkPieces, onDragState) {
+  return true
+  let dropTargets // array of moveObj
+  for (const piece of defPieces) {
+    dropTargets = findDropTargetsBySrcIndex(piece.index, onDragState)
+    simulateAllMoves(piece, dropTargets, () => {
+      if (!isPlayerInCheck(defPieces, atkPieces)) return false
+    })
+  }
+
+  return true
 }
 
 const getTilesCovered = {
@@ -148,4 +184,4 @@ function straightStepsCovered(srcIndex, step, atkPieces, defPieces) {
   return result
 }
 
-export { isPlayerInCheck }
+export { isCheckMate, isPlayerInCheck, isStaleMate }

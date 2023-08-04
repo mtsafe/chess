@@ -16,12 +16,16 @@ import {
 
 // ONDRAG EVENT HANDLER SUPPORT FUNCTIONS
 function findDropTargets(pieceElement, onDragState) {
-  let result
   let srcIndex = parseInt(pieceElement.getAttribute("tile_num"))
-  let { letter } = getPieceMatchingIndex2(parseInt(srcIndex), onDragState)
+  return findDropTargetsBySrcIndex(parseInt(srcIndex), onDragState)
+}
+
+function findDropTargetsBySrcIndex(srcIndex, onDragState) {
+  let result // array of moveObj
+  let { letter } = getPieceMatchingIndex2(srcIndex, onDragState)
   switch (letter) {
     case "P":
-      result = pawnMovement({ srcIndex, onDragState })
+      result = pawnMovement(srcIndex, onDragState)
       break
     case "R":
       result = rookMovement(srcIndex, onDragState)
@@ -42,4 +46,4 @@ function findDropTargets(pieceElement, onDragState) {
   return result.filter(Boolean) // remove undefined elements from array
 }
 
-export { findDropTargets }
+export { findDropTargets, findDropTargetsBySrcIndex }

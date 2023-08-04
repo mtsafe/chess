@@ -11,20 +11,7 @@ import {
   locateOneMoveWin,
   winner,
 } from "../lib/applib"
-
-import {
-  orientation,
-  newPieces1,
-  newPieces2,
-  getFreshPiecesWithout,
-  getPieceMatchingCode,
-  getPieceMatchingIndex1,
-  getPieceMatchingIndex2,
-  killPiece,
-  movePiece,
-  promotePiece,
-} from "../state/pieces"
-import { isPlayerInCheck } from "../state/check"
+import { isSimulationAValidMove } from "./simulation"
 import * as Action from "./actions"
 
 // "Reversible Algebraic Notation" as per Wikipedia
@@ -51,24 +38,9 @@ function algebraicNotation({ action, srcIndex, srcPiece, tarIndex, tarPiece }) {
   }
 }
 
-function isSimulationGood(srcIndex, tarIndex, victimIndex, onDragState) {
-  // Simulate move piece to check that it is valid / not into check
-  let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  console.log(`isSimulationGood: ${pieceAtSource.name}@${pieceAtSource.index}`)
-  let defPieces = structuredClone(onDragState.pieces1)
-  let atkPieces = structuredClone(onDragState.pieces2)
-
-  if (pieceAtSource.player === 2)
-    [defPieces, atkPieces] = [atkPieces, defPieces]
-  let unkilledPieces = killPiece(victimIndex, atkPieces)
-  if (unkilledPieces !== undefined) atkPieces = unkilledPieces
-  defPieces = movePiece(srcIndex, tarIndex, defPieces)
-  return !isPlayerInCheck(defPieces, atkPieces)
-}
-
 function captureAction(srcIndex, srcPiece, tarIndex, tarPiece, onDragState) {
-  if (isSimulationGood(srcIndex, tarIndex, tarIndex, onDragState)) {
-    let moveObj = {
+  if (isSimulationAValidMove(srcIndex, tarIndex, tarIndex, onDragState)) {
+    const moveObj = {
       action: Action.CAPTURE,
       algNote: "",
       onDragState,
@@ -84,8 +56,8 @@ function captureAction(srcIndex, srcPiece, tarIndex, tarPiece, onDragState) {
 
 function enPassantAction(srcIndex, tarIndex, onDragState) {
   let victimIndex = rf2Index(index2Rank(srcIndex), index2File(tarIndex))
-  if (isSimulationGood(srcIndex, tarIndex, victimIndex, onDragState)) {
-    let moveObj = {
+  if (isSimulationAValidMove(srcIndex, tarIndex, victimIndex, onDragState)) {
+    const moveObj = {
       action: Action.EN_PASSANT,
       algNote: "",
       onDragState,
@@ -100,8 +72,8 @@ function enPassantAction(srcIndex, tarIndex, onDragState) {
 }
 
 function movePieceAction(srcIndex, srcPiece, tarIndex, onDragState) {
-  if (isSimulationGood(srcIndex, tarIndex, srcIndex, onDragState)) {
-    let moveObj = {
+  if (isSimulationAValidMove(srcIndex, tarIndex, srcIndex, onDragState)) {
+    const moveObj = {
       action: Action.MOVE,
       algNote: "",
       onDragState,
@@ -116,8 +88,8 @@ function movePieceAction(srcIndex, srcPiece, tarIndex, onDragState) {
 }
 
 function capturePromoteAction(srcIndex, tarIndex, tarPiece, onDragState) {
-  if (isSimulationGood(srcIndex, tarIndex, tarIndex, onDragState)) {
-    let moveObj = {
+  if (isSimulationAValidMove(srcIndex, tarIndex, tarIndex, onDragState)) {
+    const moveObj = {
       action: Action.CAPTURE_PROMOTE,
       algNote: "",
       onDragState,
@@ -132,8 +104,8 @@ function capturePromoteAction(srcIndex, tarIndex, tarPiece, onDragState) {
 }
 
 function movePromoteAction(srcIndex, tarIndex, onDragState) {
-  if (isSimulationGood(srcIndex, tarIndex, srcIndex, onDragState)) {
-    let moveObj = {
+  if (isSimulationAValidMove(srcIndex, tarIndex, srcIndex, onDragState)) {
+    const moveObj = {
       action: Action.MOVE_PROMOTE,
       algNote: "",
       onDragState,
@@ -149,10 +121,10 @@ function movePromoteAction(srcIndex, tarIndex, onDragState) {
 
 function kingsideCastleAction(srcIndex, onDragState) {
   if (
-    isSimulationGood(srcIndex, srcIndex + 1, srcIndex, onDragState) &&
-    isSimulationGood(srcIndex, srcIndex + 2, srcIndex, onDragState)
+    isSimulationAValidMove(srcIndex, srcIndex + 1, srcIndex, onDragState) &&
+    isSimulationAValidMove(srcIndex, srcIndex + 2, srcIndex, onDragState)
   ) {
-    let moveObj = {
+    const moveObj = {
       action: Action.KINGSIDE_CASTLE,
       algNote: "",
       onDragState,
@@ -168,10 +140,10 @@ function kingsideCastleAction(srcIndex, onDragState) {
 
 function queensideCastleAction(srcIndex, onDragState) {
   if (
-    isSimulationGood(srcIndex, srcIndex - 1, srcIndex, onDragState) &&
-    isSimulationGood(srcIndex, srcIndex - 2, srcIndex, onDragState)
+    isSimulationAValidMove(srcIndex, srcIndex - 1, srcIndex, onDragState) &&
+    isSimulationAValidMove(srcIndex, srcIndex - 2, srcIndex, onDragState)
   ) {
-    let moveObj = {
+    const moveObj = {
       action: Action.QUEENSIDE_CASTLE,
       algNote: "",
       onDragState,

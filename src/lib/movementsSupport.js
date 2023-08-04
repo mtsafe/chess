@@ -32,7 +32,6 @@ import {
 // const onDragState = {
 //   pieces1,
 //   pieces2,
-//   moveActions,
 //   enPassantOpportunity,
 //   castleability,
 //   canCastle,

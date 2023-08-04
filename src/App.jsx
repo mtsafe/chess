@@ -41,8 +41,16 @@ function App() {
   // const [isCheck, setIsCheck] = useState(false)
   const [gamePlay, setGamePlay] = useState("3")
 
+  const onDragState = {
+    pieces1,
+    pieces2,
+    enPassantOpportunity,
+    castleability,
+    canCastle,
+  }
   const gameStatus = getGameStatus(gamePlay, moveActions)
-  const statusMsg = newStatusMsg(gameStatus, pieces1, pieces2)
+  const statusMsg = newStatusMsg(gameStatus, onDragState)
+  // const statusMsg = newStatusMsg(gameStatus, pieces1, pieces2)
 
   function canCastle(isCheck) {
     if (isCheck)
@@ -96,14 +104,13 @@ function App() {
       )}  classList="${e.target.classList}"`
     )
 
-    const onDragState = {
-      pieces1,
-      pieces2,
-      moveActions,
-      enPassantOpportunity,
-      castleability,
-      canCastle,
-    }
+    // const onDragState = {
+    //   pieces1,
+    //   pieces2,
+    //   enPassantOpportunity,
+    //   castleability,
+    //   canCastle,
+    // }
     setDropTargetMoves(findDropTargets(e.target, onDragState))
   }
 

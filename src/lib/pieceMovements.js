@@ -68,7 +68,7 @@ function knightMovement(srcIndex, onDragState) {
 }
 
 // PAWN MOVES
-function pawnMovement({ srcIndex, onDragState }) {
+function pawnMovement(srcIndex, onDragState) {
   let result = []
   result.push(pawn1Step(srcIndex, onDragState))
   result.push(pawn2Step(srcIndex, onDragState))
@@ -77,7 +77,7 @@ function pawnMovement({ srcIndex, onDragState }) {
 
 // QUEEN MOVES
 function QueenMovement(srcIndex, onDragState) {
-  let result1 = genericBishop(srcIndex, "B", onDragState)
+  let result1 = genericBishop(srcIndex, "Q", onDragState)
   let result2 = genericRook(srcIndex, "Q", onDragState)
   return [...result1, ...result2]
 }
