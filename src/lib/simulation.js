@@ -3,6 +3,7 @@ import {
   orientation,
   newPieces1,
   newPieces2,
+  getDefAndAtkPieces1,
   getFreshPiecesWithout,
   getPieceMatchingCode,
   getPieceMatchingIndex1,
@@ -11,14 +12,6 @@ import {
   movePiece,
   promotePiece,
 } from "../state/pieces"
-
-// const onDragState = {
-//   pieces1,
-//   pieces2,
-//   enPassantOpportunity,
-//   castleability,
-//   canCastle,
-// }
 
 function isSimulationAValidMove(srcIndex, tarIndex, victimIndex, onDragState) {
   let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
@@ -36,4 +29,13 @@ function isSimulationAValidMove(srcIndex, tarIndex, victimIndex, onDragState) {
   return !isPlayerInCheck(defPieces, atkPieces)
 }
 
-export { isSimulationAValidMove }
+function doesPieceHaveAValidMove(piece, dropTargets) {
+  for (const moveObj of dropTargets) {
+    let { srcIndex, tarIndex, victimIndex, onDragState } = moveObj
+    if (isSimulationAValidMove(srcIndex, tarIndex, victimIndex, onDragState))
+      return true
+  }
+  return false
+}
+
+export { doesPieceHaveAValidMove, isSimulationAValidMove }

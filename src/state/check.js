@@ -9,6 +9,11 @@ import {
   movePiece,
   promotePiece,
 } from "./pieces"
+import { findDropTargetsBySrcIndex } from "../lib/ondrag"
+import {
+  doesPieceHaveAValidMove,
+  isSimulationAValidMove,
+} from "../lib/simulation"
 
 const angleToOffset = {
   0: 1,
@@ -35,25 +40,8 @@ const knightOffsets = [
 
 function orientation(playerNum) {
   if (playerNum === 1) return 1
-  else return -1
+  return -1
 }
-
-// const onDragState = {
-//   pieces1,
-//   pieces2,
-//   enPassantOpportunity,
-//   castleability,
-//   canCastle,
-// }
-// const moveObj = {
-//   action,
-//   algNote,
-//   onDragState,
-//   srcIndex,
-//   srcPiece,
-//   tarIndex,
-//   tarPiece,
-// }
 
 function isCheckMate(defPieces, atkPieces, onDragState) {
   if (!isPlayerInCheck(defPieces, atkPieces)) return false
@@ -82,16 +70,12 @@ function isPlayerInCheckFrom(atkPiece, kingIndex, atkPieces, defPieces) {
 }
 
 function canPlayerNotBeInCheckAfterMoving(defPieces, atkPieces, onDragState) {
-  return true
   let dropTargets // array of moveObj
   for (const piece of defPieces) {
     dropTargets = findDropTargetsBySrcIndex(piece.index, onDragState)
-    simulateAllMoves(piece, dropTargets, () => {
-      if (!isPlayerInCheck(defPieces, atkPieces)) return false
-    })
+    if (doesPieceHaveAValidMove(piece, dropTargets)) return true
   }
-
-  return true
+  return false
 }
 
 const getTilesCovered = {

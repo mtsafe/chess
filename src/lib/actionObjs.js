@@ -39,6 +39,7 @@ function algebraicNotation({ action, srcIndex, srcPiece, tarIndex, tarPiece }) {
 }
 
 function captureAction(srcIndex, srcPiece, tarIndex, tarPiece, onDragState) {
+  let victimIndex = tarIndex
   if (isSimulationAValidMove(srcIndex, tarIndex, tarIndex, onDragState)) {
     const moveObj = {
       action: Action.CAPTURE,
@@ -48,6 +49,7 @@ function captureAction(srcIndex, srcPiece, tarIndex, tarPiece, onDragState) {
       srcPiece,
       tarIndex,
       tarPiece,
+      victimIndex,
     }
 
     return { ...moveObj, algNote: algebraicNotation(moveObj) }
@@ -65,6 +67,7 @@ function enPassantAction(srcIndex, tarIndex, onDragState) {
       srcPiece: "P",
       tarIndex,
       tarPiece: "P",
+      victimIndex,
     }
 
     return { ...moveObj, algNote: algebraicNotation(moveObj) }
@@ -72,6 +75,7 @@ function enPassantAction(srcIndex, tarIndex, onDragState) {
 }
 
 function movePieceAction(srcIndex, srcPiece, tarIndex, onDragState) {
+  let victimIndex = srcIndex
   if (isSimulationAValidMove(srcIndex, tarIndex, srcIndex, onDragState)) {
     const moveObj = {
       action: Action.MOVE,
@@ -81,6 +85,7 @@ function movePieceAction(srcIndex, srcPiece, tarIndex, onDragState) {
       srcPiece,
       tarIndex,
       tarPiece: "",
+      victimIndex,
     }
 
     return { ...moveObj, algNote: algebraicNotation(moveObj) }
@@ -88,6 +93,7 @@ function movePieceAction(srcIndex, srcPiece, tarIndex, onDragState) {
 }
 
 function capturePromoteAction(srcIndex, tarIndex, tarPiece, onDragState) {
+  let victimIndex = tarIndex
   if (isSimulationAValidMove(srcIndex, tarIndex, tarIndex, onDragState)) {
     const moveObj = {
       action: Action.CAPTURE_PROMOTE,
@@ -97,6 +103,7 @@ function capturePromoteAction(srcIndex, tarIndex, tarPiece, onDragState) {
       srcPiece: "P",
       tarIndex,
       tarPiece,
+      victimIndex,
     }
 
     return { ...moveObj, algNote: algebraicNotation(moveObj) }
@@ -104,6 +111,7 @@ function capturePromoteAction(srcIndex, tarIndex, tarPiece, onDragState) {
 }
 
 function movePromoteAction(srcIndex, tarIndex, onDragState) {
+  let victimIndex = srcIndex
   if (isSimulationAValidMove(srcIndex, tarIndex, srcIndex, onDragState)) {
     const moveObj = {
       action: Action.MOVE_PROMOTE,
@@ -113,6 +121,7 @@ function movePromoteAction(srcIndex, tarIndex, onDragState) {
       srcPiece: "P",
       tarIndex,
       tarPiece: "",
+      victimIndex,
     }
 
     return { ...moveObj, algNote: algebraicNotation(moveObj) }
@@ -120,6 +129,7 @@ function movePromoteAction(srcIndex, tarIndex, onDragState) {
 }
 
 function kingsideCastleAction(srcIndex, onDragState) {
+  let victimIndex = srcIndex
   if (
     isSimulationAValidMove(srcIndex, srcIndex + 1, srcIndex, onDragState) &&
     isSimulationAValidMove(srcIndex, srcIndex + 2, srcIndex, onDragState)
@@ -132,6 +142,7 @@ function kingsideCastleAction(srcIndex, onDragState) {
       srcPiece: "K",
       tarIndex: srcIndex + 2,
       tarPiece: "",
+      victimIndex,
     }
 
     return { ...moveObj, algNote: algebraicNotation(moveObj) }
@@ -139,6 +150,7 @@ function kingsideCastleAction(srcIndex, onDragState) {
 }
 
 function queensideCastleAction(srcIndex, onDragState) {
+  let victimIndex = srcIndex
   if (
     isSimulationAValidMove(srcIndex, srcIndex - 1, srcIndex, onDragState) &&
     isSimulationAValidMove(srcIndex, srcIndex - 2, srcIndex, onDragState)
@@ -151,6 +163,7 @@ function queensideCastleAction(srcIndex, onDragState) {
       srcPiece: "K",
       tarIndex: srcIndex - 2,
       tarPiece: "",
+      victimIndex,
     }
 
     return { ...moveObj, algNote: algebraicNotation(moveObj) }

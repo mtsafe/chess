@@ -1,6 +1,6 @@
 import { getEnPassantOpp } from "../state/enPassantOpportunity"
 import {
-  getDefAtk,
+  getDefAndAtkPieces2,
   getMovPlayer,
   killPiece,
   movePiece,

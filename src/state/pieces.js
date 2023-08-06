@@ -69,6 +69,18 @@ function newPieces2() {
   return result
 }
 
+function getDefAndAtkPieces1(playerNum, onDragState) {
+  let defPieces = structuredClone(onDragState.pieces1)
+  let atkPieces = structuredClone(onDragState.pieces2)
+  if (playerNum === 2) [defPieces, atkPieces] = [atkPieces, defPieces]
+  return { defPieces, atkPieces }
+}
+
+function getDefAndAtkPieces2(srcIndex, pieces1, pieces2) {
+  let pieceAtSource = getPieceMatchingIndex1(srcIndex, pieces1.concat(pieces2))
+  return getDefAndAtkPieces1(pieceAtSource.player, { pieces1, pieces2 })
+}
+
 function getFreshPiecesWithout(tarIndex, pieces) {
   return pieces
     .map(p => {
@@ -142,23 +154,13 @@ function promotePiece(tarIndex, pieces) {
   return makeQueen(tarIndex, pieces)
 }
 
-function getDefAtk(srcIndex, pieces1, pieces2) {
-  let pieceAtSource = getPieceMatchingIndex1(srcIndex, pieces1.concat(pieces2))
-  let defPieces = pieces1
-  let atkPieces = pieces2
-  console.log("getDefAtk()")
-
-  if (pieceAtSource.player === 2)
-    [defPieces, atkPieces] = [atkPieces, defPieces]
-  return { defPieces, atkPieces }
-}
-
 export {
   orientation,
   newPieces1,
   newPieces2,
+  getDefAndAtkPieces1,
   getFreshPiecesWithout,
-  getDefAtk,
+  getDefAndAtkPieces2,
   getMovPlayer,
   getPieceMatchingCode,
   getPieceMatchingIndex1,
