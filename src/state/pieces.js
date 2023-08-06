@@ -120,9 +120,10 @@ function isVacantTile(tile_num, onDragState) {
 }
 
 function killPiece(tarIndex, pieces) {
-  console.log(`killPiece(${tarIndex})`)
+  // console.log(`killPiece(${tarIndex})`)
   let victim = getPieceMatchingIndex1(tarIndex, pieces)
   if (victim === undefined) return
+  // console.log(`killPiece(${tarIndex}) success`)
   return getFreshPiecesWithout(tarIndex, pieces)
 }
 
@@ -137,10 +138,14 @@ function makeQueen(tarIndex, pieces) {
 }
 
 function movePiece(srcIndex, tarIndex, pieces) {
-  console.log(`movePiece(${srcIndex}, ${tarIndex})`)
+  // console.log(`movePiece(${srcIndex}, ${tarIndex})`)
+  // let piece = getPieceMatchingIndex1(tarIndex, pieces)
+  // if (piece !== undefined) return
+  // piece = getPieceMatchingIndex1(srcIndex, pieces)
   let piece = getPieceMatchingIndex1(srcIndex, pieces)
   if (piece === undefined) return
 
+  // console.log(`movePiece(${srcIndex}, ${tarIndex}) success`)
   return pieces.map(p => {
     if (p.index === srcIndex) p.index = tarIndex
     return p

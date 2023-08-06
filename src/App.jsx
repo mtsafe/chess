@@ -98,11 +98,11 @@ function App() {
   }
 
   function handleOnDrag_SetDropzones(e) {
-    console.log(
-      `<==EVENT===\nhandleOnDrag_SetDropzones(): targetTileNum=${e.target.getAttribute(
-        "tile_num"
-      )}  classList="${e.target.classList}"`
-    )
+    // console.log(
+    //   `<==EVENT===\nhandleOnDrag_SetDropzones(): targetTileNum=${e.target.getAttribute(
+    //     "tile_num"
+    //   )}  classList="${e.target.classList}"`
+    // )
 
     // const onDragState = {
     //   pieces1,
@@ -117,11 +117,11 @@ function App() {
   function handleOnDrop_ExecuteMove(e) {
     // prevent default action (open as link for some elements)
     e.preventDefault()
-    console.log(
-      `===EVENT==>\nhandleOnDrop_ExecuteMove(): targetTileNum=${e.target.getAttribute(
-        "tile_num"
-      )}  classList="${e.target.classList}"`
-    )
+    // console.log(
+    //   `===EVENT==>\nhandleOnDrop_ExecuteMove(): targetTileNum=${e.target.getAttribute(
+    //     "tile_num"
+    //   )}  classList="${e.target.classList}"`
+    // )
     if (!e.target.classList.contains("dropzone")) return
 
     let move = getMoveMatchingTarProp(

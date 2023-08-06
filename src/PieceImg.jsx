@@ -87,7 +87,7 @@ export function PieceImg({
   else className = "interact-img img-border-light"
 
   let draggable, onDragStart, onDragOver, onDrop
-  if (isDropZone) console.log(`--- isDropZone=${isDropZone}`)
+  // if (isDropZone) console.log(`--- isDropZone=${isDropZone}`)
   if (isDropZone) {
     className += " dropzone"
     onDragOver = e => e.preventDefault()

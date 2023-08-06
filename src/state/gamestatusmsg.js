@@ -1,20 +1,21 @@
 import { isCheckMate, isPlayerInCheck, isStaleMate } from "./check"
 
 function newStatusMsg({ takingTurns, whosTurn }, onDragState) {
-  let statusMsg
   if (takingTurns) {
-    let atkPieces, defPieces
+    let atkPieces, defPieces, notWhosTurn
     if (whosTurn === 1) {
       defPieces = onDragState.pieces1
       atkPieces = onDragState.pieces2
+      notWhosTurn = 2
     } else if (whosTurn === 2) {
       defPieces = onDragState.pieces2
       atkPieces = onDragState.pieces1
+      notWhosTurn = 1
     }
 
     if (isPlayerInCheck(defPieces, atkPieces)) {
       if (isCheckMate(defPieces, atkPieces, onDragState))
-        return "CHECKMATE: Player ${whosTurn} loses!"
+        return `CHECKMATE: Player ${notWhosTurn} wins!`
       return `TURN: Player ${whosTurn} CHECK!`
     }
     if (isStaleMate(defPieces, atkPieces, onDragState))
@@ -23,12 +24,12 @@ function newStatusMsg({ takingTurns, whosTurn }, onDragState) {
   }
   if (isPlayerInCheck(onDragState.pieces1, onDragState.pieces2)) {
     if (isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))
-      return "Both players 1 and 2 are in check."
+      return "Both players 1 and 2 are in check." // Not really possible (yet)
     return "Player 1 is in check."
   }
   if (isPlayerInCheck(onDragState.pieces2, onDragState.pieces1))
     return "Player 2 is in check."
-  return "Go!"
+  return "Go!" // Anyone's turn
 }
 
 function getGameStatus(gamePlay, moveActions) {

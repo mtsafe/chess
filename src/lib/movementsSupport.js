@@ -39,7 +39,7 @@ import {
 
 // KING MOVES SUPPORT
 function kingKingsideCastle(srcIndex, onDragState) {
-  console.log(`kingKingsideCastle(${srcIndex})`)
+  // console.log(`kingKingsideCastle(${srcIndex})`)
   let { kingside } = canPlayerCastle(srcIndex, onDragState)
   if (
     kingside &&
@@ -50,7 +50,7 @@ function kingKingsideCastle(srcIndex, onDragState) {
 }
 
 function kingQueensideCastle(srcIndex, onDragState) {
-  console.log(`kingQueensideCastle(${srcIndex})`)
+  // console.log(`kingQueensideCastle(${srcIndex})`)
   let { queenside } = canPlayerCastle(srcIndex, onDragState)
   if (
     queenside &&
@@ -87,7 +87,7 @@ function canPlayerCastle(srcIndex, onDragState) {
 
 // KNIGHT MOVES SUPPORT
 function genericMove(srcIndex, tarOffset, letter, onDragState) {
-  console.log(`genericMove(srcIndex, tarOffset, letter, onDragState)`)
+  // console.log(`genericMove(srcIndex, tarOffset, letter, onDragState)`)
   let tarIndex = srcIndex + tarOffset
   let { pieceAtSource, pieceAtTarget } = getSrcAndTarPieces(
     srcIndex,
@@ -108,7 +108,7 @@ function genericMove(srcIndex, tarOffset, letter, onDragState) {
 
 // PAWN MOVES SUPPORT
 function pawn1Step(srcIndex, onDragState) {
-  console.log(`pawn1Step(${srcIndex}, onDragState)`)
+  // console.log(`pawn1Step(${srcIndex}, onDragState)`)
   let { player } = getPieceMatchingIndex2(srcIndex, onDragState)
   let tarIndex = srcIndex + 8 * orientation[player]
   if (!isVacantTile(tarIndex, onDragState)) return
@@ -160,13 +160,13 @@ function pawnCaptureRL(leftRight, srcIndex, onDragState) {
   let pieceAtTarget = getPieceMatchingIndex2(tarIndex, onDragState)
   if (pieceAtTarget === undefined) {
     let victimIndex = srcIndex + leftRight.atkSideVal
-    console.log(
-      `does victimIndex{${victimIndex}} === onDragState.enPassantOpportunity{${onDragState.enPassantOpportunity}}`
-    )
+    // console.log(
+    //   `does victimIndex{${victimIndex}} === onDragState.enPassantOpportunity{${onDragState.enPassantOpportunity}}`
+    // )
     if (victimIndex === onDragState.enPassantOpportunity)
       return enPassantAction(srcIndex, tarIndex, onDragState)
     return
-  }
+  } else if (pieceAtTarget.player === player) return
 
   if (
     (pieceAtTarget.player === 1 && index2Rank(tarIndex) === 1) ||
@@ -198,9 +198,9 @@ function genericBishop(srcIndex, letter, onDragState) {
 }
 
 function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
-  console.log(
-    `bishopRadiate(quatrant=${quadrant}, srcIndex=${srcIndex}, letter=${letter}, onDragState)`
-  )
+  // console.log(
+  //   `bishopRadiate(quatrant=${quadrant}, srcIndex=${srcIndex}, letter=${letter}, onDragState)`
+  // )
   let tarOffset,
     condition,
     nextPosition,
@@ -209,6 +209,9 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
     result = []
   switch (quadrant) {
     case 1:
+      if (index2Rank(srcIndex) === 8 || index2Column(srcIndex) === 8)
+        return result
+      // console.log("case 1:")
       tarOffset = -7
       condition = () => column <= 8 && rank <= 8
       nextPosition = () => {
@@ -217,6 +220,9 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
       }
       break
     case 2:
+      if (index2Rank(srcIndex) === 8 || index2Column(srcIndex) === 0)
+        return result
+      // console.log("case 2:")
       tarOffset = -9
       condition = () => column > 0 && rank <= 8
       nextPosition = () => {
@@ -225,6 +231,9 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
       }
       break
     case 3:
+      if (index2Rank(srcIndex) === 0 || index2Column(srcIndex) === 0)
+        return result
+      // console.log("case 3:")
       tarOffset = 7
       condition = () => column > 0 && rank > 0
       nextPosition = () => {
@@ -233,6 +242,9 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
       }
       break
     case 4:
+      if (index2Rank(srcIndex) === 0 || index2Column(srcIndex) === 8)
+        return result
+      // console.log("case 4:")
       tarOffset = 9
       condition = () => column <= 8 && rank > 0
       nextPosition = () => {
@@ -245,7 +257,7 @@ function bishopRadiate(quadrant, srcIndex, letter, onDragState) {
   let tarIndex = srcIndex + tarOffset
   column = index2Column(tarIndex)
   rank = index2Rank(tarIndex)
-  console.log(`condition=${condition()}`)
+  // console.log(`condition=${condition()}`)
   for (; condition(); nextPosition(), tarIndex += tarOffset) {
     let { pieceAtSource, pieceAtTarget } = getSrcAndTarPieces(
       srcIndex,
@@ -282,7 +294,7 @@ function genericRook(srcIndex, letter, onDragState) {
 }
 
 function rookHorizontal(direction, srcIndex, letter, rank, onDragState) {
-  console.log(`rookHorizontal(direction, srcIndex, letter, rank, onDragState)`)
+  // console.log(`rookHorizontal(direction, srcIndex, letter, rank, onDragState)`)
   let column,
     start,
     condition,
@@ -323,7 +335,7 @@ function rookHorizontal(direction, srcIndex, letter, rank, onDragState) {
 }
 
 function rookVertical(direction, srcIndex, letter, file, onDragState) {
-  console.log(`rookVertical(direction, srcIndex, letter, file, onDragState)`)
+  // console.log(`rookVertical(direction, srcIndex, letter, file, onDragState)`)
   let rank,
     start,
     condition,

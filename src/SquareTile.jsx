@@ -21,7 +21,7 @@ export function SquareTile({
     className = "square-tile dark-tile"
     frameBorderClass = "interact-frame border-light"
   }
-  if (isDropZone) console.log(`-- img ${tile_num} isDropZone`)
+  // if (isDropZone) console.log(`-- img ${tile_num} isDropZone`)
 
   return (
     <div className={className} tile_id={tile_id}>

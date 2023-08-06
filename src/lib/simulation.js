@@ -15,9 +15,9 @@ import {
 
 function isSimulationAValidMove(srcIndex, tarIndex, victimIndex, onDragState) {
   let pieceAtSource = getPieceMatchingIndex2(srcIndex, onDragState)
-  console.log(
-    `isSimulationAValidMove: ${pieceAtSource.name}@${pieceAtSource.index}`
-  )
+  // console.log(
+  //   `isSimulationAValidMove: ${pieceAtSource.name}@${pieceAtSource.index}`
+  // )
   let defPieces = structuredClone(onDragState.pieces1)
   let atkPieces = structuredClone(onDragState.pieces2)
 
@@ -30,11 +30,15 @@ function isSimulationAValidMove(srcIndex, tarIndex, victimIndex, onDragState) {
 }
 
 function doesPieceHaveAValidMove(piece, dropTargets) {
+  // console.log(`?? doesPieceHaveAValidMove(${piece.code}@${piece.index}) ??`)
   for (const moveObj of dropTargets) {
     let { srcIndex, tarIndex, victimIndex, onDragState } = moveObj
     if (isSimulationAValidMove(srcIndex, tarIndex, victimIndex, onDragState))
       return true
   }
+  // console.log(
+  // `?? doesPieceHaveAValidMove(${piece.code}@${piece.index}) ?? NO !!!`
+  // )
   return false
 }
 

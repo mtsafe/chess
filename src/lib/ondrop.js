@@ -21,7 +21,7 @@ function computeOnDropStateChanges({
   pieces1,
   pieces2,
 }) {
-  console.log("computeOnDropStateChanges()")
+  // console.log("computeOnDropStateChanges()")
   let { action, srcIndex, srcPiece, tarIndex, tarPiece } = move
   let freshCastleability, freshEnPassantOpp, freshPieces1, freshPieces2
   let thePlayer
