@@ -4,7 +4,7 @@ import {
   rc2Index,
   rf2Index,
   index2Column,
-} from "./applib"
+} from "./gameboard"
 import {
   genericBishop,
   genericMove,

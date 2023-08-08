@@ -1,3 +1,5 @@
+import { GAMEPLAY_DEFAULT } from "./lib/applib"
+
 export function AISelector({ handleOnChange_AIAlgoMode }) {
   return (
     <div className="ai">
@@ -5,10 +7,10 @@ export function AISelector({ handleOnChange_AIAlgoMode }) {
       <select
         name="ai-algo"
         id="ai-algo"
-        defaultValue={1}
+        defaultValue={GAMEPLAY_DEFAULT}
         onChange={e => handleOnChange_AIAlgoMode(e.target.value)}
       >
-        <option value="0">Test Mode 1</option>
+        <option value="0">Test Mode</option>
         <option value="1">2 Player Mode</option>
         <option value="2">Walker</option>
         <option value="3">Spit Baller</option>

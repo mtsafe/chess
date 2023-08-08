@@ -5,12 +5,7 @@ import {
   index2Rank,
   index2File,
   index2Column,
-  aiChoosesTile,
-  numMovesLeft,
-  tie,
-  locateOneMoveWin,
-  winner,
-} from "../lib/applib"
+} from "../lib/gameboard"
 import { isSimulationAValidMove } from "./simulation"
 import * as Action from "./actions"
 

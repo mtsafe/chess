@@ -4,7 +4,7 @@ import {
   rc2Index,
   rf2Index,
   index2Column,
-} from "./applib"
+} from "./gameboard"
 import {
   orientation,
   newPieces1,
@@ -29,13 +29,6 @@ import {
   kingsideCastleAction,
   queensideCastleAction,
 } from "./actionObjs"
-// const onDragState = {
-//   pieces1,
-//   pieces2,
-//   enPassantOpportunity,
-//   castleability,
-//   canCastle,
-// }
 
 // KING MOVES SUPPORT
 function kingKingsideCastle(srcIndex, onDragState) {

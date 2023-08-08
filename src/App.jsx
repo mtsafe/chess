@@ -1,13 +1,12 @@
 import { useState } from "react"
 
-// FUNCTION COMPONENTS
+// FUNCTIONAL COMPONENTS
 import { GameBoard } from "./GameBoard"
 import { GameStatusMsg } from "./GameStatusMsg"
 import { AISelector } from "./AISelector"
 import { NewGameButton } from "./NewGameButton"
 
 // FUNCTIONS SUPPORTING STATE
-import { getEnPassantOpp } from "./state/enPassantOpportunity"
 import { castleabilityUpdater, newCastleability } from "./state/castleability"
 import {
   newPieces1,
@@ -19,50 +18,25 @@ import {
 import { newTiles } from "./state/tiles"
 
 // OTHER FUNCTIONS
-// import { aiChoosesTile, tie, winner } from "./lib/applib"
-import { newStatusMsg, getGameStatus } from "./state/gamestatusmsg"
+import {
+  newStatusMsg,
+  getGameStatus,
+  getGameSubtitle,
+  getGameTitle,
+} from "./state/gamestatusmsg"
 import { findDropTargets } from "./lib/ondrag"
 import { computeOnDropStateChanges } from "./lib/ondrop"
 
+// CONSTANTS
+import { GAMEPLAY_DEFAULT, OFF_BOARD } from "./lib/applib"
+
+// CSS
 import "./App.css"
 
+// THIS FUNCTIONAL COMPONENT
 function App() {
-  const OFF_BOARD = -1
   // ***************************
-  // STATE HOOKS
-  const [tiles, setTiles] = useState(newTiles)
-  const [pieces1, setPieces1] = useState(newPieces1)
-  const [pieces2, setPieces2] = useState(newPieces2)
-  const [dropTargetMoves, setDropTargetMoves] = useState([])
-  const [moveActions, setMoveActions] = useState([])
-  const [castleability, setCastleability] = useState(newCastleability())
-  const [enPassantOpportunity, setEnPassantOpportunity] = useState(OFF_BOARD)
-
-  // const [isCheck, setIsCheck] = useState(false)
-  const [gamePlay, setGamePlay] = useState("3")
-
-  const onDragState = {
-    pieces1,
-    pieces2,
-    enPassantOpportunity,
-    castleability,
-    canCastle,
-  }
-  const gameStatus = getGameStatus(gamePlay, moveActions)
-  const statusMsg = newStatusMsg(gameStatus, onDragState)
-  // const statusMsg = newStatusMsg(gameStatus, pieces1, pieces2)
-
-  function canCastle(isCheck) {
-    if (isCheck)
-      return {
-        player1Kingside: false,
-        player1Queenside: false,
-        player2Kingside: false,
-        player2Queenside: false,
-      }
-    return castleability
-  }
-
+  // Functions Passed As Props
   function getPieceMatchingIndexProp(tile_num) {
     let result
     if (pieces1?.length)
@@ -82,7 +56,6 @@ function App() {
 
   // ***************************
   // EVENT HANDLERS
-
   function handleOnChange_AIAlgoMode(value) {
     const selection = parseInt(value)
     setGamePlay(selection)
@@ -104,13 +77,6 @@ function App() {
     //   )}  classList="${e.target.classList}"`
     // )
 
-    // const onDragState = {
-    //   pieces1,
-    //   pieces2,
-    //   enPassantOpportunity,
-    //   castleability,
-    //   canCastle,
-    // }
     setDropTargetMoves(findDropTargets(e.target, onDragState))
   }
 
@@ -148,17 +114,48 @@ function App() {
     let moveAction = move
     setMoveActions([...moveActions, moveAction])
   }
+
   // ***************************
   // EXECUTION BEGINS (OTHER THAN STATE HOOK DECLARATIONS)
 
-  let foot = tiles.map(tile => {
-    return tile.letter
-  })
+  // ***************************
+  // STATE HOOKS
+  const [tiles, setTiles] = useState(newTiles)
+  const [pieces1, setPieces1] = useState(newPieces1)
+  const [pieces2, setPieces2] = useState(newPieces2)
+  const [dropTargetMoves, setDropTargetMoves] = useState([])
+  const [moveActions, setMoveActions] = useState([])
+  const [castleability, setCastleability] = useState(newCastleability())
+  const [enPassantOpportunity, setEnPassantOpportunity] = useState(OFF_BOARD)
+  const [gamePlay, setGamePlay] = useState(GAMEPLAY_DEFAULT)
+
+  // ***************************
+  // State Dependent Consts
+  const onDragState = {
+    pieces1,
+    pieces2,
+    enPassantOpportunity,
+    castleability,
+    canCastle: isCheck => {
+      if (isCheck)
+        return {
+          player1Kingside: false,
+          player1Queenside: false,
+          player2Kingside: false,
+          player2Queenside: false,
+        }
+      return castleability
+    },
+  }
+  const gameTitle = getGameTitle(gamePlay)
+  const gameSubtitle = getGameSubtitle(gamePlay)
+  const gameStatus = getGameStatus(gamePlay, moveActions)
+  const statusMsg = newStatusMsg(gameStatus, onDragState)
 
   return (
     <>
-      <h1>CHESS + Vite + React</h1>
-      <h2>[You Against AI!]</h2>
+      <h1>{gameTitle}</h1>
+      <h2>{gameSubtitle}</h2>
       <GameBoard
         tiles={tiles}
         gameStatus={gameStatus}

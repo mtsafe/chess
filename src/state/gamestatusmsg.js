@@ -38,4 +38,31 @@ function getGameStatus(gamePlay, moveActions) {
   if (takingTurns) whosTurn = (moveActions?.length % 2) + 1
   return { takingTurns, whosTurn }
 }
-export { newStatusMsg, getGameStatus }
+
+function getGameTitle(gamePlay) {
+  const title = [
+    "CHESS: Test Mode",
+    "CHESS: Player vs Player",
+    "CHESS: Player vs AI Bot",
+    "CHESS: Player vs AI Bot",
+    "CHESS: Player vs AI Bot",
+    "CHESS: Player vs AI Bot",
+    "CHESS: Player vs AI Bot",
+  ]
+  return title[gamePlay]
+}
+
+function getGameSubtitle(gamePlay) {
+  const subTitle = [
+    "[not taking turns]",
+    "[2 player mode]",
+    "Play against Walker Bot",
+    "Play against Spit Baller Bot",
+    "Play against Offender Bot",
+    "Play against Defender Bot",
+    "Play against Boss Level 1 Bot",
+  ]
+  return subTitle[gamePlay]
+}
+
+export { newStatusMsg, getGameStatus, getGameSubtitle, getGameTitle }

@@ -27,7 +27,7 @@ describe("Test check", () => {
     cy.get("#ai-algo").select("Walker")
   })
 
-  it("NPC player 2: walker", () => {
+  it("Bot player 2: walker", () => {
     let up = -8,
       down = 8,
       left = -1,

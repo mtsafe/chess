@@ -13,10 +13,10 @@ describe("Test Gameplay Modes", () => {
     cy.get("#ai-algo").should("be.visible")
   })
 
-  it("Test AI Algo Test Mode 1: move without taking turns", () => {
+  it("Test AI Algo Test Mode: move without taking turns", () => {
     let a = 48
-    // Select Test Mode 1 = player moves any pieces
-    cy.get("#ai-algo").select("Test Mode 1")
+    // Select Test Mode = player moves any pieces
+    cy.get("#ai-algo").select("Test Mode")
     cy.get("#ai-algo").should("have.value", "0")
 
     // Move player 1 pieces
@@ -94,8 +94,8 @@ describe("Test Gameplay Modes", () => {
   // Gameplay should continue even when AI Algos switch
   it("Tests AI Algos Switching", () => {
     let a = 48
-    // Select Test Mode 1 = player moves any pieces
-    cy.get("#ai-algo").select("Test Mode 1")
+    // Select Test Mode = player moves any pieces
+    cy.get("#ai-algo").select("Test Mode")
     cy.get("#ai-algo").should("have.value", "0")
     let up = -8,
       down = 8,

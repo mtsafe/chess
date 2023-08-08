@@ -4,12 +4,7 @@ import {
   index2Rank,
   index2File,
   index2Column,
-  aiChoosesTile,
-  numMovesLeft,
-  tie,
-  locateOneMoveWin,
-  winner,
-} from "../lib/applib"
+} from "../lib/gameboard"
 
 // STATE SUPPORT CONSTANTS
 const orientation = { 1: -1, 2: 1 }
