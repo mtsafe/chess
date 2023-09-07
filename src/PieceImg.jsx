@@ -10,7 +10,7 @@ import LightBishop from "./assets/chessSetShade/bishop-w164x294.png"
 import LightKnight from "./assets/chessSetShade/knight-w164x294.png"
 import LightRook from "./assets/chessSetShade/rook-w164x294.png"
 import LightPawn from "./assets/chessSetShade/pawn-w164x294.png"
-import Empty from "./assets/transparent100x100.png"
+import Empty from "./assets/Transparent100x100.png"
 
 export function PieceImg({
   tile_num,
