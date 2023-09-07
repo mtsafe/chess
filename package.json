@@ -1,9 +1,9 @@
 {
-  "name": "tic-react-toe",
+  "name": "chess",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://mtsafe.github.io/tic-react-toe/",
+  "homepage": "https://mtsafe.github.io/chess/",
   "scripts": {
     "cy:open": "cypress open",
     "cy:run": "cypress run --spec \"cypress/e2e/chess/*.cy.js\"",
