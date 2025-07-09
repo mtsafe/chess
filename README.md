@@ -2,6 +2,21 @@
 
 Play Chess against the AI of your choice
 
+## Gameplay
+
+You can play at https://mtsafe.github.io/chess/ .
+
+Player 1 has light shaded pieces and goes first.
+
+The Restart Game button will return the pieces to the starting positions.
+
+2 Player mode works.
+The test mode works as a kind of cheat mode to test the system.
+
+### Limitations
+
+So far the AI computer players are not yet coded.
+
 ## Design Decisions
 
 Since chess is very heavy in calculations, the calculation code is moved out of the App functional component.
@@ -26,6 +41,10 @@ OnDrag, the possible moves are calculated for that piece and marked as dropzones
 
 OnDrop, the move is executed for that piece going to that location by updating the states of pieces1 and pieces2. Since the moves are checked OnDrag as possible, then the validity of the move does not need to be questioned. Just execute the move.
 
-### Gameplay
+## Dev Platform
 
-Player 1 has light shaded pieces and goes first.
+Developed on:
+
+- Apple M1 Pro with macOS 14.4
+- Node.js v20.19.0
+- Vite 7.0.3
