@@ -67,7 +67,8 @@ function App() {
     setPieces2(newPieces2())
     setTiles(newTiles())
     setEnPassantOpportunity(OFF_BOARD)
-    setStatusMsg("Go!")
+    setMoveActions([])
+    // setStatusMsg("Go!")
   }
 
   function handleOnDrag_SetDropzones(e) {
